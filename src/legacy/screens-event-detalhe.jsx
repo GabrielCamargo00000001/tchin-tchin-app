@@ -336,7 +336,7 @@ function EventDetalheScreen({ event, brotherhood, go }) {
 function EventMenuSheet({ event, isOrganizer, isPast, onClose, go }) {
   const organizerLive = [
     { icon: 'edit',           label: 'Editar evento',         onClick: () => go('evento-editar', { event }) },
-    { icon: 'people',         label: 'Lista de presença',     onClick: () => go('evento-presenca', { event }) },
+    { icon: 'people',         label: 'Inscritos e pagamentos', onClick: () => go('evento-presenca', { event }) },
     { icon: 'group_add',      label: 'Convidar mais pessoas', onClick: () => go('toast', { variant: 'info', message: 'Link de convite copiado.' }) },
     { icon: 'chat',           label: 'Abrir chat do evento',  onClick: () => go('chat-conversa', { chat: { id: 'ev-' + (event.id || 'x'), name: event.title, type: 'group', members: event.participants || 6 } }) },
     { icon: 'event_busy',     label: 'Cancelar evento',       danger: true, onClick: () => go('evento-editar', { event }) },

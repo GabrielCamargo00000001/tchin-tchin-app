@@ -5,6 +5,7 @@ import React from 'react';
 import { Button } from './components.jsx';
 import { getEventCover } from './event-covers.jsx';
 import { readEventDraft, writeEventDraft } from './screens-event-wizard-p1.jsx';
+import { PRICE_TIERS, priceTierOf } from './screens-event-wizard-p3.jsx';
 import { fbEvent } from './screens-wizard-confraria.jsx';
 import { BottlePlaceholder, Icon, T } from './tokens.jsx';
 
@@ -187,17 +188,9 @@ function WizardCriarEventoP5({ data, onPublish, onBack }) {
 
             <Divider/>
 
-            {/* Vinhos sugeridos */}
+            {/* Vinhos sugeridos — resumo + lista recolhível (#10) */}
             <ReviewSubsection title="Vinhos sugeridos" badge={`${countWines(data.wines)}`}>
-              {data.wines && data.wines.slots ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {data.wines.slots.flat().filter(Boolean).map((w, i) => (
-                    <WineMiniCard key={`${w.id}-${i}`} wine={w}/>
-                  ))}
-                </div>
-              ) : (
-                <EmptyHint>Nenhum vinho sugerido.</EmptyHint>
-              )}
+              <WinesReview wines={data.wines}/>
             </ReviewSubsection>
 
             <Divider/>
@@ -299,6 +292,78 @@ function formatEventDate(dateStr, time) {
   // Capitaliza primeira letra
   const dayCap = day.charAt(0).toUpperCase() + day.slice(1);
   return time ? `${dayCap}, ${time}` : dayCap;
+}
+
+// ─── WinesReview — resumo + lista recolhível dos vinhos (#10) ─
+// Com poucos vinhos mostra tudo; com muitos, mostra resumo + prévia e um
+// "Ver todos" que expande, agrupado por faixa de preço.
+function WinesReview({ wines }) {
+  const [expanded, setExpanded] = React.useState(false);
+  const list = wines && wines.slots ? wines.slots.flat().filter(Boolean) : [];
+  if (list.length === 0) return <EmptyHint>Nenhum vinho sugerido.</EmptyHint>;
+
+  const prices = list.map((w) => w.price);
+  const min = Math.min(...prices), max = Math.max(...prices);
+  const fmt = (n) => `R$ ${Math.round(n)}`;
+  const range = min === max ? fmt(min) : `${fmt(min)}–${fmt(max)}`;
+
+  const byTier = PRICE_TIERS
+    .map((t) => ({ tier: t, items: list.filter((w) => priceTierOf(w.price) === t.id) }))
+    .filter((g) => g.items.length);
+
+  const collapsible = list.length > 4;
+  const showAll = !collapsible || expanded;
+
+  return (
+    <div>
+      {/* Resumo */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
+        <span style={{ fontFamily: T.mono, fontSize: 12, fontWeight: 700, color: T.c.p700 }}>{list.length} vinhos</span>
+        <span style={{ width: 3, height: 3, borderRadius: 2, background: T.c.n400 }}/>
+        <span style={{ fontFamily: T.mono, fontSize: 12, fontWeight: 600, color: T.c.n600 }}>{range}</span>
+      </div>
+      {/* Breakdown por faixa */}
+      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 12 }}>
+        {byTier.map((g) => (
+          <span key={g.tier.id} style={{
+            padding: '4px 10px', background: T.c.n100, borderRadius: T.r.full,
+            fontFamily: T.font, fontSize: 11, fontWeight: 600, color: T.c.n800,
+          }}>{g.tier.label} · {g.items.length}</span>
+        ))}
+      </div>
+
+      {showAll ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {byTier.map((g) => (
+            <div key={g.tier.id}>
+              <div style={{
+                fontFamily: T.font, fontSize: 11, fontWeight: 700, color: T.c.p700,
+                textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 6,
+              }}>{g.tier.label}</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {g.items.map((w, i) => <WineMiniCard key={`${w.id}-${i}`} wine={w}/>)}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {list.slice(0, 3).map((w, i) => <WineMiniCard key={`${w.id}-${i}`} wine={w}/>)}
+        </div>
+      )}
+
+      {collapsible && (
+        <button onClick={() => setExpanded((e) => !e)} style={{
+          marginTop: 10, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+          padding: 10, background: 'none', border: `1px solid ${T.c.n300}`, borderRadius: T.r.md,
+          cursor: 'pointer', fontFamily: T.font, fontSize: 13, fontWeight: 600, color: T.c.p700,
+        }}>
+          <Icon name={expanded ? 'expand_less' : 'expand_more'} size={18} color={T.c.p700}/>
+          {expanded ? 'Ver menos' : `Ver todos os ${list.length} vinhos`}
+        </button>
+      )}
+    </div>
+  );
 }
 
 // ─── EventReviewCover — usa a capa escolhida (#6) ou o tipo ─

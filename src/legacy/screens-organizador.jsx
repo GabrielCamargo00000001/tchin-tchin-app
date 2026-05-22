@@ -149,16 +149,34 @@ const oeInput = {
 };
 
 // 29.02 ─────────────────────────────────────────────────
+// Visão do organizador: duas abas — Presença (RSVP + check-in) e Pagamentos
+// (quem pagou, via conta própria ou LACI, com reconhecimento automático). #A
+const fmtBRL = (n) => 'R$ ' + Number(n).toFixed(2).replace('.', ',');
+
+function eventFixedAmount(ev) {
+  const s = ev && ev.settings;
+  if (s && s.payment === 'free') return 0;
+  if (s && s.payment === 'fixed') return Number(String(s.paymentAmount || '').replace(',', '.')) || 0;
+  if (ev && ev.paymentAmount) return Number(String(ev.paymentAmount).replace(',', '.')) || 0;
+  return 80; // fallback de demonstração quando o evento mock não traz config de pagamento
+}
+
 function EventoPresencaScreen({ go, params }) {
   const ev = (params && params.event) || { title: 'Degustação às cegas', participants: 8 };
+  const [view, setView] = React.useState('presenca'); // presenca | pagamentos
   const [filter, setFilter] = React.useState('todos');
   const [checkin, setCheckin] = React.useState({ 'Carla Mendes': true, 'Diego Reis': true });
+
+  const fixedAmount = eventFixedAmount(ev);
+  const isPaid = fixedAmount > 0;
+
+  // payMethod: 'laci' (reconhecido automático) | 'conta' (pago pela conta) | null (pendente)
   const all = [
-    { name: 'Carla Mendes',     status: 'going',  level: 'expert',         host: true },
-    { name: 'Diego Reis',       status: 'going',  level: 'intermediario' },
-    { name: 'Fernando Medrado', status: 'going',  level: 'intermediario' },
-    { name: 'Helena Britto',    status: 'going',  level: 'iniciante' },
-    { name: 'João Bernardes',   status: 'going',  level: 'intermediario' },
+    { name: 'Carla Mendes',     status: 'going',  level: 'expert',         host: true, payMethod: 'laci' },
+    { name: 'Diego Reis',       status: 'going',  level: 'intermediario',  payMethod: 'conta' },
+    { name: 'Fernando Medrado', status: 'going',  level: 'intermediario',  payMethod: 'laci' },
+    { name: 'Helena Britto',    status: 'going',  level: 'iniciante',      payMethod: null },
+    { name: 'João Bernardes',   status: 'going',  level: 'intermediario',  payMethod: null },
     { name: 'Marina Oliveira',  status: 'maybe',  level: 'iniciante' },
     { name: 'Pedro Almeida',    status: 'maybe',  level: 'expert' },
     { name: 'Roberto Santos',   status: 'no',     level: 'iniciante' },
@@ -174,90 +192,208 @@ function EventoPresencaScreen({ go, params }) {
   const checkedCount = Object.values(checkin).filter(Boolean).length;
   const filtered = all.filter(a => filter === 'todos' || a.status === filter);
 
+  // Pagamentos — admin pode marcar manualmente quem pagou (os via LACI já entram pagos)
+  const goingList = all.filter(a => a.status === 'going');
+  const [manualPaid, setManualPaid] = React.useState({}); // name -> true (marcado pelo admin)
+  const isPaidBy = (p) => p.payMethod === 'laci' || p.payMethod === 'conta' || manualPaid[p.name];
+  const paidCount = goingList.filter(isPaidBy).length;
+  const arrecadado = paidCount * fixedAmount;
+  const meta = goingList.length * fixedAmount;
+
   return (
-    <OrgShell title="Lista de presença" onBack={() => go('back')}>
-      {/* Stats hero */}
+    <OrgShell title="Gerenciar evento" onBack={() => go('back')}>
+      {/* Stats hero — muda conforme a aba */}
       <div style={{ background: `linear-gradient(135deg, ${T.c.p700}, ${T.c.p900})`, color: T.c.n0, padding: '20px 16px' }}>
         <div style={{ ...T.t.overline, color: 'rgba(255,255,255,0.7)', marginBottom: 4 }}>{ev.title}</div>
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 14 }}>
-          <div style={{ fontSize: 36, fontWeight: 700, fontFamily: T.font, lineHeight: 1 }}>{checkedCount}<span style={{ fontSize: 18, opacity: 0.8 }}>/{counts.going}</span></div>
-          <div style={{ ...T.t.body, color: 'rgba(255,255,255,0.85)' }}>presentes</div>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6 }}>
-          {[
-            { k: 'going',   l: 'Confirmados', v: counts.going },
-            { k: 'maybe',   l: 'Talvez',      v: counts.maybe },
-            { k: 'no',      l: 'Não vão',     v: counts.no },
-            { k: 'pending', l: 'Sem resp.',   v: counts.pending },
-          ].map(s => (
-            <div key={s.k} style={{ padding: 8, background: 'rgba(255,255,255,0.12)', borderRadius: T.r.md }}>
-              <div style={{ fontSize: 20, fontWeight: 700, fontFamily: T.font }}>{s.v}</div>
-              <div style={{ ...T.t.caption, color: 'rgba(255,255,255,0.8)' }}>{s.l}</div>
+        {view === 'presenca' ? (
+          <>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 14 }}>
+              <div style={{ fontSize: 36, fontWeight: 700, fontFamily: T.font, lineHeight: 1 }}>{checkedCount}<span style={{ fontSize: 18, opacity: 0.8 }}>/{counts.going}</span></div>
+              <div style={{ ...T.t.body, color: 'rgba(255,255,255,0.85)' }}>presentes</div>
             </div>
-          ))}
-        </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6 }}>
+              {[
+                { k: 'going',   l: 'Confirmados', v: counts.going },
+                { k: 'maybe',   l: 'Talvez',      v: counts.maybe },
+                { k: 'no',      l: 'Não vão',     v: counts.no },
+                { k: 'pending', l: 'Sem resp.',   v: counts.pending },
+              ].map(s => (
+                <div key={s.k} style={{ padding: 8, background: 'rgba(255,255,255,0.12)', borderRadius: T.r.md }}>
+                  <div style={{ fontSize: 20, fontWeight: 700, fontFamily: T.font }}>{s.v}</div>
+                  <div style={{ ...T.t.caption, color: 'rgba(255,255,255,0.8)' }}>{s.l}</div>
+                </div>
+              ))}
+            </div>
+          </>
+        ) : (
+          <>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 4 }}>
+              <div style={{ fontSize: 32, fontWeight: 700, fontFamily: T.font, lineHeight: 1 }}>{fmtBRL(arrecadado)}</div>
+              {isPaid && <div style={{ ...T.t.body, color: 'rgba(255,255,255,0.8)' }}>de {fmtBRL(meta)}</div>}
+            </div>
+            <div style={{ ...T.t.caption, color: 'rgba(255,255,255,0.85)', marginBottom: 12 }}>
+              {isPaid ? `${paidCount} de ${goingList.length} pagaram · ${fmtBRL(fixedAmount)} por pessoa` : 'Evento gratuito'}
+            </div>
+            {isPaid && (
+              <div style={{ height: 8, background: 'rgba(255,255,255,0.2)', borderRadius: 4, overflow: 'hidden' }}>
+                <div style={{ height: '100%', width: `${meta ? (arrecadado / meta) * 100 : 0}%`, background: T.c.a500, transition: 'width 240ms' }}/>
+              </div>
+            )}
+          </>
+        )}
       </div>
 
-      {/* Filter pills */}
-      <div style={{ background: T.c.n0, padding: '12px 16px 8px', borderBottom: `1px solid ${T.c.n100}`, display: 'flex', gap: 8, overflowX: 'auto' }}>
+      {/* Abas Presença | Pagamentos */}
+      <div style={{ display: 'flex', background: T.c.n0, borderBottom: `1px solid ${T.c.n200}` }}>
         {[
-          { id: 'todos',   label: `Todos (${counts.todos})` },
-          { id: 'going',   label: `Confirmados (${counts.going})` },
-          { id: 'maybe',   label: `Talvez (${counts.maybe})` },
-          { id: 'no',      label: `Não vão (${counts.no})` },
-          { id: 'pending', label: `Sem resp. (${counts.pending})` },
-        ].map(f => (
-          <button key={f.id} onClick={() => setFilter(f.id)} style={{
-            padding: '8px 14px', borderRadius: T.r.full,
-            background: filter === f.id ? T.c.p700 : T.c.n100,
-            color: filter === f.id ? T.c.n0 : T.c.n800,
-            border: 'none', cursor: 'pointer', fontFamily: T.font, fontSize: 13, fontWeight: 600,
-            whiteSpace: 'nowrap', flexShrink: 0,
-          }}>{f.label}</button>
+          { id: 'presenca',   label: 'Presença' },
+          { id: 'pagamentos', label: 'Pagamentos' },
+        ].map(t => (
+          <button key={t.id} onClick={() => setView(t.id)} style={{
+            flex: 1, padding: '14px 0', background: 'none', border: 'none', cursor: 'pointer',
+            borderBottom: `2px solid ${view === t.id ? T.c.p700 : 'transparent'}`,
+            color: view === t.id ? T.c.p700 : T.c.n600, fontWeight: 600, fontSize: 14,
+            fontFamily: T.font, marginBottom: -1,
+          }}>{t.label}</button>
         ))}
       </div>
 
-      {/* List */}
-      <div style={{ background: T.c.n0 }}>
-        {filtered.map((p, i) => (
-          <div key={p.name} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderBottom: i === filtered.length - 1 ? 'none' : `1px solid ${T.c.n100}` }}>
-            <Avatar name={p.name.replace('Sem resposta · ', '')} size={40} level={p.level}/>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ ...T.t.bodyB, color: T.c.n950, display: 'flex', alignItems: 'center', gap: 6 }}>
-                {p.name.replace('Sem resposta · ', '')}
-                {p.host && <span style={{ ...T.t.caption, padding: '2px 6px', borderRadius: T.r.xs, background: T.c.a100, color: T.c.a700, fontWeight: 600 }}>anfitriã</span>}
-              </div>
-              <div style={{ ...T.t.caption, color: T.c.n600, marginTop: 2 }}>
-                {p.status === 'going'   && 'Confirmado'}
-                {p.status === 'maybe'   && 'Marcou talvez'}
-                {p.status === 'no'      && 'Não vai'}
-                {p.status === 'pending' && 'Ainda não respondeu'}
-              </div>
-            </div>
-            {p.status === 'going' ? (
-              <button onClick={() => setCheckin(c => ({ ...c, [p.name]: !c[p.name] }))} style={{
-                display: 'inline-flex', alignItems: 'center', gap: 6,
+      {view === 'presenca' && (
+        <>
+          {/* Filter pills */}
+          <div style={{ background: T.c.n0, padding: '12px 16px 8px', borderBottom: `1px solid ${T.c.n100}`, display: 'flex', gap: 8, overflowX: 'auto' }}>
+            {[
+              { id: 'todos',   label: `Todos (${counts.todos})` },
+              { id: 'going',   label: `Confirmados (${counts.going})` },
+              { id: 'maybe',   label: `Talvez (${counts.maybe})` },
+              { id: 'no',      label: `Não vão (${counts.no})` },
+              { id: 'pending', label: `Sem resp. (${counts.pending})` },
+            ].map(f => (
+              <button key={f.id} onClick={() => setFilter(f.id)} style={{
                 padding: '8px 14px', borderRadius: T.r.full,
-                background: checkin[p.name] ? T.c.s100 : T.c.n0,
-                border: `1.5px solid ${checkin[p.name] ? T.c.s700 : T.c.n300}`,
-                color: checkin[p.name] ? T.c.s700 : T.c.n800,
-                cursor: 'pointer', fontFamily: T.font, fontSize: 13, fontWeight: 600,
-              }}>
-                <Icon name={checkin[p.name] ? 'check_circle' : 'radio_button_unchecked'} size={16} color={checkin[p.name] ? T.c.s700 : T.c.n600} fill={checkin[p.name] ? 1 : 0}/>
-                {checkin[p.name] ? 'Presente' : 'Marcar'}
-              </button>
-            ) : p.status === 'pending' ? (
-              <Button variant="secondary" size="sm" onClick={() => go('toast', { kind: 'success', message: `Lembrete enviado pra ${p.name.replace('Sem resposta · ', '')}.` })}>Cutucar</Button>
-            ) : null}
+                background: filter === f.id ? T.c.p700 : T.c.n100,
+                color: filter === f.id ? T.c.n0 : T.c.n800,
+                border: 'none', cursor: 'pointer', fontFamily: T.font, fontSize: 13, fontWeight: 600,
+                whiteSpace: 'nowrap', flexShrink: 0,
+              }}>{f.label}</button>
+            ))}
           </div>
-        ))}
-      </div>
 
-      <div style={{ padding: 16 }}>
-        <Button variant="secondary" size="md" fullWidth leading={<Icon name="download" size={18}/>} onClick={() => go('toast', { kind: 'success', message: 'Lista exportada.' })}>
-          Exportar lista (CSV)
-        </Button>
-      </div>
+          {/* List */}
+          <div style={{ background: T.c.n0 }}>
+            {filtered.map((p, i) => (
+              <div key={p.name} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderBottom: i === filtered.length - 1 ? 'none' : `1px solid ${T.c.n100}` }}>
+                <Avatar name={p.name.replace('Sem resposta · ', '')} size={40} level={p.level}/>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ ...T.t.bodyB, color: T.c.n950, display: 'flex', alignItems: 'center', gap: 6 }}>
+                    {p.name.replace('Sem resposta · ', '')}
+                    {p.host && <span style={{ ...T.t.caption, padding: '2px 6px', borderRadius: T.r.xs, background: T.c.a100, color: T.c.a700, fontWeight: 600 }}>anfitriã</span>}
+                  </div>
+                  <div style={{ ...T.t.caption, color: T.c.n600, marginTop: 2 }}>
+                    {p.status === 'going'   && 'Confirmado'}
+                    {p.status === 'maybe'   && 'Marcou talvez'}
+                    {p.status === 'no'      && 'Não vai'}
+                    {p.status === 'pending' && 'Ainda não respondeu'}
+                  </div>
+                </div>
+                {p.status === 'going' ? (
+                  <button onClick={() => setCheckin(c => ({ ...c, [p.name]: !c[p.name] }))} style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 6,
+                    padding: '8px 14px', borderRadius: T.r.full,
+                    background: checkin[p.name] ? T.c.s100 : T.c.n0,
+                    border: `1.5px solid ${checkin[p.name] ? T.c.s700 : T.c.n300}`,
+                    color: checkin[p.name] ? T.c.s700 : T.c.n800,
+                    cursor: 'pointer', fontFamily: T.font, fontSize: 13, fontWeight: 600,
+                  }}>
+                    <Icon name={checkin[p.name] ? 'check_circle' : 'radio_button_unchecked'} size={16} color={checkin[p.name] ? T.c.s700 : T.c.n600} fill={checkin[p.name] ? 1 : 0}/>
+                    {checkin[p.name] ? 'Presente' : 'Marcar'}
+                  </button>
+                ) : p.status === 'pending' ? (
+                  <Button variant="secondary" size="sm" onClick={() => go('toast', { kind: 'success', message: `Lembrete enviado pra ${p.name.replace('Sem resposta · ', '')}.` })}>Cutucar</Button>
+                ) : null}
+              </div>
+            ))}
+          </div>
+
+          <div style={{ padding: 16 }}>
+            <Button variant="secondary" size="md" fullWidth leading={<Icon name="download" size={18}/>} onClick={() => go('toast', { kind: 'success', message: 'Lista exportada.' })}>
+              Exportar lista (CSV)
+            </Button>
+          </div>
+        </>
+      )}
+
+      {view === 'pagamentos' && (
+        <>
+          {!isPaid ? (
+            <div style={{ padding: '32px 24px', textAlign: 'center', color: T.c.n600 }}>
+              <Icon name="volunteer_activism" size={40} color={T.c.n400}/>
+              <div style={{ ...T.t.h3, color: T.c.n950, marginTop: 12, marginBottom: 4 }}>Evento gratuito</div>
+              <div style={{ ...T.t.body, color: T.c.n600 }}>Não há cobrança pra este evento.</div>
+            </div>
+          ) : (
+            <>
+              {/* Aviso LACI */}
+              <div style={{ display: 'flex', gap: 10, margin: 16, padding: 12, background: T.c.i100, borderRadius: T.r.md }}>
+                <Icon name="bolt" size={20} color={T.c.i700} fill={1}/>
+                <div style={{ ...T.t.caption, color: T.c.n800, lineHeight: 1.5 }}>
+                  Pagamentos pelo <strong>LACI</strong> são reconhecidos automaticamente. Quem paga pela própria conta você confirma manualmente.
+                </div>
+              </div>
+
+              <div style={{ background: T.c.n0 }}>
+                {goingList.map((p, i) => {
+                  const paid = isPaidBy(p);
+                  return (
+                    <div key={p.name} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderBottom: i === goingList.length - 1 ? 'none' : `1px solid ${T.c.n100}` }}>
+                      <Avatar name={p.name} size={40} level={p.level}/>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ ...T.t.bodyB, color: T.c.n950 }}>{p.name}</div>
+                        <div style={{ ...T.t.caption, color: T.c.n600, marginTop: 2 }}>
+                          {paid
+                            ? (p.payMethod === 'laci' ? 'Pago via LACI · automático' : (p.payMethod === 'conta' ? 'Pago pela conta' : 'Pago · confirmado por você'))
+                            : `Pendente · ${fmtBRL(fixedAmount)}`}
+                        </div>
+                      </div>
+                      {paid ? (
+                        <span style={{
+                          display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 12px', borderRadius: T.r.full,
+                          background: T.c.s100, color: T.c.s700, fontFamily: T.font, fontSize: 12, fontWeight: 700,
+                        }}>
+                          <Icon name={p.payMethod === 'laci' ? 'bolt' : 'check_circle'} size={15} color={T.c.s700} fill={1}/>
+                          {p.payMethod === 'laci' ? 'LACI' : 'Pago'}
+                        </span>
+                      ) : (
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
+                          <button onClick={() => setManualPaid(m => ({ ...m, [p.name]: true }))} style={{
+                            padding: '7px 12px', borderRadius: T.r.full, background: T.c.p700, color: T.c.n0,
+                            border: 'none', cursor: 'pointer', fontFamily: T.font, fontSize: 12, fontWeight: 600,
+                          }}>Marcar pago</button>
+                          <button onClick={() => go('toast', { kind: 'success', message: `Cobrança enviada pra ${p.name}.` })} style={{
+                            background: 'none', border: 'none', cursor: 'pointer', color: T.c.p700,
+                            fontFamily: T.font, fontSize: 12, fontWeight: 600, padding: 0,
+                          }}>Cobrar</button>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <Button variant="secondary" size="md" fullWidth leading={<Icon name="notifications_active" size={18}/>}
+                  onClick={() => go('toast', { kind: 'success', message: 'Lembrete de pagamento enviado aos pendentes.' })}>
+                  Cobrar todos os pendentes
+                </Button>
+                <Button variant="ghost" size="md" fullWidth leading={<Icon name="download" size={18}/>}
+                  onClick={() => go('toast', { kind: 'success', message: 'Relatório de pagamentos exportado.' })}>
+                  Exportar pagamentos (CSV)
+                </Button>
+              </div>
+            </>
+          )}
+        </>
+      )}
     </OrgShell>
   );
 }
