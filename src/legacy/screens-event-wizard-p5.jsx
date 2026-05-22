@@ -29,13 +29,12 @@ const EVENT_TYPE_LABEL = {
 
 const PAYMENT_LABEL = {
   free:  'Grátis',
-  split: 'Rateio entre todos',
   fixed: 'Valor fixo por pessoa',
 };
 
 const RSVP_LABEL = {
-  open:   'Aberto a todos da confraria',
-  manual: 'Aprovação manual',
+  open:   'Entrada livre pra confraria',
+  manual: 'Você aprova cada um',
 };
 
 const EVENT_TYPE_GRADIENT = {
@@ -198,12 +197,9 @@ function WizardCriarEventoP5({ data, onPublish, onBack }) {
             {/* Configurações */}
             <ReviewSubsection title="Configurações">
               <ConfigRow
-                icon="person_add"
-                label="Plus One"
-                value={settings.plusOne
-                  ? `${settings.plusOnePerMember} por membro`
-                  : 'Desativado'}
-                positive={Boolean(settings.plusOne)}
+                icon="groups"
+                label="Vagas"
+                value={`${settings.capacity || '—'} pessoas`}
               />
               <ConfigRow
                 icon="attach_money"
@@ -213,8 +209,8 @@ function WizardCriarEventoP5({ data, onPublish, onBack }) {
               />
               <ConfigRow
                 icon="how_to_reg"
-                label="RSVP"
-                value={RSVP_LABEL[settings.rsvp] || 'Aberto'}
+                label="Confirmação de presença"
+                value={RSVP_LABEL[settings.rsvp] || 'Entrada livre'}
               />
               <ConfigRow
                 icon="notifications"

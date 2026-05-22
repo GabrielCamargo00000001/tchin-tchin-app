@@ -94,8 +94,9 @@ function WizardCriarEventoP3({ eventType = 'degustacao', initialData, userPalada
   const init = initialData || {};
   // #8 — primeiro o organizador escolhe COMO montar a carta: manual ou Tchin sugere.
   const [mode, setMode] = React.useState(init.mode || 'choose'); // choose | manual | auto
+  // Começa vazio: "Eu escolho" não deve vir com vinhos pré-selecionados.
   const [slots, setSlots] = React.useState(
-    init.slots || suggestWinesForEvent(eventType)
+    init.slots || PRICE_TIERS.map(() => [])
   );
   const [allowMembers, setAllowMembers] = React.useState(
     init.allowMemberSuggestions !== false // default ON
@@ -191,7 +192,7 @@ function WizardCriarEventoP3({ eventType = 'degustacao', initialData, userPalada
       <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
         {mode === 'choose' && (
           <EventWineChoice
-            onManual={() => setMode('manual')}
+            onManual={() => { setSlots(PRICE_TIERS.map(() => [])); setMode('manual'); }}
             onAuto={() => setMode('auto')}
           />
         )}

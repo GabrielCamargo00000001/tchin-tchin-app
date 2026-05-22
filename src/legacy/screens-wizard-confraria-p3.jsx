@@ -33,6 +33,15 @@ const TAG_UNIVERSE = [
 
 const MAX_TAGS = 5;
 const DESC_MAX = 240;
+const RULES_MAX = 400;
+
+// Texto sugerido pras regras — tom acolhedor, sem esnobismo (marca).
+const SUGGESTED_RULES = [
+  'Todo mundo é bem-vindo, do curioso ao apaixonado por vinho.',
+  'Cada encontro, cada um traz uma garrafa pra compartilhar.',
+  'Respeito sempre: sem esnobismo de rótulo nem de preço.',
+  'Confirmou presença? Avisa com antecedência se não puder ir.',
+].map((r) => '• ' + r).join('\n');
 
 // Map de tipos de encontro. Material Symbols substituem os emoji da spec
 // pra manter consistência com o resto do app (que é todo Material).
@@ -61,6 +70,7 @@ function WizardCriarConfrariaP3({ templateData, onContinue, onBack }) {
   const [description, setDescription]   = React.useState(tpl.description || '');
   const [tags, setTags]                 = React.useState(initialTags);
   const [encontro, setEncontro]         = React.useState(defaultEncontro);
+  const [rules, setRules]               = React.useState(tpl.rules || '');
 
   // Track if user edited the auto-filled description
   const originalDesc = React.useRef(tpl.description || '');
@@ -94,6 +104,7 @@ function WizardCriarConfrariaP3({ templateData, onContinue, onBack }) {
       description: description.trim(),
       tags,
       meeting_type: encontro,
+      rules: rules.trim(),
     };
     // Persist on draft so 08.04 (Localização) and 08.05 (Revisar) can hydrate
     const draft = readWizardDraft() || {};
@@ -205,6 +216,16 @@ function WizardCriarConfrariaP3({ templateData, onContinue, onBack }) {
           <MeetingTypePicker
             value={encontro}
             onChange={setEncontro}
+          />
+
+          <div style={{ height: 16 }}/>
+
+          {/* ── Regras da confraria ── */}
+          <RulesField
+            value={rules}
+            onChange={(v) => setRules(v.slice(0, RULES_MAX))}
+            maxLength={RULES_MAX}
+            onUseSuggestion={() => setRules(SUGGESTED_RULES)}
           />
 
           <div style={{ height: 24 }}/>
@@ -421,6 +442,62 @@ function TagsPicker({ tags, selected, onToggle }) {
   );
 }
 
+// ─── RulesField — regras da confraria + sugestão de texto ──
+function RulesField({ value, onChange, maxLength, onUseSuggestion }) {
+  const [focused, setFocused] = React.useState(false);
+  const len = value.length;
+  const nearLimit = len > maxLength * 0.9;
+  return (
+    <div style={{ padding: '0 8px' }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 4 }}>
+        <label style={{
+          fontFamily: T.font, fontSize: 12, fontWeight: 600, lineHeight: 1.4,
+          color: T.c.n800, textTransform: 'uppercase', letterSpacing: '0.4px',
+        }}>
+          Regras <span style={{ color: T.c.n600, fontWeight: 500, textTransform: 'none', letterSpacing: 0 }}>(opcional)</span>
+        </label>
+        {!value.trim() && (
+          <button onClick={onUseSuggestion} style={{
+            display: 'inline-flex', alignItems: 'center', gap: 4, background: 'none', border: 'none',
+            cursor: 'pointer', padding: 0, color: T.c.p700, fontFamily: T.font, fontSize: 12, fontWeight: 600,
+          }}>
+            <Icon name="auto_awesome" size={14} color={T.c.p700} fill={1}/> Usar sugestão
+          </button>
+        )}
+      </div>
+      <div style={{ fontFamily: T.font, fontSize: 12, color: T.c.n600, lineHeight: 1.45, marginBottom: 8 }}>
+        Deixa o combinado claro — ajuda todo mundo a se sentir à vontade desde o primeiro brinde.
+      </div>
+      <div style={{
+        position: 'relative',
+        border: `1.5px solid ${focused ? T.c.p700 : T.c.n300}`,
+        borderRadius: T.r.md, background: T.c.n0, transition: 'border-color 160ms',
+      }}>
+        <textarea
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          placeholder="Ex.: cada um traz uma garrafa; respeito sempre; avise se não puder ir…"
+          maxLength={maxLength}
+          rows={4}
+          style={{
+            width: '100%', padding: '14px 16px 24px',
+            border: 'none', outline: 'none', background: 'transparent',
+            fontFamily: T.font, fontSize: 15, lineHeight: 1.5, color: T.c.n950,
+            resize: 'vertical', minHeight: 80, maxHeight: 200, boxSizing: 'border-box', display: 'block',
+          }}
+        />
+        <span style={{
+          position: 'absolute', right: 12, bottom: 6,
+          fontFamily: T.mono, fontSize: 12, fontWeight: 500,
+          color: nearLimit ? T.c.w700 : T.c.n400, pointerEvents: 'none',
+        }}>{len}/{maxLength}</span>
+      </div>
+    </div>
+  );
+}
+
 // ─── MeetingTypePicker — 3 radio cards horizontais ─────────
 function MeetingTypePicker({ value, onChange }) {
   return (
@@ -502,4 +579,4 @@ Object.assign(window, {
 });
 
 
-export { CoverPhoto, DESC_MAX, DescriptionField, ENCONTRO_OPTIONS, MAX_TAGS, MeetingTypePicker, TAG_UNIVERSE, TagsPicker, WizardCriarConfrariaP3, WizardCriarConfrariaP3Screen };
+export { CoverPhoto, DESC_MAX, DescriptionField, ENCONTRO_OPTIONS, MAX_TAGS, MeetingTypePicker, RULES_MAX, RulesField, SUGGESTED_RULES, TAG_UNIVERSE, TagsPicker, WizardCriarConfrariaP3, WizardCriarConfrariaP3Screen };

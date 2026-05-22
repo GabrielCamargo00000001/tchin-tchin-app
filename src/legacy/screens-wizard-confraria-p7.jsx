@@ -185,23 +185,33 @@ function TutorialPosCriacao({ onComplete, onSkip, initialStep = 0 }) {
           }}/>
       )}
 
-      {/* Tooltip card */}
-      {rect && (
-        <BrotherhoodTourTooltip
-          rect={rect}
-          frame={overlaySize}
-          place={cfg.place}
-          title={cfg.title}
-          body={cfg.body}
-          step={step}
-          total={TOUR_BROTHERHOOD_STEPS.length}
-          primaryLabel={cfg.primary}
-          isLast={isLast}
-          onSkip={handleSkip}
-          onNext={handleNext}
-          titleId={`brotherhood-tour-title-${step}`}
-        />
-      )}
+      {/* Tooltip card — sempre renderiza (centralizado quando não há âncora),
+          pra nunca deixar a tela escura sem ação. */}
+      <BrotherhoodTourTooltip
+        rect={rect}
+        frame={overlaySize}
+        place={cfg.place}
+        title={cfg.title}
+        body={cfg.body}
+        step={step}
+        total={TOUR_BROTHERHOOD_STEPS.length}
+        primaryLabel={cfg.primary}
+        isLast={isLast}
+        onSkip={handleSkip}
+        onNext={handleNext}
+        titleId={`brotherhood-tour-title-${step}`}
+      />
+      {/* Fecho de segurança — toque fora do card pula o tutorial */}
+      <button
+        onClick={handleSkip}
+        aria-label="Fechar tutorial"
+        style={{
+          position: 'absolute', top: 12, right: 12, zIndex: 2,
+          width: 36, height: 36, borderRadius: '50%', border: 'none', cursor: 'pointer',
+          background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+        <Icon name="close" size={20} color="#fff"/>
+      </button>
     </div>
   );
 }
@@ -217,15 +227,22 @@ function BrotherhoodTourTooltip({
   const MARGIN    = 16;
   const ARROW_GAP = 14;
 
-  const anchorCenterX = rect.x + rect.w / 2;
+  // Quando o passo não tem âncora visível na tela (ex.: o elemento está em
+  // outra aba), centralizamos o card em vez de deixar a tela escura travada.
+  const hasAnchor = !!rect;
+  const frameW = frame.w || TOOLTIP_W + MARGIN * 2;
+  const frameH = frame.h || 640;
+  const anchorCenterX = hasAnchor ? rect.x + rect.w / 2 : frameW / 2;
   let tooltipLeft = anchorCenterX - TOOLTIP_W / 2;
-  tooltipLeft = Math.max(MARGIN, Math.min(tooltipLeft, frame.w - TOOLTIP_W - MARGIN));
+  tooltipLeft = Math.max(MARGIN, Math.min(tooltipLeft, frameW - TOOLTIP_W - MARGIN));
   const triangleLeftWithin = anchorCenterX - tooltipLeft;
 
   const pointsUp = place === 'below'; // tooltip below spotlight → arrow points up
-  const positionStyle = pointsUp
-    ? { top: rect.y + rect.h + ARROW_GAP }
-    : { bottom: frame.h - rect.y + ARROW_GAP };
+  const positionStyle = hasAnchor
+    ? (pointsUp
+        ? { top: rect.y + rect.h + ARROW_GAP }
+        : { bottom: frameH - rect.y + ARROW_GAP })
+    : { top: Math.max(80, (frameH - 220) / 2) }; // centralizado sem âncora
 
   return (
     <div
@@ -282,16 +299,18 @@ function BrotherhoodTourTooltip({
         </div>
       </div>
 
-      {/* Triangle arrow */}
-      <div style={{
-        position: 'absolute',
-        left: triangleLeftWithin - 6,
-        ...(pointsUp
-          ? { top: -7, borderLeft: '6px solid transparent', borderRight: '6px solid transparent', borderBottom: `8px solid ${T.c.n0}` }
-          : { bottom: -7, borderLeft: '6px solid transparent', borderRight: '6px solid transparent', borderTop: `8px solid ${T.c.n0}` }),
-        width: 0, height: 0,
-        filter: 'drop-shadow(0 2px 1px rgba(0,0,0,0.08))',
-      }}/>
+      {/* Triangle arrow — só quando há âncora pra apontar */}
+      {hasAnchor && (
+        <div style={{
+          position: 'absolute',
+          left: triangleLeftWithin - 6,
+          ...(pointsUp
+            ? { top: -7, borderLeft: '6px solid transparent', borderRight: '6px solid transparent', borderBottom: `8px solid ${T.c.n0}` }
+            : { bottom: -7, borderLeft: '6px solid transparent', borderRight: '6px solid transparent', borderTop: `8px solid ${T.c.n0}` }),
+          width: 0, height: 0,
+          filter: 'drop-shadow(0 2px 1px rgba(0,0,0,0.08))',
+        }}/>
+      )}
     </div>
   );
 }

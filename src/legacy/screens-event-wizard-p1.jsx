@@ -174,13 +174,13 @@ function WizardCriarEventoP1({ prefill, tags, onContinue, onBack }) {
 
           <div style={{ height: 24 }}/>
 
-          {/* ── Tipo de encontro ── */}
-          <EventTypePicker value={type} onChange={setType}/>
+          {/* ── Capa do evento (mesmo estilo da confraria, no topo) ── */}
+          <CoverPicker value={cover} onChange={setCover}/>
 
           <div style={{ height: 24 }}/>
 
-          {/* ── Capa do evento ── */}
-          <CoverPicker value={cover} onChange={setCover}/>
+          {/* ── Tipo de encontro ── */}
+          <EventTypePicker value={type} onChange={setType}/>
 
           <div style={{ height: 24 }}/>
         </div>

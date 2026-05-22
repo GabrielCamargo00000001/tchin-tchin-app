@@ -27,10 +27,10 @@ const DEFAULT_REMINDERS = {
 };
 
 const REMINDERS_META = [
-  { id: 'push3d',   label: 'Push 3 dias antes',           icon: 'notifications' },
-  { id: 'push1d',   label: 'Push 1 dia antes',            icon: 'notifications' },
-  { id: 'pushDay',  label: 'Push no dia (manhã)',         icon: 'wb_sunny' },
-  { id: 'emailIcs', label: 'Email D-1 com .ics calendar', icon: 'mail' },
+  { id: 'push3d',   label: 'Aviso 3 dias antes',                       icon: 'notifications' },
+  { id: 'push1d',   label: 'Aviso 1 dia antes',                        icon: 'notifications' },
+  { id: 'pushDay',  label: 'Aviso na manhã do dia',                    icon: 'wb_sunny' },
+  { id: 'emailIcs', label: 'E-mail com convite pro calendário',        icon: 'mail' },
 ];
 
 // ─── Pure component (matches spec contract) ─────────────────
@@ -41,9 +41,7 @@ const REMINDERS_META = [
 function WizardCriarEventoP4({ initialData, onContinue, onBack }) {
   const init = initialData || {};
   const [capacity, setCapacity]   = React.useState(init.capacity ?? 10);
-  const [plusOne, setPlusOne]     = React.useState(init.plusOne !== false);
-  const [plusOnePerMember, setPlusOnePerMember] = React.useState(init.plusOnePerMember ?? 1);
-  const [payment, setPayment]     = React.useState(init.payment || 'free'); // free | split | fixed
+  const [payment, setPayment]     = React.useState(init.payment || 'free'); // free | fixed
   const [paymentAmount, setPaymentAmount] = React.useState(init.paymentAmount || '');
   const [rsvp, setRsvp]           = React.useState(init.rsvp || 'open');    // open | manual
   const [reminders, setReminders] = React.useState(init.reminders || DEFAULT_REMINDERS);
@@ -56,14 +54,12 @@ function WizardCriarEventoP4({ initialData, onContinue, onBack }) {
     if (!valid) return;
     fbEvent('event_p4_completed', {
       capacity,
-      plus_one: plusOne,
-      plus_one_per_member: plusOne ? plusOnePerMember : 0,
       payment_kind: payment,
       rsvp_mode: rsvp,
       reminders_count: Object.values(reminders).filter(Boolean).length,
     });
     const data = {
-      capacity, plusOne, plusOnePerMember,
+      capacity,
       payment, paymentAmount: payment === 'fixed' ? paymentAmount : null,
       rsvp, reminders,
     };
@@ -133,39 +129,8 @@ function WizardCriarEventoP4({ initialData, onContinue, onBack }) {
           <div style={{ height: 24 }}/>
 
           {/* ── Vagas ── */}
-          <Section title="Vagas" subtitle="Quantas pessoas no máximo?">
+          <Section title="Quantas pessoas cabem?" subtitle="O encontro fecha quando lotar — você conta como uma das vagas.">
             <Stepper value={capacity} onChange={setCapacity} min={2} max={50}/>
-            <div style={{ ...HELP_STYLE, marginTop: 8 }}>
-              Inclui você como organizador.
-            </div>
-          </Section>
-
-          <div style={{ height: 16 }}/>
-
-          {/* ── Plus One ── */}
-          <Section
-            title="Permitir Plus One"
-            badge="RSVP Viral"
-            subtitle="Cada membro pode convidar 1 acompanhante não-membro.">
-            <ToggleRow
-              value={plusOne}
-              onChange={setPlusOne}
-              label={plusOne ? 'Ativado' : 'Desativado'}
-            />
-            {plusOne && (
-              <div style={{ marginTop: 12 }}>
-                <div style={{ ...HELP_STYLE, marginBottom: 8, fontWeight: 600, color: T.c.n800 }}>
-                  Plus One por membro
-                </div>
-                <Stepper
-                  value={plusOnePerMember}
-                  onChange={setPlusOnePerMember}
-                  min={0}
-                  max={3}
-                  compact
-                />
-              </div>
-            )}
           </Section>
 
           <div style={{ height: 16 }}/>
@@ -195,16 +160,16 @@ function WizardCriarEventoP4({ initialData, onContinue, onBack }) {
 
           <div style={{ height: 16 }}/>
 
-          {/* ── RSVP ── */}
-          <Section title="RSVP">
+          {/* ── Quem pode confirmar presença ── */}
+          <Section title="Quem pode confirmar presença" subtitle="Você decide como a galera entra no evento.">
             <RadioList
               value={rsvp}
               onChange={setRsvp}
               options={[
-                { id: 'open',   label: 'Aberto a todos da confraria', icon: 'group_add',
-                  helper: 'Qualquer membro confirma direto.' },
-                { id: 'manual', label: 'Aprovação manual',           icon: 'how_to_reg',
-                  helper: 'Você aprova cada confirmação.' },
+                { id: 'open',   label: 'Entrada livre pra confraria', icon: 'group_add',
+                  helper: 'Qualquer membro confirma sozinho, na hora.' },
+                { id: 'manual', label: 'Você aprova cada um',         icon: 'how_to_reg',
+                  helper: 'Cada pedido de presença espera o seu ok.' },
               ]}
             />
           </Section>
@@ -212,7 +177,7 @@ function WizardCriarEventoP4({ initialData, onContinue, onBack }) {
           <div style={{ height: 16 }}/>
 
           {/* ── Lembretes ── */}
-          <Section title="Lembretes" subtitle="A gente cuida dos lembretes automáticos.">
+          <Section title="Lembretes automáticos" subtitle="A gente avisa a galera pra ninguém esquecer. Você escolhe quais enviar.">
             <CheckboxList
               reminders={reminders}
               onToggle={toggleReminder}

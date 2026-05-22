@@ -568,7 +568,7 @@ function NextEventBanner({ confraria, joined, isAdmin, go, onCreate }) {
       boxShadow: '0 8px 24px rgba(74,31,36,0.28)',
       position: 'relative',
     }}>
-      <div style={{ position: 'absolute', inset: 0, opacity: 0.15, backgroundImage: `repeating-linear-gradient(135deg, rgba(255,255,255,0.4) 0 1px, transparent 1px 12px)` }}/>
+      <div style={{ position: 'absolute', inset: 0, opacity: 0.15, pointerEvents: 'none', backgroundImage: `repeating-linear-gradient(135deg, rgba(255,255,255,0.4) 0 1px, transparent 1px 12px)` }}/>
       {/* Date column */}
       <div style={{
         width: 72, padding: '14px 0',
