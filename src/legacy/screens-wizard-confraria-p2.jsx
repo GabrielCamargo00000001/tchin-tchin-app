@@ -168,6 +168,14 @@ function WizardCriarConfrariaP2({ onTemplateSelected, onBack, selectedTemplate }
 
           <div style={{ height: 16 }}/>
 
+          {/* ── Começar do zero — primeira opção ── */}
+          <FromScratchCard
+            selected={selected === 'zero'}
+            onSelect={() => onPick('zero')}
+          />
+
+          <div style={{ height: 12 }}/>
+
           {/* ── Template cards ── */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }} role="radiogroup" aria-label="Templates de confraria">
             {TEMPLATES.map(tpl => (
@@ -179,14 +187,6 @@ function WizardCriarConfrariaP2({ onTemplateSelected, onBack, selectedTemplate }
               />
             ))}
           </div>
-
-          <div style={{ height: 16 }}/>
-
-          {/* ── 6th: começar do zero ── */}
-          <FromScratchCard
-            selected={selected === 'zero'}
-            onSelect={() => onPick('zero')}
-          />
 
           <div style={{ height: 24 }}/>
         </div>

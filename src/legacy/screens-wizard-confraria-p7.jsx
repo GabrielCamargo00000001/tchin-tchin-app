@@ -68,47 +68,23 @@ const TOUR_BROTHERHOOD_STEPS = [
 //  props:
 //    onComplete: () => void
 //    onSkip: () => void
-function TutorialPosCriacao({ onComplete, onSkip, initialStep = 0 }) {
-  const overlayRef = React.useRef(null);
-  const [step, setStep] = React.useState(initialStep);
-  const [rect, setRect] = React.useState(null);
-  const [overlaySize, setOverlaySize] = React.useState({ w: 0, h: 0 });
+// Modal centralizado (carrossel de 3 passos). Antes era um tour com máscara SVG
+// que apontava pra âncoras na tela — mas os alvos (feed/eventos/checklist) ficam
+// em abas diferentes, então a âncora some e sobrava só a tela escura travada.
+// Um modal centralizado é à prova de falha e dispensável a qualquer momento.
+const TOUR_BROTHERHOOD_GLYPHS = {
+  'confraria-feed': 'forum',
+  'confraria-events': 'event',
+  'confraria-checklist': 'checklist',
+};
 
+function TutorialPosCriacao({ onComplete, onSkip, initialStep = 0 }) {
+  const [step, setStep] = React.useState(initialStep);
   const cfg = TOUR_BROTHERHOOD_STEPS[step] || TOUR_BROTHERHOOD_STEPS[0];
   const isLast = step === TOUR_BROTHERHOOD_STEPS.length - 1;
+  const glyph = TOUR_BROTHERHOOD_GLYPHS[cfg.anchor] || 'celebration';
 
-  // Fire start event once
-  React.useEffect(() => {
-    fbEvent('brotherhood_tutorial_started');
-  }, []);
-
-  // Measure anchor + overlay on each step
-  React.useEffect(() => {
-    const compute = () => {
-      const overlay = overlayRef.current;
-      if (!overlay) return;
-      const oRect = overlay.getBoundingClientRect();
-      setOverlaySize({ w: oRect.width, h: oRect.height });
-      const anchor = document.querySelector(`[data-tour-anchor="${cfg.anchor}"]`);
-      if (!anchor) { setRect(null); return; }
-      const a = anchor.getBoundingClientRect();
-      setRect({
-        x: a.left - oRect.left - cfg.pad,
-        y: a.top  - oRect.top  - cfg.pad,
-        w: a.width  + cfg.pad * 2,
-        h: a.height + cfg.pad * 2,
-      });
-    };
-    // Try immediately + on next frame (anchor may layout after mount)
-    compute();
-    const raf = window.requestAnimationFrame(compute);
-    window.addEventListener('resize', compute);
-    return () => {
-      window.cancelAnimationFrame(raf);
-      window.removeEventListener('resize', compute);
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step]);
+  React.useEffect(() => { fbEvent('brotherhood_tutorial_started'); }, []);
 
   const handleNext = () => {
     fbEvent('brotherhood_tutorial_step_completed', { step_index: step });
@@ -129,89 +105,63 @@ function TutorialPosCriacao({ onComplete, onSkip, initialStep = 0 }) {
 
   return (
     <div
-      ref={overlayRef}
-      role="dialog"
-      aria-modal="true"
+      role="dialog" aria-modal="true"
       aria-labelledby={`brotherhood-tour-title-${step}`}
-      onClick={e => e.stopPropagation()}
+      onClick={handleSkip}
       style={{
         position: 'absolute', inset: 0, zIndex: 65,
-        pointerEvents: 'auto',
+        background: 'rgba(15,15,15,0.6)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: 24, animation: 'tcFadeIn 200ms ease',
       }}>
-      {/* SVG mask — darken everything except the spotlight */}
-      <svg
-        width="100%" height="100%"
-        viewBox={`0 0 ${overlaySize.w || 1} ${overlaySize.h || 1}`}
-        preserveAspectRatio="none"
+      <div
+        onClick={e => e.stopPropagation()}
         style={{
-          position: 'absolute', inset: 0, pointerEvents: 'none',
-          animation: 'tcFadeIn 220ms ease',
-        }}
-        aria-hidden="true">
-        <defs>
-          <mask id={`brotherhood-tour-mask-${step}`}>
-            <rect x="0" y="0" width="100%" height="100%" fill="white"/>
-            {rect && (
-              <rect
-                x={rect.x} y={rect.y}
-                width={rect.w} height={rect.h}
-                rx={Math.min(cfg.radius, rect.h / 2)}
-                ry={Math.min(cfg.radius, rect.h / 2)}
-                fill="black"
-              />
-            )}
-          </mask>
-        </defs>
-        <rect
-          x="0" y="0" width="100%" height="100%"
-          fill="rgba(15,15,15,0.70)"
-          mask={`url(#brotherhood-tour-mask-${step})`}
-        />
-      </svg>
-
-      {/* Pulsing burgundy ring */}
-      {rect && (
-        <div
-          aria-hidden="true"
-          style={{
-            position: 'absolute',
-            left: rect.x - 3, top: rect.y - 3,
-            width: rect.w + 6, height: rect.h + 6,
-            borderRadius: Math.min(cfg.radius, rect.h / 2 + 3),
-            border: `3px solid ${T.c.p500}`,
-            boxShadow: '0 0 24px rgba(160,74,85,0.55)',
-            animation: 'tcTourPulse 1.5s ease-in-out infinite',
-            pointerEvents: 'none',
-          }}/>
-      )}
-
-      {/* Tooltip card — sempre renderiza (centralizado quando não há âncora),
-          pra nunca deixar a tela escura sem ação. */}
-      <BrotherhoodTourTooltip
-        rect={rect}
-        frame={overlaySize}
-        place={cfg.place}
-        title={cfg.title}
-        body={cfg.body}
-        step={step}
-        total={TOUR_BROTHERHOOD_STEPS.length}
-        primaryLabel={cfg.primary}
-        isLast={isLast}
-        onSkip={handleSkip}
-        onNext={handleNext}
-        titleId={`brotherhood-tour-title-${step}`}
-      />
-      {/* Fecho de segurança — toque fora do card pula o tutorial */}
-      <button
-        onClick={handleSkip}
-        aria-label="Fechar tutorial"
-        style={{
-          position: 'absolute', top: 12, right: 12, zIndex: 2,
-          width: 36, height: 36, borderRadius: '50%', border: 'none', cursor: 'pointer',
-          background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          width: '100%', maxWidth: 320, background: T.c.n0,
+          borderRadius: T.r.xl, padding: 24, position: 'relative',
+          boxShadow: T.el[5], animation: 'tcPopIn 240ms cubic-bezier(0.2,0.8,0.2,1)',
         }}>
-        <Icon name="close" size={20} color="#fff"/>
-      </button>
+        {/* Fechar */}
+        <button onClick={handleSkip} aria-label="Fechar tutorial" style={{
+          position: 'absolute', top: 12, right: 12, width: 32, height: 32, borderRadius: '50%',
+          border: 'none', background: T.c.n100, cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <Icon name="close" size={18} color={T.c.n800}/>
+        </button>
+
+        <div style={{
+          width: 56, height: 56, borderRadius: T.r.full, background: T.c.p50,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16,
+        }}>
+          <Icon name={glyph} size={28} color={T.c.p700} fill={1}/>
+        </div>
+
+        <div id={`brotherhood-tour-title-${step}`} style={{
+          fontFamily: '"Fraunces", Georgia, serif', fontSize: 20, fontWeight: 600,
+          color: T.c.n950, marginBottom: 8, lineHeight: 1.2,
+        }}>
+          {cfg.title}
+        </div>
+        <div style={{ fontFamily: T.font, fontSize: 15, lineHeight: 1.55, color: T.c.n800, marginBottom: 20 }}>
+          {cfg.body}
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+          <div style={{ display: 'flex', gap: 6 }} aria-label={`Passo ${step + 1} de ${TOUR_BROTHERHOOD_STEPS.length}`}>
+            {TOUR_BROTHERHOOD_STEPS.map((_, i) => (
+              <div key={i} style={{
+                width: 8, height: 8, borderRadius: '50%',
+                background: i === step ? T.c.p700 : T.c.n300, transition: 'background 200ms',
+              }}/>
+            ))}
+          </div>
+          <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+            {!isLast && <Button variant="ghost" size="sm" onClick={handleSkip}>Pular</Button>}
+            <Button variant="primary" size="sm" onClick={handleNext}>{cfg.primary}</Button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

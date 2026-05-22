@@ -535,7 +535,16 @@ function PublicacoesConfTab({ confraria, joined }) {
 // ─── NextEventBanner — banner principal do próximo evento ─────
 function NextEventBanner({ confraria, joined, isAdmin, go, onCreate }) {
   const events = (typeof MOCK_EVENTS !== 'undefined' ? MOCK_EVENTS : []).filter(e => new Date(e.date) >= new Date('2026-05-10'));
-  const ev = events[0];
+  // Confraria recém-criada usa o próprio evento (se houver) e NÃO empresta um
+  // evento mock; confraria estabelecida (mock) mostra a agenda mock.
+  const fe = (confraria && confraria._firstEvent && confraria._firstEvent.date) ? confraria._firstEvent : null;
+  const synthetic = confraria && (confraria._justCreated || confraria._isAdmin);
+  const ev = fe
+    ? { ...fe,
+        title: fe.name || fe.title || 'Seu evento',
+        location: fe.locationMode === 'online' ? 'Online' : (fe.locationText || fe.location || 'Local a definir'),
+        modality: fe.locationMode === 'online' ? 'online' : 'presencial' }
+    : (synthetic ? null : events[0]);
   if (!ev) {
     if (isAdmin) {
       return (

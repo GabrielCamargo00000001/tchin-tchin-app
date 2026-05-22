@@ -171,7 +171,7 @@ function WizardCriarEventoP5({ data, onPublish, onBack }) {
               fontFamily: T.font, fontSize: 12, lineHeight: 1.4, color: T.c.n800,
               marginTop: 4,
             }}>
-              Tipo: <strong style={{ fontWeight: 600 }}>{EVENT_TYPE_LABEL[data.type] || data.type}</strong>
+              Tipo: <strong style={{ fontWeight: 600 }}>{data.type === 'outro' ? (data.customType || 'Outro') : (EVENT_TYPE_LABEL[data.type] || data.type)}</strong>
             </div>
 
             <div style={{ height: 12 }}/>
@@ -545,6 +545,7 @@ function WizardCriarEventoP5Screen({ go }) {
   const data = {
     name: draft.name || 'Evento sem nome',
     type: draft.type || 'degustacao',
+    customType: draft.customType,
     cover: draft.cover,
     date: draft.date,
     time: draft.time,

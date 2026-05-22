@@ -44,6 +44,7 @@ const EVENT_TYPES = [
   { id: 'jantar',     label: 'Jantar',             icon: 'restaurant' },
   { id: 'festa',      label: 'Festa',              icon: 'celebration'},
   { id: 'visita',     label: 'Visita a vinícola',  icon: 'tour'       },
+  { id: 'outro',      label: 'Outro',              icon: 'more_horiz' },
 ];
 
 // ─── Pure component (matches spec contract) ─────────────────
@@ -56,6 +57,7 @@ function WizardCriarEventoP1({ prefill, tags, onContinue, onBack }) {
 
   const [name, setName] = React.useState(prefill && prefill.name ? prefill.name : '');
   const [type, setType] = React.useState(prefill && prefill.type ? prefill.type : 'degustacao');
+  const [customType, setCustomType] = React.useState(prefill && prefill.customType ? prefill.customType : '');
   const [cover, setCover] = React.useState(
     (prefill && prefill.cover) || COVER_BY_TYPE[(prefill && prefill.type) || 'degustacao'] || 'classico'
   );
@@ -66,7 +68,8 @@ function WizardCriarEventoP1({ prefill, tags, onContinue, onBack }) {
   }, []);
 
   const trimmed = name.trim();
-  const nameValid = trimmed.length >= EVENT_NAME_MIN;
+  const customValid = type !== 'outro' || customType.trim().length >= 2;
+  const formValid = trimmed.length >= EVENT_NAME_MIN && customValid;
 
   const onChangeName = (v) => setName(v.slice(0, EVENT_NAME_MAX));
 
@@ -74,8 +77,8 @@ function WizardCriarEventoP1({ prefill, tags, onContinue, onBack }) {
   const suggestions = React.useMemo(() => suggestEventNames(type, tags), [type, tags]);
 
   const handleContinue = () => {
-    if (!nameValid) return;
-    const data = { name: trimmed, type, cover };
+    if (!formValid) return;
+    const data = { name: trimmed, type, customType: type === 'outro' ? customType.trim() : '', cover };
     const draft = readEventDraft() || {};
     writeEventDraft({ ...draft, ...data, step: 2 });
     onContinue(data);
@@ -182,6 +185,13 @@ function WizardCriarEventoP1({ prefill, tags, onContinue, onBack }) {
           {/* ── Tipo de encontro ── */}
           <EventTypePicker value={type} onChange={setType}/>
 
+          {type === 'outro' && (
+            <>
+              <div style={{ height: 12 }}/>
+              <CustomTypeField value={customType} onChange={(v) => setCustomType(v.slice(0, 40))}/>
+            </>
+          )}
+
           <div style={{ height: 24 }}/>
         </div>
       </div>
@@ -197,7 +207,7 @@ function WizardCriarEventoP1({ prefill, tags, onContinue, onBack }) {
       }}>
         <Button
           variant="primary" size="lg" fullWidth
-          disabled={!nameValid}
+          disabled={!formValid}
           onClick={handleContinue}
           trailing={<Icon name="arrow_forward" size={18}/>}
           data-route="event_wizard_2">
@@ -286,6 +296,36 @@ function EventNameField({ value, onChange, minLength, maxLength }) {
       }}>
         {tooShort ? `Mínimo de ${minLength} caracteres.` : ' '}
       </div>
+    </div>
+  );
+}
+
+// ─── CustomTypeField — quando o tipo é "Outro", diz qual ───
+function CustomTypeField({ value, onChange }) {
+  const [focused, setFocused] = React.useState(false);
+  return (
+    <div>
+      <label htmlFor="event-custom-type" style={{
+        display: 'block', fontFamily: T.font, fontSize: 12, fontWeight: 600, lineHeight: 1.4,
+        color: T.c.n800, marginBottom: 6,
+      }}>
+        Qual o tipo de encontro?
+      </label>
+      <input
+        id="event-custom-type"
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        placeholder="Ex.: confraternização, curso, piquenique…"
+        style={{
+          width: '100%', padding: '14px 16px',
+          border: `1.5px solid ${focused ? T.c.p700 : T.c.n300}`,
+          borderRadius: T.r.md, outline: 'none', background: T.c.n0,
+          fontFamily: T.font, fontSize: 15, color: T.c.n950, boxSizing: 'border-box',
+          transition: 'border-color 160ms',
+        }}
+      />
     </div>
   );
 }
@@ -412,7 +452,7 @@ function WizardCriarEventoP1Screen({ go, params = {} }) {
   const templateId = params.template_id;
   const prefill = params.prefill
     || (templateId ? eventPrefillFromTemplate(templateId) : null)
-    || (draft.name ? { name: draft.name, type: draft.type, cover: draft.cover } : null);
+    || (draft.name ? { name: draft.name, type: draft.type, customType: draft.customType, cover: draft.cover } : null);
 
   // Tags da confraria atual alimentam as sugestões de nome por IA.
   const tags = (params.brotherhoodTags)
