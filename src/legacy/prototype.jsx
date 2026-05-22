@@ -70,6 +70,7 @@ import { WizardCriarConfrariaP5Screen } from './screens-wizard-confraria-p5.jsx'
 import { BoraMarcarPrimeiroEncontroScreen } from './screens-wizard-confraria-p6.jsx';
 import { WizardCriarConfrariaP1Screen } from './screens-wizard-confraria.jsx';
 import { Icon, T } from './tokens.jsx';
+import { TchinOnboarding } from './onboarding-manager.js';
 
 // Tchin Tchin — Interactive Prototype Shell (Android frame + navigation)
 
@@ -155,17 +156,31 @@ function TchinApp({ initialScreen = 'onboarding' }) {
 
   const current = stack[stack.length - 1];
 
-  // Auto-fire tutorial on certain screens (first time only)
+  // Keep the onboarding coordinator in sync with the shell-level overlays so
+  // screen-level overlays (e.g. the post-creation tutorial) can suppress them.
+  React.useEffect(() => {
+    if (tour) TchinOnboarding.claim('tour'); else TchinOnboarding.release('tour');
+    return () => TchinOnboarding.release('tour');
+  }, [tour]);
+  React.useEffect(() => {
+    if (activeTutorial) TchinOnboarding.claim('tutor'); else TchinOnboarding.release('tutor');
+    return () => TchinOnboarding.release('tutor');
+  }, [activeTutorial]);
+
+  // Auto-fire tutorial on certain screens (first time only).
+  // Note: the create-confraria/create-event screens are intentionally omitted —
+  // the richer post-creation tutorial (TutorialPosCriacao) covers those, and we
+  // don't want two onboarding overlays stacking. The central coordinator is
+  // re-checked at fire time so a higher-priority overlay always wins.
   React.useEffect(() => {
     if (activeTutorial) return; // already running
+    if (tour) return; // the guided tour has priority
     if (typeof isTutorDone !== 'function') return;
     const map = {
       'harmoniza':       'harmoniza',
       'modo-restaurante':'modo-restaurante',
       'scanner':         'scanner',
       'scanner-v2':      'scanner',
-      'wizard-confraria-1': 'confraria-criar',
-      'event-wizard-1':  'evento-criar',
       'confraria-detalhe':'confraria-usar',
       'event-detalhe':    'evento-usar',
       'marketplace':      'marketplace',
@@ -173,18 +188,25 @@ function TchinApp({ initialScreen = 'onboarding' }) {
       'indicacao-landing':'indicacao',
       'badges-galeria':   'badges',
     };
+    const fire = (id) => {
+      // Re-check at fire time: a higher-priority onboarding (post-creation
+      // tutorial, tour) may have claimed the slot since we scheduled this.
+      if (TchinOnboarding.isBlocked('tutor')) return;
+      if (typeof window !== 'undefined' && window.__tcShouldShowBrotherhoodTutorial) return;
+      setActiveTutorial(id);
+    };
     const tutId = map[current.screen];
     if (tutId && !isTutorDone(tutId)) {
-      // Defer slightly so the target screen mounts first
-      const t = setTimeout(() => setActiveTutorial(tutId), 320);
+      // Defer slightly so the target screen (and any overlay it owns) mounts first
+      const t = setTimeout(() => fire(tutId), 360);
       return () => clearTimeout(t);
     }
     // Also auto-fire on Adega first time (via tab + empty diary)
     if (current.screen === 'home' && tab === 'adega' && (ctx.diary || []).length === 0 && !isTutorDone('adega')) {
-      const t = setTimeout(() => setActiveTutorial('adega'), 320);
+      const t = setTimeout(() => fire('adega'), 360);
       return () => clearTimeout(t);
     }
-  }, [current.screen, tab, activeTutorial, ctx.diary]);
+  }, [current.screen, tab, activeTutorial, tour, ctx.diary]);
 
   const go = (screen, params = {}) => {
     if (screen === 'back') {

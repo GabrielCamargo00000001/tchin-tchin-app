@@ -34,6 +34,12 @@ function AdegaScreen({ go, ctx }) {
             {subtitleByTab[tab]}
           </div>
         </div>
+        {/* Adicionar vinho — atalho sempre visível no topo da Adega (qualquer aba) */}
+        <div style={{ marginTop: 4 }} data-tour-anchor="diario-add-button">
+          <Button variant="primary" size="sm" leading={<Icon name="add" size={16}/>} onClick={() => go('register-consumo')}>
+            Adicionar
+          </Button>
+        </div>
         <button onClick={() => go('favoritos')} style={{
           width: 40, height: 40, background: T.c.n0, border: `1px solid ${T.c.n200}`, borderRadius: T.r.full,
           display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
@@ -71,21 +77,9 @@ function AdegaScreen({ go, ctx }) {
         {tab === 'paladar' && <PaladarTab ctx={ctx} go={go}/>}
       </div>
 
-      {/* FAB contextual — registrar consumo (só no Diário) */}
-      {tab === 'diario' && ctx.diary.length > 0 && (
-        <button onClick={() => go('register-consumo')}
-          data-tour-anchor="diario-add-button"
-          aria-label="Registrar vinho"
-          style={{
-          position: 'absolute', bottom: 24, right: 20, zIndex: 4,
-          width: 56, height: 56, borderRadius: T.r.full,
-          background: T.c.p700, border: 'none', cursor: 'pointer',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 6px 16px rgba(74,31,36,0.35)',
-        }}>
-          <Icon name="add" size={28} color={T.c.n0}/>
-        </button>
-      )}
+      {/* Adicionar vinho fica no botão do topo + no FAB global da Adega (app shell),
+          disponível em todas as abas. O FAB interno (só no Diário) foi removido
+          para evitar dois FABs sobrepostos. */}
 
       {/* 05.Diário Tour overlay — first-visit pattern */}
       {diarioTourStep != null && typeof TourDiario === 'function' && (

@@ -54,6 +54,10 @@ function ConfrariaDetalheScreen({ go, params }) {
     if (showTutorial && typeof window !== 'undefined') {
       // Limpa a flag pra não disparar de novo na próxima entrada
       window.__tcShouldShowBrotherhoodTutorial = false;
+      // Claim the onboarding slot so the auto-fired TchinTutor stays suppressed
+      // while this richer post-creation tutorial is on screen.
+      window.TchinOnboarding && window.TchinOnboarding.claim('post-criacao');
+      return () => { window.TchinOnboarding && window.TchinOnboarding.release('post-criacao'); };
     }
   }, [showTutorial]);
 
