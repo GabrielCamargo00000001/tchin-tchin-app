@@ -4,6 +4,7 @@
 import React from 'react';
 import { Button } from './components.jsx';
 import { MOCK_CONFRARIAS, MOCK_EVENTS, MOCK_WINES } from './data.jsx';
+import { getEventCover } from './event-covers.jsx';
 import { Avatar } from './f13_01_Avatar.jsx';
 import { Icon, T } from './tokens.jsx';
 
@@ -33,6 +34,7 @@ function EventDetalheScreen({ event, brotherhood, go }) {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const isOrganizer = ev.organizerSelf === true || (conf && conf._isAdmin === true);
   const isPast = new Date(ev.date + 'T00:00:00') < new Date();
+  const cover = getEventCover(ev.cover, ev.type); // capa escolhida (#6) ou padrão por tipo
 
   const d = new Date(ev.date + 'T00:00:00');
   const weekday = ['domingo','segunda','terça','quarta','quinta','sexta','sábado'][d.getDay()];
@@ -89,10 +91,10 @@ function EventDetalheScreen({ event, brotherhood, go }) {
       </div>
 
       <div style={{ flex: 1, overflow: 'auto', paddingBottom: 100 }}>
-        {/* Hero — burgundy gradient with title */}
+        {/* Hero — capa do evento (#6): gradiente escolhido + motivo */}
         <div style={{
           position: 'relative',
-          background: `linear-gradient(135deg, ${T.c.p700} 0%, ${T.c.p900} 100%)`,
+          background: `linear-gradient(135deg, ${cover.from} 0%, ${cover.to} 100%)`,
           color: T.c.n0, padding: '28px 20px 32px',
           display: 'flex', flexDirection: 'column', gap: 14,
         }}>
@@ -100,6 +102,11 @@ function EventDetalheScreen({ event, brotherhood, go }) {
             position: 'absolute', inset: 0, opacity: 0.12, pointerEvents: 'none',
             backgroundImage: `repeating-linear-gradient(135deg, rgba(255,255,255,0.4) 0 1px, transparent 1px 14px)`,
           }}/>
+          <div style={{
+            position: 'absolute', right: 12, top: 10, opacity: 0.22, pointerEvents: 'none',
+          }}>
+            <Icon name={cover.glyph} size={72} color="#FFFFFF" fill={1}/>
+          </div>
           {/* Date pill + modality */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, position: 'relative' }}>
             <div style={{

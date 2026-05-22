@@ -3,6 +3,7 @@
 // Auto-converted from the Tchin Tchin design prototype. See scripts/convert-legacy.mjs
 import React from 'react';
 import { Button } from './components.jsx';
+import { CoverPicker, COVER_BY_TYPE, suggestEventNames } from './event-covers.jsx';
 import { TEMPLATES } from './screens-wizard-confraria-p2.jsx';
 import { FIRST_EVENT_TITLES } from './screens-wizard-confraria-p6.jsx';
 import { fbEvent } from './screens-wizard-confraria.jsx';
@@ -50,11 +51,14 @@ const EVENT_TYPES = [
 //    prefill?: { name?, type? }
 //    onContinue: (data) => void
 //    onBack: () => void
-function WizardCriarEventoP1({ prefill, onContinue, onBack }) {
+function WizardCriarEventoP1({ prefill, tags, onContinue, onBack }) {
   const hasPrefill = Boolean(prefill && (prefill.name || prefill.type));
 
   const [name, setName] = React.useState(prefill && prefill.name ? prefill.name : '');
   const [type, setType] = React.useState(prefill && prefill.type ? prefill.type : 'degustacao');
+  const [cover, setCover] = React.useState(
+    (prefill && prefill.cover) || COVER_BY_TYPE[(prefill && prefill.type) || 'degustacao'] || 'classico'
+  );
 
   React.useEffect(() => {
     fbEvent('event_wizard_started', { from_template: hasPrefill });
@@ -66,9 +70,12 @@ function WizardCriarEventoP1({ prefill, onContinue, onBack }) {
 
   const onChangeName = (v) => setName(v.slice(0, EVENT_NAME_MAX));
 
+  // Sugestões de nome por IA (#6) — derivadas do tipo + tags da confraria.
+  const suggestions = React.useMemo(() => suggestEventNames(type, tags), [type, tags]);
+
   const handleContinue = () => {
     if (!nameValid) return;
-    const data = { name: trimmed, type };
+    const data = { name: trimmed, type, cover };
     const draft = readEventDraft() || {};
     writeEventDraft({ ...draft, ...data, step: 2 });
     onContinue(data);
@@ -162,10 +169,18 @@ function WizardCriarEventoP1({ prefill, onContinue, onBack }) {
             minLength={EVENT_NAME_MIN}
           />
 
+          {/* Sugestões de nome por IA — toque para preencher */}
+          <NameSuggestions suggestions={suggestions} onPick={(s) => onChangeName(s)}/>
+
           <div style={{ height: 24 }}/>
 
           {/* ── Tipo de encontro ── */}
           <EventTypePicker value={type} onChange={setType}/>
+
+          <div style={{ height: 24 }}/>
+
+          {/* ── Capa do evento ── */}
+          <CoverPicker value={cover} onChange={setCover}/>
 
           <div style={{ height: 24 }}/>
         </div>
@@ -275,6 +290,33 @@ function EventNameField({ value, onChange, minLength, maxLength }) {
   );
 }
 
+// ─── NameSuggestions — chips de sugestão de nome (IA) ──────
+function NameSuggestions({ suggestions, onPick }) {
+  if (!suggestions || !suggestions.length) return null;
+  return (
+    <div style={{ marginTop: 10 }}>
+      <div style={{
+        display: 'inline-flex', alignItems: 'center', gap: 6, marginBottom: 8,
+        fontFamily: T.font, fontSize: 11, fontWeight: 600, color: T.c.p700, letterSpacing: '0.2px',
+      }}>
+        <Icon name="auto_awesome" size={14} color={T.c.p700} fill={1}/>
+        Sugestões pra você
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+        {suggestions.map((s) => (
+          <button key={s} onClick={() => onPick(s)} style={{
+            padding: '8px 12px', background: T.c.p50, border: `1px solid ${T.c.p100}`,
+            borderRadius: T.r.full, cursor: 'pointer',
+            fontFamily: T.font, fontSize: 13, fontWeight: 500, color: T.c.p700,
+          }}>
+            {s}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ─── EventTypePicker — 2x2 grid of radio cards ─────────────
 function EventTypePicker({ value, onChange }) {
   return (
@@ -370,7 +412,12 @@ function WizardCriarEventoP1Screen({ go, params = {} }) {
   const templateId = params.template_id;
   const prefill = params.prefill
     || (templateId ? eventPrefillFromTemplate(templateId) : null)
-    || (draft.name ? { name: draft.name, type: draft.type } : null);
+    || (draft.name ? { name: draft.name, type: draft.type, cover: draft.cover } : null);
+
+  // Tags da confraria atual alimentam as sugestões de nome por IA.
+  const tags = (params.brotherhoodTags)
+    || (typeof window !== 'undefined' && window.__tcCurrentBrotherhood && window.__tcCurrentBrotherhood.tags)
+    || [];
 
   const onContinue = (data) => {
     go('event-wizard-2');
@@ -380,6 +427,7 @@ function WizardCriarEventoP1Screen({ go, params = {} }) {
   return (
     <WizardCriarEventoP1
       prefill={prefill}
+      tags={tags}
       onContinue={onContinue}
       onBack={onBack}
     />

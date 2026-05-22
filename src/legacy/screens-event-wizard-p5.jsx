@@ -3,6 +3,7 @@
 // Auto-converted from the Tchin Tchin design prototype. See scripts/convert-legacy.mjs
 import React from 'react';
 import { Button } from './components.jsx';
+import { getEventCover } from './event-covers.jsx';
 import { readEventDraft, writeEventDraft } from './screens-event-wizard-p1.jsx';
 import { fbEvent } from './screens-wizard-confraria.jsx';
 import { BottlePlaceholder, Icon, T } from './tokens.jsx';
@@ -153,7 +154,7 @@ function WizardCriarEventoP5({ data, onPublish, onBack }) {
             padding: 16,
           }}>
             {/* Cover */}
-            <EventReviewCover type={data.type} name={data.name}/>
+            <EventReviewCover type={data.type} name={data.name} cover={data.cover}/>
 
             <div style={{ height: 16 }}/>
 
@@ -300,16 +301,15 @@ function formatEventDate(dateStr, time) {
   return time ? `${dayCap}, ${time}` : dayCap;
 }
 
-// ─── EventReviewCover — gradient + glyph baseado no tipo ────
-function EventReviewCover({ type, name }) {
-  const gradient = EVENT_TYPE_GRADIENT[type] || EVENT_TYPE_GRADIENT.degustacao;
-  const glyph = EVENT_TYPE_GLYPH[type] || 'event';
+// ─── EventReviewCover — usa a capa escolhida (#6) ou o tipo ─
+function EventReviewCover({ type, name, cover }) {
+  const c = getEventCover(cover, type);
   return (
     <div style={{
       position: 'relative',
       height: 100,
       borderRadius: T.r.md,
-      background: `linear-gradient(135deg, ${gradient[0]} 0%, ${gradient[1]} 100%)`,
+      background: `linear-gradient(135deg, ${c.from} 0%, ${c.to} 100%)`,
       overflow: 'hidden',
     }}>
       <div style={{
@@ -321,7 +321,7 @@ function EventReviewCover({ type, name }) {
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         opacity: 0.55,
       }}>
-        <Icon name={glyph} size={44} color="#FFFFFF" fill={1}/>
+        <Icon name={c.glyph} size={44} color="#FFFFFF" fill={1}/>
       </div>
       <div style={{
         position: 'absolute', left: 10, bottom: 10,
@@ -332,7 +332,7 @@ function EventReviewCover({ type, name }) {
         color: '#FFFFFF', letterSpacing: '0.4px',
         textTransform: 'uppercase',
       }}>
-        Capa-padrão
+        Capa · {c.label}
       </div>
     </div>
   );
@@ -484,6 +484,7 @@ function WizardCriarEventoP5Screen({ go }) {
   const data = {
     name: draft.name || 'Evento sem nome',
     type: draft.type || 'degustacao',
+    cover: draft.cover,
     date: draft.date,
     time: draft.time,
     locationMode: draft.locationMode || 'presencial',

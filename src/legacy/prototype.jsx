@@ -167,6 +167,12 @@ function TchinApp({ initialScreen = 'onboarding' }) {
     return () => TchinOnboarding.release('tutor');
   }, [activeTutorial]);
 
+  // Expõe o paladar atual pra fluxos fora do ctx (ex.: sugestão automática de
+  // vinhos no wizard de evento, #8).
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') window.__tcUserPaladar = ctx.user && ctx.user.paladar;
+  }, [ctx.user]);
+
   // Auto-fire tutorial on certain screens (first time only).
   // Note: the create-confraria/create-event screens are intentionally omitted —
   // the richer post-creation tutorial (TutorialPosCriacao) covers those, and we

@@ -173,15 +173,14 @@ function WizardCriarEventoP4({ initialData, onContinue, onBack }) {
           {/* ── Pagamento ── */}
           <Section
             title="Pagamento"
-            subtitle="Você pode configurar integração LACI depois.">
+            subtitle="Quem paga pela conta ou pelo LACI é reconhecido automaticamente.">
             <RadioList
               value={payment}
               onChange={setPayment}
               options={[
-                { id: 'free',  label: 'Grátis',             icon: 'volunteer_activism' },
-                { id: 'split', label: 'Rateio entre todos', icon: 'group',
-                  helper: 'Rachão automático no fim do evento.' },
-                { id: 'fixed', label: 'Valor fixo por pessoa', icon: 'attach_money' },
+                { id: 'free',  label: 'Grátis',                icon: 'volunteer_activism' },
+                { id: 'fixed', label: 'Valor fixo por pessoa', icon: 'attach_money',
+                  helper: 'Cada participante paga o mesmo valor.' },
               ]}
             />
             {payment === 'fixed' && (
