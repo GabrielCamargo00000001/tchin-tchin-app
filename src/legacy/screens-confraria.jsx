@@ -11,15 +11,15 @@ import { ModalSheet } from './screens-descobrir.jsx';
 import { TutorialPosCriacao } from './screens-wizard-confraria-p7.jsx';
 import { Icon, T } from './tokens.jsx';
 
-// ─── Detalhe Confraria (5 tabs) ────────────────────────────
+// ─── Detalhe Confraria (4 tabs) ────────────────────────────
 // Ordem: Eventos primeiro (é o que a galera mais busca), Publicações logo em
-// seguida. A descrição vive no topo (bloco de identidade), não numa aba.
+// seguida. A descrição vive no topo (bloco de identidade) e as Regras ficam
+// no menu (3 pontos) — por isso não há mais aba "Sobre".
 const CONFRARIA_TABS = [
   { id: 'eventos', label: 'Eventos', icon: 'event', highlight: true },
   { id: 'publicacoes', label: 'Publicações' },
   { id: 'membros', label: 'Membros' },
   { id: 'adega', label: 'Adega' },
-  { id: 'sobre', label: 'Sobre' },
 ];
 
 function ConfrariaDetalheScreen({ go, params }) {
@@ -48,6 +48,14 @@ function ConfrariaDetalheScreen({ go, params }) {
   });
   const [confirmLeave, setConfirmLeave] = React.useState(false);
   const [menuOpen, setMenuOpen] = React.useState(false);
+
+  // Checklist do organizador (antes na aba Sobre, agora na aba Eventos p/ admin)
+  const [checklistDone, setChecklistDone] = React.useState(['tema_descricao', 'foto_capa']);
+  const onChecklistTap = (id) => {
+    if (id === 'primeiro_evento') { go('event-wizard-1', { brotherhoodId: confraria.id, brotherhoodName: confraria.name }); return; }
+    if (id === 'primeiro_post')   { setTab('publicacoes'); return; }
+    if (id === 'convidou_amigos') { setChecklistDone(prev => prev.includes(id) ? prev : [...prev, id]); return; }
+  };
 
   // 08.07 — Tutorial pós-criação overlay
   const shouldShowTutorial = isAdmin && (typeof window !== 'undefined') && window.__tcShouldShowBrotherhoodTutorial;
@@ -156,7 +164,13 @@ function ConfrariaDetalheScreen({ go, params }) {
         </div>
 
         <div style={{ padding: '16px 20px 32px' }}>
-          {tab === 'sobre'       && <SobreTab confraria={confraria} isAdmin={isAdmin} justCreated={justCreated} onCreateEvent={() => go('event-wizard-1', { brotherhoodId: confraria.id, brotherhoodName: confraria.name })} onOpenEventos={() => setTab('eventos')} onOpenPublicacoes={() => setTab('publicacoes')}/>}
+          {/* Checklist do organizador (admin) — antes vivia na aba Sobre; agora
+              acompanha a aba Eventos pra não perder o onboarding de novo admin. */}
+          {tab === 'eventos' && isAdmin && (
+            <div style={{ marginBottom: 18 }}>
+              <ChecklistOrganizador completedItems={checklistDone} onItemTap={onChecklistTap}/>
+            </div>
+          )}
           {tab === 'membros'     && <MembrosTab confraria={confraria}/>}
           {tab === 'eventos'     && <EventosTab confraria={confraria} joined={joined} isAdmin={isAdmin} onJoin={handleJoinToggle} go={go} onCreateEvent={() => go('event-wizard-1', { brotherhoodId: confraria.id, brotherhoodName: confraria.name })}/>}
           {tab === 'adega'       && <AdegaConfTab confraria={confraria} go={go}/>}

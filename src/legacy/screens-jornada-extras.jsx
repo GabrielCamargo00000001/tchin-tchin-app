@@ -222,13 +222,6 @@ function ConfrariaTourRapidoScreen({ go, params }) {
       cta: 'Continuar',
     },
     {
-      icon: 'emoji_events',
-      bg: T.c.s700,
-      title: 'Desafios semanais',
-      body: 'Toda segunda abre um desafio (ex.: "Espanhol"). Quem registra mais vinhos do tema, ganha pontos.',
-      cta: 'Continuar',
-    },
-    {
       icon: 'chat',
       bg: T.c.p900,
       title: 'Chat é direto',
