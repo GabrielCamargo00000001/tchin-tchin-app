@@ -551,7 +551,7 @@ function TchinApp({ initialScreen = 'onboarding' }) {
 
   return (
     <div style={{
-      width: 412, height: 892, borderRadius: 36, overflow: 'hidden',
+      width: 412, height: 892, maxHeight: 'calc(100vh - 16px)', borderRadius: 36, overflow: 'hidden',
       background: T.c.n0, border: '10px solid #1a1a1a',
       boxShadow: '0 30px 80px rgba(0,0,0,0.25), 0 0 0 2px #2a2a2a',
       display: 'flex', flexDirection: 'column', position: 'relative',

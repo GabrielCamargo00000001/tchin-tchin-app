@@ -12,19 +12,21 @@ import { TutorialPosCriacao } from './screens-wizard-confraria-p7.jsx';
 import { Icon, T } from './tokens.jsx';
 
 // ─── Detalhe Confraria (5 tabs) ────────────────────────────
+// Ordem: Eventos primeiro (é o que a galera mais busca), Publicações logo em
+// seguida. A descrição vive no topo (bloco de identidade), não numa aba.
 const CONFRARIA_TABS = [
-  { id: 'sobre', label: 'Sobre' },
   { id: 'eventos', label: 'Eventos', icon: 'event', highlight: true },
+  { id: 'publicacoes', label: 'Publicações' },
   { id: 'membros', label: 'Membros' },
   { id: 'adega', label: 'Adega' },
-  { id: 'publicacoes', label: 'Publicações' },
+  { id: 'sobre', label: 'Sobre' },
 ];
 
 function ConfrariaDetalheScreen({ go, params }) {
   const confraria = params?.confraria || MOCK_CONFRARIAS[4];
   const isAdmin = confraria._isAdmin === true;
   const justCreated = params?.justCreated === true;
-  const [tab, setTab] = React.useState(justCreated ? 'sobre' : 'sobre');
+  const [tab, setTab] = React.useState('eventos');
   // Persisted "joined" state per confraria id — survives navigation
   // through welcome → apresentar → tour-rapido and back.
   const confKey = confraria.id != null ? `c${confraria.id}` : (confraria.name || 'c').toLowerCase();
@@ -286,11 +288,7 @@ function SobreTab({ confraria, isAdmin, justCreated, onCreateEvent, onOpenEvento
         </>
       )}
 
-      <Section title="Descrição">
-        <div style={{ ...T.t.body, color: T.c.n800, lineHeight: 1.5 }}>
-          {confraria.description}{!justCreated && ' Reuniões mensais com 12 vagas por encontro. Cada participante traz uma garrafa do tema do mês. Discussão técnica leve, sem snobismo — todos os níveis são bem-vindos.'}
-        </div>
-      </Section>
+      {/* Descrição mora no topo (bloco de identidade), não aqui — evita repetição. */}
 
       {!justCreated && (
         <Section title="Regras">
@@ -548,7 +546,7 @@ function NextEventBanner({ confraria, joined, isAdmin, go, onCreate }) {
   if (!ev) {
     if (isAdmin) {
       return (
-        <div style={{ margin: '0 20px 18px', padding: 16, background: T.c.p50, borderRadius: T.r.lg, border: `1.5px dashed ${T.c.p300}`, display: 'flex', gap: 12, alignItems: 'center' }}>
+        <div style={{ margin: '16px 20px 18px', padding: 16, background: T.c.p50, borderRadius: T.r.lg, border: `1.5px dashed ${T.c.p300}`, display: 'flex', gap: 12, alignItems: 'center' }}>
           <div style={{ width: 44, height: 44, borderRadius: T.r.md, background: T.c.p700, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <Icon name="event_available" size={22} color={T.c.n0}/>
           </div>
@@ -569,7 +567,7 @@ function NextEventBanner({ confraria, joined, isAdmin, go, onCreate }) {
   const goEvent = () => go('event-detalhe', { event: ev, brotherhood: confraria });
   return (
     <button onClick={goEvent} style={{
-      width: 'calc(100% - 40px)', margin: '0 20px 18px',
+      width: 'calc(100% - 40px)', margin: '16px 20px 18px',
       display: 'flex', alignItems: 'stretch', gap: 0,
       background: `linear-gradient(135deg, ${T.c.p700} 0%, ${T.c.p900} 100%)`,
       border: 'none', borderRadius: T.r.lg, cursor: 'pointer',

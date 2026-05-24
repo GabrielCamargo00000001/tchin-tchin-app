@@ -127,7 +127,10 @@ function ConfrariaApresentarScreen({ go, params }) {
           <Button variant="primary" size="lg" fullWidth onClick={() => { go('toast', { kind: 'success', message: 'Apresentação postada no mural!' }); go('confraria-tour-rapido', { confraria }); }} disabled={!historia.trim()}>
             Postar no mural
           </Button>
-          <div style={{ ...T.t.caption, color: T.c.n600, marginTop: 8, textAlign: 'center' }}>Pode pular se preferir.</div>
+          <div style={{ height: 8 }}/>
+          <Button variant="ghost" size="md" fullWidth onClick={() => go('confraria-tour-rapido', { confraria })}>
+            Pular por enquanto
+          </Button>
         </div>
       }>
       <div style={{ padding: '16px 16px 8px', background: T.c.n0 }}>
