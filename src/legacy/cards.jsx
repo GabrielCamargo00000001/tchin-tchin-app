@@ -212,9 +212,48 @@ const ACTIVITY_META = {
   'inativa':     { emoji: '🌙', label: 'Inativa',     bg: '#E5E7EB', fg: '#6B7280' },
 };
 
-function ConfrariaCard({ confraria, onClick }) {
+// Badges de estado (#4) — separados do tier de atividade. Regras de exibição
+// abaixo; no máximo 2 por card, por prioridade.
+const CONFRARIA_BADGES = {
+  verificada:   { label: 'Verificada',            icon: 'verified',           bg: '#E3F2FD', fg: '#1565C0' },
+  eventoSemana: { label: 'Evento esta semana',    icon: 'event_available',    bg: '#E8F5E9', fg: '#2E7D32' },
+  emAlta:       { label: 'Em alta',               icon: 'trending_up',        bg: '#FFEDD5', fg: '#C2410C' },
+  nova:         { label: 'Nova',                  icon: 'auto_awesome',       bg: '#F5E9D4', fg: '#B8894A' },
+  pertoDeVoce:  { label: 'Perto de você',         icon: 'near_me',            bg: 'rgba(255,255,255,0.92)', fg: '#0F0F0F' },
+  iniciantes:   { label: 'Iniciantes bem-vindos', icon: 'volunteer_activism', bg: '#F5E3E5', fg: '#722F37' },
+};
+
+function sameCityName(a, b) {
+  if (!a || !b) return false;
+  const norm = (s) => String(s).split(',')[0].trim().toLowerCase();
+  return norm(a) === norm(b);
+}
+
+// Decide quais badges um card exibe, em ordem de prioridade (máx. 2).
+//   verificada  → confraria.verified (organizador verificado / parceira)
+//   evento sem. → confraria.eventThisWeek (evento nos próximos 7 dias)
+//   em alta     → confraria.trending (crescimento/atividade recente)
+//   nova        → confraria.isNew (criada há < 30 dias) ou recém-criada
+//   perto       → presencial na mesma cidade do usuário
+//   iniciantes  → tag de boas-vindas a iniciantes
+function getConfrariaBadges(c, userCity) {
+  if (!c) return [];
+  const has = [];
+  if (c.verified) has.push('verificada');
+  if (c.eventThisWeek) has.push('eventoSemana');
+  if (c.trending) has.push('emAlta');
+  if (c.isNew || c._justCreated) has.push('nova');
+  if (c.modality !== 'online' && sameCityName(c.location, userCity)) has.push('pertoDeVoce');
+  if ((c.tags || []).some((t) => /iniciante/i.test(t))) has.push('iniciantes');
+  const order = ['verificada', 'eventoSemana', 'emAlta', 'nova', 'pertoDeVoce', 'iniciantes'];
+  return order.filter((b) => has.includes(b)).slice(0, 2).map((id) => ({ id, ...CONFRARIA_BADGES[id] }));
+}
+
+function ConfrariaCard({ confraria, onClick, userCity }) {
   const { name, description, members, activity = 'ativa', visibility = 'publica', modality, location, tags = [], color = T.c.p700, cover } = confraria;
   const act = ACTIVITY_META[activity] || ACTIVITY_META['ativa'];
+  const city = userCity || (typeof window !== 'undefined' && window.MOCK_USER && window.MOCK_USER.city) || null;
+  const badges = getConfrariaBadges(confraria, city);
   const place = modality === 'presencial' ? `📍 ${location || 'Brasília, DF'}` : modality === 'online' ? '🌐 Online' : '🔀 Híbrida';
   const visLabel = visibility === 'privada' ? 'Grupo Privado' : 'Grupo Público';
   return (
@@ -227,6 +266,21 @@ function ConfrariaCard({ confraria, onClick }) {
         {!cover && (
           <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.18 }}>
             <Icon name="groups" size={72} color="#fff"/>
+          </div>
+        )}
+        {/* Top-left state badges (#4) */}
+        {badges.length > 0 && (
+          <div style={{ position: 'absolute', top: 10, left: 10, display: 'flex', gap: 6, flexWrap: 'wrap', maxWidth: 'calc(100% - 20px)' }}>
+            {badges.map(b => (
+              <span key={b.id} style={{
+                display: 'inline-flex', alignItems: 'center', gap: 4,
+                padding: '3px 8px', borderRadius: T.r.full,
+                background: b.bg, color: b.fg, fontSize: 10, fontWeight: 700,
+                boxShadow: '0 1px 2px rgba(0,0,0,0.12)',
+              }}>
+                <Icon name={b.icon} size={12} color={b.fg} fill={1}/>{b.label}
+              </span>
+            ))}
           </div>
         )}
         {/* Bottom-left meta row */}
@@ -356,8 +410,9 @@ function FAB({ icon, label, onClick, extended, disabled }) {
 
 Object.assign(window, {
   WineCard, PostCard, ConfrariaCard, EventCard, CuriosityCard, ACTIVITY_META,
+  CONFRARIA_BADGES, getConfrariaBadges,
   SectionHeader, FAB, PostAction,
 });
 
 
-export { ACTIVITY_META, ConfrariaCard, CuriosityCard, EventCard, FAB, PostAction, PostCard, SectionHeader, WineCard };
+export { ACTIVITY_META, CONFRARIA_BADGES, ConfrariaCard, CuriosityCard, EventCard, FAB, PostAction, PostCard, SectionHeader, WineCard, getConfrariaBadges };

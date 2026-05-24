@@ -706,7 +706,10 @@ function ComunidadeScreen({ go, ctx }) {
 
 // ─── Confrarias ─────────────────────────────────────────────
 function ConfrariasScreen({ go }) {
-  const [tab, setTab] = React.useState('descobrir');
+  const [mainTab, setMainTab] = React.useState('confrarias'); // confrarias | eventos
+  const [confSub, setConfSub] = React.useState('recomendadas'); // recomendadas | suas
+  const [evSub, setEvSub] = React.useState('minhas'); // minhas | inscritos
+  const [query, setQuery] = React.useState('');
   const [filterOpen, setFilterOpen] = React.useState(false);
   const [filters, setFilters] = React.useState({ activity: [], modality: [], style: [] });
   const [sortBy, setSortBy] = React.useState('ativa'); // 'ativa' | 'membros' | 'recente'
@@ -715,7 +718,14 @@ function ConfrariasScreen({ go }) {
   const toggle = (group, val) => setFilters(f => ({ ...f, [group]: f[group].includes(val) ? f[group].filter(v => v !== val) : [...f[group], val] }));
   const clearAll = () => setFilters({ activity: [], modality: [], style: [] });
 
-  let recomendadas = MOCK_CONFRARIAS;
+  // Busca — só confrarias (nome, descrição, tags, local).
+  const matchesQuery = (c) => {
+    const q = query.trim().toLowerCase();
+    if (!q) return true;
+    return (c.name + ' ' + (c.description || '') + ' ' + (c.tags || []).join(' ') + ' ' + (c.location || '')).toLowerCase().includes(q);
+  };
+
+  let recomendadas = MOCK_CONFRARIAS.filter(matchesQuery);
   if (filters.activity.length) recomendadas = recomendadas.filter(c => filters.activity.includes(c.activity));
   if (filters.modality.length) recomendadas = recomendadas.filter(c => filters.modality.includes(c.modality === 'hibrida' ? 'online' : c.modality));
   if (filters.style.length)    recomendadas = recomendadas.filter(c => (c.tags || []).some(t => filters.style.includes(t)));
@@ -725,94 +735,148 @@ function ConfrariasScreen({ go }) {
   if (sortBy === 'membros')  recomendadas = [...recomendadas].sort((a, b) => b.members - a.members);
   if (sortBy === 'recente')  recomendadas = [...recomendadas].sort((a, b) => b.id - a.id);
 
-  const suas = MOCK_CONFRARIAS.slice(0, 2);
+  const suas = MOCK_CONFRARIAS.slice(0, 2).filter(matchesQuery);
   const sortLabel = { ativa: 'Mais ativa', membros: 'Mais membros', recente: 'Mais recente' }[sortBy];
   const styleOptions = ['Degustação Técnica', 'Vinhos da Região', 'Harmonização', 'Pequenos Produtores'];
+
+  // Eventos
+  const eventosMinhas = MOCK_EVENTS; // eventos das confrarias que você participa
+  const eventosInscritos = MOCK_EVENTS.filter(e => e.joined);
+  const eventosList = evSub === 'minhas' ? eventosMinhas : eventosInscritos;
+
+  const mainTabStyle = (active) => ({
+    flex: 1, padding: '12px 0', background: 'none', border: 'none',
+    borderBottom: `2px solid ${active ? T.c.p700 : 'transparent'}`,
+    color: active ? T.c.p700 : T.c.n600, fontWeight: 600, fontSize: 14,
+    cursor: 'pointer', fontFamily: T.font, marginBottom: -1,
+  });
+  const subPill = (active) => ({
+    padding: '7px 14px', borderRadius: T.r.full,
+    background: active ? T.c.p700 : T.c.n0, color: active ? T.c.n0 : T.c.n800,
+    border: `1px solid ${active ? T.c.p700 : T.c.n300}`, cursor: 'pointer',
+    fontFamily: T.font, fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap', flexShrink: 0,
+  });
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: T.c.n50 }}>
       <div style={{ padding: '16px 16px 0' }}>
         <div style={{ ...T.t.h1, color: T.c.n950 }}>Confrarias</div>
-        <div style={{ ...T.t.caption, color: T.c.n600, marginBottom: 16 }}>Grupos de pessoas que abrem garrafas juntas.</div>
+        <div style={{ ...T.t.caption, color: T.c.n600, marginBottom: 12 }}>Grupos de pessoas que abrem garrafas juntas.</div>
       </div>
 
-      {/* Row 2 botões */}
-      <div style={{ display: 'flex', gap: 8, padding: '0 16px 12px' }}>
-        <Button variant="secondary" size="md" fullWidth leading={<Icon name="add" size={18}/>} onClick={() => go('wizard-confraria-1')}>
-          Criar confraria
-        </Button>
-        <Button variant="secondary" size="md" fullWidth leading={<Icon name="tune" size={18}/>} onClick={() => setFilterOpen(true)}>
-          Filtrar{filterCount > 0 ? ` · ${filterCount}` : ''}
-        </Button>
-      </div>
-
-      {/* Tabs primary */}
+      {/* Main tabs: Confrarias | Eventos */}
       <div style={{ display: 'flex', padding: '0 16px', borderBottom: `1px solid ${T.c.n200}`, gap: 4 }}>
-        {[
-          { id: 'descobrir', label: `Recomendações (${recomendadas.length})` },
-          { id: 'suas', label: `Suas (${suas.length})` },
-          { id: 'eventos', label: 'Eventos' },
-        ].map(t => (
-          <button key={t.id} onClick={() => setTab(t.id)} style={{
-            padding: '12px 14px', background: 'none', border: 'none',
-            borderBottom: `2px solid ${tab === t.id ? T.c.p700 : 'transparent'}`,
-            color: tab === t.id ? T.c.p700 : T.c.n600, fontWeight: 600, fontSize: 14,
-            cursor: 'pointer', fontFamily: T.font, marginBottom: -1, whiteSpace: 'nowrap',
-          }}>{t.label}</button>
+        {[{ id: 'confrarias', label: 'Confrarias' }, { id: 'eventos', label: 'Eventos' }].map(t => (
+          <button key={t.id} onClick={() => setMainTab(t.id)} style={mainTabStyle(mainTab === t.id)}>{t.label}</button>
         ))}
       </div>
 
-      <div style={{ flex: 1, overflow: 'auto', padding: '12px 16px 80px' }}>
-        {tab === 'descobrir' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {/* Sort row */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 0' }}>
-              <div style={{ ...T.t.caption, color: T.c.n600 }}>{recomendadas.length} {recomendadas.length === 1 ? 'resultado' : 'resultados'}</div>
-              <button onClick={() => {
-                const next = { ativa: 'membros', membros: 'recente', recente: 'ativa' }[sortBy];
-                setSortBy(next);
-              }} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 8px', background: 'none', border: 'none', cursor: 'pointer', fontFamily: T.font, color: T.c.n800, fontSize: 13, fontWeight: 600 }}>
-                <Icon name="swap_vert" size={16}/>
-                <span>Ordenar: {sortLabel}</span>
-              </button>
+      {mainTab === 'confrarias' && (
+        <>
+          {/* Busca (só confrarias) + filtro */}
+          <div style={{ display: 'flex', gap: 8, padding: '12px 16px 8px' }}>
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8, padding: '10px 12px', background: T.c.n0, border: `1px solid ${T.c.n200}`, borderRadius: T.r.md }}>
+              <Icon name="search" size={18} color={T.c.n600}/>
+              <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Buscar confrarias" style={{ flex: 1, border: 'none', outline: 'none', background: 'transparent', fontFamily: T.font, fontSize: 14, color: T.c.n950 }}/>
+              {query && <button onClick={() => setQuery('')} aria-label="Limpar busca" style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex' }}><Icon name="close" size={16} color={T.c.n600}/></button>}
             </div>
-            {recomendadas.length > 0 ? (
-              recomendadas.map(c => <CardConfraria key={c.id} brotherhood={c} onTap={() => go('confraria-detalhe', { confraria: c })}/>)
+            <button onClick={() => setFilterOpen(true)} aria-label="Filtros" style={{
+              position: 'relative', width: 44, flexShrink: 0, cursor: 'pointer',
+              background: filterCount ? T.c.p50 : T.c.n0, border: `1px solid ${filterCount ? T.c.p700 : T.c.n300}`,
+              borderRadius: T.r.md, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <Icon name="tune" size={20} color={filterCount ? T.c.p700 : T.c.n800}/>
+              {filterCount > 0 && (
+                <span style={{ position: 'absolute', top: -6, right: -6, minWidth: 18, height: 18, padding: '0 5px', background: T.c.p700, color: T.c.n0, borderRadius: 9, fontSize: 10, fontWeight: 700, fontFamily: T.mono, display: 'flex', alignItems: 'center', justifyContent: 'center', border: `2px solid ${T.c.n50}` }}>{filterCount}</span>
+              )}
+            </button>
+          </div>
+
+          {/* Criar confraria */}
+          <div style={{ padding: '0 16px 8px' }}>
+            <Button variant="secondary" size="md" fullWidth leading={<Icon name="add" size={18}/>} onClick={() => go('wizard-confraria-1')}>
+              Criar confraria
+            </Button>
+          </div>
+
+          {/* Sub-tabs: Recomendações | Suas */}
+          <div style={{ display: 'flex', gap: 8, padding: '4px 16px 4px', overflowX: 'auto' }}>
+            {[{ id: 'recomendadas', label: `Recomendações (${recomendadas.length})` }, { id: 'suas', label: `Suas (${suas.length})` }].map(s => (
+              <button key={s.id} onClick={() => setConfSub(s.id)} style={subPill(confSub === s.id)}>{s.label}</button>
+            ))}
+          </div>
+
+          <div style={{ flex: 1, overflow: 'auto', padding: '8px 16px 80px' }}>
+            {confSub === 'recomendadas' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {/* Sort row */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 0 4px' }}>
+                  <div style={{ ...T.t.caption, color: T.c.n600 }}>{recomendadas.length} {recomendadas.length === 1 ? 'resultado' : 'resultados'}</div>
+                  <button onClick={() => { const next = { ativa: 'membros', membros: 'recente', recente: 'ativa' }[sortBy]; setSortBy(next); }} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 8px', background: 'none', border: 'none', cursor: 'pointer', fontFamily: T.font, color: T.c.n800, fontSize: 13, fontWeight: 600 }}>
+                    <Icon name="swap_vert" size={16}/>
+                    <span>Ordenar: {sortLabel}</span>
+                  </button>
+                </div>
+                {recomendadas.length > 0 ? (
+                  recomendadas.map(c => <CardConfraria key={c.id} brotherhood={c} onTap={() => go('confraria-detalhe', { confraria: c })}/>)
+                ) : (
+                  <div style={{ padding: 32, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+                    <div style={{ width: 64, height: 64, borderRadius: '50%', background: T.c.p50, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Icon name="search_off" size={32} color={T.c.p700}/>
+                    </div>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: T.c.n950 }}>{query.trim() ? 'Nada encontrado na busca' : 'Nenhuma confraria com esses filtros'}</div>
+                    <div style={{ fontSize: 13, color: T.c.n600, maxWidth: 260 }}>Tente outra busca, limpe os filtros ou crie uma confraria do seu jeito.</div>
+                    <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+                      <Button variant="secondary" size="md" onClick={() => { clearAll(); setQuery(''); }}>Limpar</Button>
+                      <Button variant="primary" size="md" onClick={() => go('wizard-confraria-1')}>Criar confraria</Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+            {confSub === 'suas' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {suas.length > 0 ? suas.map(c => <CardConfraria key={c.id} brotherhood={c} onTap={() => go('confraria-detalhe', { confraria: c })}/>) : (
+                  <div style={{ padding: 32, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+                    <div style={{ width: 64, height: 64, borderRadius: '50%', background: T.c.p50, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Icon name="groups" size={32} color={T.c.p700}/>
+                    </div>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: T.c.n950 }}>{query.trim() ? 'Nenhuma das suas confrarias bate com a busca' : 'Você ainda não está em nenhuma confraria'}</div>
+                    <div style={{ fontSize: 13, color: T.c.n600, maxWidth: 260 }}>Explore recomendações pra entrar em uma — ou crie a sua.</div>
+                    <Button variant="primary" size="md" onClick={() => setConfSub('recomendadas')}>Ver recomendações</Button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </>
+      )}
+
+      {mainTab === 'eventos' && (
+        <>
+          {/* Sub-tabs: Das minhas confrarias | Inscritos */}
+          <div style={{ display: 'flex', gap: 8, padding: '12px 16px 4px', overflowX: 'auto' }}>
+            {[{ id: 'minhas', label: 'Das minhas confrarias' }, { id: 'inscritos', label: `Inscritos (${eventosInscritos.length})` }].map(s => (
+              <button key={s.id} onClick={() => setEvSub(s.id)} style={subPill(evSub === s.id)}>{s.label}</button>
+            ))}
+          </div>
+          <div style={{ flex: 1, overflow: 'auto', padding: '8px 16px 80px' }}>
+            {eventosList.length > 0 ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {eventosList.map(e => <EventCard key={e.id} event={e} onClick={() => go('event-detalhe', { event: e })}/>)}
+              </div>
             ) : (
               <div style={{ padding: 32, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
                 <div style={{ width: 64, height: 64, borderRadius: '50%', background: T.c.p50, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Icon name="groups" size={32} color={T.c.p700}/>
+                  <Icon name="event_busy" size={32} color={T.c.p700}/>
                 </div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: T.c.n950 }}>Nenhuma confraria com esses filtros</div>
-                <div style={{ fontSize: 13, color: T.c.n600, maxWidth: 260 }}>Tente limpar os filtros ou criar uma confraria com o seu jeito.</div>
-                <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
-                  <Button variant="secondary" size="md" onClick={clearAll}>Limpar filtros</Button>
-                  <Button variant="primary" size="md" onClick={() => go('wizard-confraria-1')}>Criar confraria</Button>
-                </div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: T.c.n950 }}>{evSub === 'inscritos' ? 'Você ainda não se inscreveu em nenhum evento' : 'Sem eventos nas suas confrarias'}</div>
+                <div style={{ fontSize: 13, color: T.c.n600, maxWidth: 260 }}>Quando rolar um encontro, ele aparece aqui.</div>
               </div>
             )}
           </div>
-        )}
-        {tab === 'suas' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {suas.length > 0 ? suas.map(c => <CardConfraria key={c.id} brotherhood={c} onTap={() => go('confraria-detalhe', { confraria: c })}/>) : (
-              <div style={{ padding: 32, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
-                <div style={{ width: 64, height: 64, borderRadius: '50%', background: T.c.p50, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Icon name="groups" size={32} color={T.c.p700}/>
-                </div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: T.c.n950 }}>Você ainda não está em nenhuma confraria</div>
-                <div style={{ fontSize: 13, color: T.c.n600, maxWidth: 260 }}>Explore recomendações pra entrar em uma — ou crie a sua.</div>
-                <Button variant="primary" size="md" onClick={() => setTab('descobrir')}>Ver recomendações</Button>
-              </div>
-            )}
-          </div>
-        )}
-        {tab === 'eventos' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {MOCK_EVENTS.map(e => <EventCard key={e.id} event={e} onClick={() => go('event-detalhe', { event: e })}/>)}
-          </div>
-        )}
-      </div>
+        </>
+      )}
 
       {filterOpen && (
         <ModalSheet onClose={() => setFilterOpen(false)}>

@@ -45,6 +45,21 @@ function fbEvent(name, params) {
   } catch (e) {}
 }
 
+// Gera sugestões de nome de confraria (#2) — usa a cidade quando disponível e
+// um repertório no tom da marca. `seed` permite "gerar outras".
+function suggestConfrariaNames(city, seed = 0) {
+  const cityShort = city ? city.split(',')[0].trim() : null;
+  const cityIdeas = cityShort ? [`Tchin da ${cityShort}`, `Confraria de ${cityShort}`] : [];
+  const generic = [
+    'Galera do Vinho', 'Confraria da Taça', 'Turma do Brinde', 'Clube da Boa Companhia',
+    'Adega entre Amigos', 'Confraria do Cerrado', 'Brinde de Quinta', 'Sociedade da Uva',
+    'Tchin entre Amigos', 'Clube dos Tintos', 'Os da Rolha', 'Confraria sem Frescura',
+  ];
+  const all = [...cityIdeas, ...generic];
+  const start = ((seed % all.length) + all.length) % all.length;
+  return [...all.slice(start), ...all.slice(0, start)].slice(0, 4);
+}
+
 // ─── Pure component (matches the spec contract) ─────────────
 //  props:
 //    userCity?: string            — interpola "Tchin da [cidade]" se presente
@@ -54,6 +69,7 @@ function fbEvent(name, params) {
 function WizardCriarConfrariaP1({ userCity, onContinue, onSaveDraft, onClose, initialName = '' }) {
   const [name, setName] = React.useState(initialName);
   const [showExit, setShowExit] = React.useState(false);
+  const [suggSeed, setSuggSeed] = React.useState(0);
   const inputRef = React.useRef(null);
 
   // Fire wizard_started exactly once on mount
@@ -82,15 +98,9 @@ function WizardCriarConfrariaP1({ userCity, onContinue, onSaveDraft, onClose, in
     setShowExit(true);
   };
 
-  // Suggestions — "Tchin da [cidade]" só aparece se userCity foi soft-granted
-  // (proxy: prop está presente). Extrai a cidade antes da vírgula.
-  const cityShort = userCity ? userCity.split(',')[0].trim() : null;
-  const suggestions = [
-    cityShort ? `Tchin da ${cityShort}` : null,
-    'Confraria do Vale',
-    'Galera do vinho',
-    'Brothers of Wine',
-  ].filter(Boolean);
+  // Suggestions (#2) — geradas a partir da cidade + repertório da marca; o
+  // botão "Gerar outras" avança o seed pra trazer ideias novas.
+  const suggestions = React.useMemo(() => suggestConfrariaNames(userCity, suggSeed), [userCity, suggSeed]);
 
   const onSuggestionTap = (label) => {
     fbEvent('brotherhood_suggestion_tapped', { suggestion_label: label });
@@ -189,6 +199,17 @@ function WizardCriarConfrariaP1({ userCity, onContinue, onSaveDraft, onClose, in
             current={name}
             onTap={onSuggestionTap}
           />
+
+          <div style={{ height: 10 }}/>
+          <button
+            onClick={() => setSuggSeed(s => s + 4)}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+              fontFamily: T.font, fontSize: 13, fontWeight: 600, color: T.c.p700,
+            }}>
+            <Icon name="refresh" size={16} color={T.c.p700}/> Gerar outras sugestões
+          </button>
 
           {/* Espaço pro fundo não colar no CTA fixo */}
           <div style={{ height: 24 }}/>

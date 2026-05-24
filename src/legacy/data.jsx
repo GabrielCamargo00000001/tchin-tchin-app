@@ -59,11 +59,11 @@ const MOCK_POSTS = [
 
 // activity tiers: 'muito-ativa' (≥4/30d) · 'ativa' (1-3/30d) · 'pouco-ativa' (0/30d) · 'inativa' (0/60d+)
 const MOCK_CONFRARIAS = [
-  { id: 1, name: 'Brindar em Brasília', description: 'Encontros mensais no Lago Sul. Foco em tintos sul-americanos e harmonização com cozinha brasileira.', members: 84, activity: 'muito-ativa', visibility: 'publica', modality: 'presencial', location: 'Brasília, DF', tags: ['Degustação Técnica', 'Vinhos da Região'] },
-  { id: 2, name: 'Vinhos de Garagem', description: 'Confraria virtual para pequenos produtores e descobertas fora do óbvio.', members: 312, activity: 'muito-ativa', visibility: 'publica', modality: 'online', tags: ['Pequenos Produtores', 'Iniciantes Welcome'] },
+  { id: 1, name: 'Brindar em Brasília', description: 'Encontros mensais no Lago Sul. Foco em tintos sul-americanos e harmonização com cozinha brasileira.', members: 84, activity: 'muito-ativa', visibility: 'publica', modality: 'presencial', location: 'Brasília, DF', tags: ['Degustação Técnica', 'Vinhos da Região'], verified: true, eventThisWeek: true },
+  { id: 2, name: 'Vinhos de Garagem', description: 'Confraria virtual para pequenos produtores e descobertas fora do óbvio.', members: 312, activity: 'muito-ativa', visibility: 'publica', modality: 'online', tags: ['Pequenos Produtores', 'Iniciantes Welcome'], trending: true },
   { id: 3, name: 'Douro & Cia', description: 'Aficionados por vinhos portugueses. Encontros trimestrais com degustação às cegas.', members: 47, activity: 'pouco-ativa', visibility: 'publica', modality: 'hibrida', tags: ['Portugal', 'Avançado'] },
-  { id: 4, name: 'Tinto na Mesa', description: 'Vinho e gastronomia. Cada encontro tem um tema regional.', members: 126, activity: 'ativa', visibility: 'publica', modality: 'presencial', location: 'Brasília, DF', tags: ['Harmonização', 'Mensal'] },
-  { id: 5, name: 'Winetasting Países', description: 'Aprender sobre 7 vinhos de 7 países diferentes em cada encontro.', members: 11, activity: 'muito-ativa', visibility: 'publica', modality: 'presencial', location: 'Brasília, DF', tags: ['Degustação Técnica', 'Vinhos da Região'] },
+  { id: 4, name: 'Tinto na Mesa', description: 'Vinho e gastronomia. Cada encontro tem um tema regional.', members: 126, activity: 'ativa', visibility: 'publica', modality: 'presencial', location: 'Brasília, DF', tags: ['Harmonização', 'Mensal'], eventThisWeek: true },
+  { id: 5, name: 'Winetasting Países', description: 'Aprender sobre 7 vinhos de 7 países diferentes em cada encontro.', members: 11, activity: 'muito-ativa', visibility: 'publica', modality: 'presencial', location: 'Brasília, DF', tags: ['Degustação Técnica', 'Iniciantes Welcome'], isNew: true },
   { id: 6, name: 'Espumantes & Cia', description: 'Confraria dedicada a champagnes, cavas e espumantes brasileiros.', members: 64, activity: 'inativa', visibility: 'publica', modality: 'hibrida', tags: ['Espumantes', 'Bolha'] },
 ];
 
