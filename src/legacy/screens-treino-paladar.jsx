@@ -315,7 +315,8 @@ function TreinoPaladarHome({ go }) {
     const st = readTreino();
     st.onboarded = true;
     if (answers) {
-      if (answers.level) st.level = answers.level;
+      // nível vem do onboarding do app (não repetimos a pergunta aqui)
+      st.level = (typeof window !== 'undefined' && window.__tcUserLevel) || st.level || null;
       if (answers.objetivo) st.objetivo = answers.objetivo;
       if (answers.goal) st.goal = answers.goal;
       if (answers.streakGoal) st.streakGoal = answers.streakGoal;
@@ -551,12 +552,7 @@ function TreinoSheet({ kind, s, onClose, onChange, go }) {
 // ════════════════════════════════════════════════════════════
 const ONB = [
   { kind: 'intro', title: 'Oi! Eu sou o Tchin 🍷', body: 'Vou te ensinar a entender vinho em 2 minutinhos por dia — sem decoreba e sem frescura.' },
-  { kind: 'say', body: 'Só umas perguntinhas rápidas e a gente já começa a sua primeira lição!' },
-  { kind: 'choose', key: 'level', q: 'Como você se vê com vinho hoje?', opts: [
-    { id: 'curioso', icon: 'school', label: 'Tô começando agora', sub: 'Bebo de vez em quando, sei pouco' },
-    { id: 'apreciador', icon: 'auto_stories', label: 'Curto e quero saber mais', sub: 'Tenho meus favoritos' },
-    { id: 'avancado', icon: 'workspace_premium', label: 'Já manjo bastante', sub: 'Quero afinar o paladar' },
-  ] },
+  { kind: 'say', body: 'Só duas perguntinhas rápidas e a gente já começa a sua primeira lição!' },
   { kind: 'choose', key: 'objetivo', q: 'Por que você quer treinar o paladar?', opts: [
     { id: 'comprar', icon: 'shopping_basket', label: 'Escolher sem errar na loja', sub: '' },
     { id: 'vergonha', icon: 'sentiment_satisfied', label: 'Não passar vergonha', sub: 'Entender o que falam' },
