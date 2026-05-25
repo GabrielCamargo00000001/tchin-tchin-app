@@ -395,6 +395,21 @@ function TreinoPaladarHome({ go }) {
           </div>
         </div>
 
+        {/* Aprenda bebendo — porta de entrada contextual */}
+        <div style={{ background: T.c.n0, border: `1px solid ${T.c.n200}`, borderRadius: T.r.lg, padding: 14, marginBottom: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+            <Icon name="wine_bar" size={22} color={T.c.p700} fill={1}/>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontFamily: T.font, fontSize: 15, fontWeight: 800, color: T.c.n950 }}>Aprenda bebendo</div>
+              <div style={{ ...T.t.caption, color: T.c.n600 }}>Tá com uma taça na mão? Aprenda na hora.</div>
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button onClick={() => go('scanner')} style={aprBtn}><Icon name="qr_code_scanner" size={18} color={T.c.p700}/> Escanear</button>
+            <button onClick={() => go('treino-aprender')} style={aprBtn}><Icon name="search" size={18} color={T.c.p700}/> Escolher tema</button>
+          </div>
+        </div>
+
         {/* Liga */}
         <button onClick={() => go('treino-liga')} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12, padding: 12, marginBottom: 18, background: 'linear-gradient(135deg, #4A1F24, #722F37)', border: 'none', borderRadius: T.r.lg, cursor: 'pointer', textAlign: 'left' }}>
           <Icon name="emoji_events" size={26} color={T.c.a500} fill={1}/>
@@ -483,6 +498,7 @@ function TreinoPaladarHome({ go }) {
   );
 }
 const btnRound = { width: 40, height: 40, borderRadius: '50%', border: 'none', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' };
+const aprBtn = { flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '12px', borderRadius: T.r.md, border: `1px solid ${T.c.p300 || T.c.n200}`, background: T.c.p50, cursor: 'pointer', fontFamily: T.font, fontSize: 13, fontWeight: 700, color: T.c.p700 };
 
 // ─── Nó da trilha (circular 3D, ícone por tipo) ────────────
 function PathNode({ lesson, state, onStart, onLockedTap, doneToday }) {
@@ -1025,6 +1041,66 @@ function TreinoLigaScreen({ go }) {
   );
 }
 
+// ════════════════════════════════════════════════════════════
+//  APRENDA BEBENDO — entrada contextual (scan / tema) → mesmo motor
+// ════════════════════════════════════════════════════════════
+const APRENDER_TOPICS = [
+  { id: 'licao-01-tanino', label: 'Tanino', sub: 'a boca que seca', icon: 'water_drop', kw: 'tanino amarga seca boca adstringente' },
+  { id: 'licao-02-corpo', label: 'Corpo', sub: 'leve ou encorpado', icon: 'fitness_center', kw: 'corpo leve encorpado peso textura' },
+  { id: 'licao-03-docura', label: 'Seco x suave', sub: 'doçura', icon: 'icecream', kw: 'seco suave doce acucar docura' },
+  { id: 'licao-04-acidez', label: 'Acidez', sub: 'frescor', icon: 'water_drop', kw: 'acidez fresco salivar comida' },
+  { id: 'licao-05-cabernet', label: 'Cabernet', sub: 'a uva clássica', icon: 'eco', kw: 'cabernet sauvignon tinto uva' },
+  { id: 'licao-06-malbec', label: 'Malbec', sub: 'churrasco', icon: 'eco', kw: 'malbec argentina churrasco uva' },
+  { id: 'licao-07-chardonnay', label: 'Chardonnay', sub: 'branco camaleão', icon: 'eco', kw: 'chardonnay branco madeira uva' },
+  { id: 'licao-08-rotulo', label: 'Ler o rótulo', sub: 'o que importa', icon: 'sell', kw: 'rotulo label safra regiao' },
+  { id: 'licao-09-preco', label: 'Preço justo', sub: 'vale a pena?', icon: 'payments', kw: 'preco caro barato valor' },
+];
+function TreinoAprenderScreen({ go }) {
+  const [q, setQ] = React.useState('');
+  const list = APRENDER_TOPICS.filter(t => { const n = norm(q); return !n || norm(`${t.label} ${t.sub} ${t.kw}`).includes(n); });
+  return (
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: T.c.n50, overflow: 'hidden', minHeight: 0 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 8px', background: T.c.n0, borderBottom: `1px solid ${T.c.n100}`, flexShrink: 0 }}>
+        <button onClick={() => go('back')} aria-label="Voltar" style={btnRound}><Icon name="arrow_back" size={22} color={T.c.n950}/></button>
+        <div style={{ ...T.t.h3, color: T.c.n950, flex: 1 }}>Aprenda bebendo</div>
+      </div>
+      <div style={{ flex: 1, overflow: 'auto', minHeight: 0, padding: '16px 16px 32px' }}>
+        <div style={{ ...T.t.body, color: T.c.n700, marginBottom: 14 }}>Tá com uma taça na mão? Aprenda sobre o que está bebendo — ou escolha um tema.</div>
+
+        <button onClick={() => go('scanner')} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 14, padding: 16, marginBottom: 18, background: 'linear-gradient(135deg, #4A1F24, #722F37)', border: 'none', borderRadius: T.r.lg, cursor: 'pointer', textAlign: 'left' }}>
+          <div style={{ width: 48, height: 48, flexShrink: 0, borderRadius: T.r.md, background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon name="qr_code_scanner" size={26} color="#fff"/></div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontFamily: T.font, fontSize: 15, fontWeight: 800, color: '#fff' }}>Escanear a garrafa</div>
+            <div style={{ fontFamily: T.font, fontSize: 12, color: 'rgba(255,255,255,0.85)' }}>Eu reconheço o vinho e te explico na hora.</div>
+          </div>
+          <Icon name="chevron_right" size={20} color="rgba(255,255,255,0.8)"/>
+        </button>
+
+        <div style={{ ...T.t.overline, color: T.c.n600, marginBottom: 10 }}>OU O QUE VOCÊ QUER APRENDER?</div>
+        <div style={{ height: 44, padding: '0 12px', borderRadius: T.r.md, background: T.c.n0, border: `1px solid ${T.c.n300}`, display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+          <Icon name="search" size={18} color={T.c.n600}/>
+          <input value={q} onChange={e => setQ(e.target.value)} placeholder="Ex.: tanino, seco, harmonizar…" style={{ flex: 1, border: 'none', outline: 'none', fontFamily: T.font, fontSize: 14, background: 'transparent', color: T.c.n950 }}/>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          {list.map(t => (
+            <button key={t.id} onClick={() => go('treino-licao', { lessonId: t.id })} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: 14, textAlign: 'left', background: T.c.n0, border: `1px solid ${T.c.n200}`, borderRadius: T.r.md, cursor: 'pointer', fontFamily: T.font }}>
+              <Icon name={t.icon} size={22} color={T.c.p700} fill={1}/>
+              <div style={{ flex: 1, minWidth: 0 }}><div style={{ fontSize: 14, fontWeight: 700, color: T.c.n950 }}>{t.label}</div><div style={{ ...T.t.caption, color: T.c.n600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{t.sub}</div></div>
+            </button>
+          ))}
+          {list.length === 0 && <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: 24, ...T.t.body, color: T.c.n600 }}>Não achei esse tema. Que tal escanear a garrafa? 🍷</div>}
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 18, padding: 12, background: T.c.a100, borderRadius: T.r.md }}>
+          <Icon name="local_fire_department" size={18} color="#E8772E" fill={1}/>
+          <div style={{ ...T.t.caption, color: T.c.n800 }}>Tudo que você aprende aqui conta XP e mantém sua sequência.</div>
+        </div>
+        <button onClick={() => go('aprenda')} style={{ width: '100%', marginTop: 12, background: 'none', border: 'none', cursor: 'pointer', color: T.c.p700, fontFamily: T.font, fontSize: 13, fontWeight: 700, textAlign: 'center' }}>Quer ler a fundo? Abrir a biblioteca Aprenda →</button>
+      </div>
+    </div>
+  );
+}
+
 // ─── helpers visuais ───────────────────────────────────────
 function CountUp({ to, prefix = '' }) {
   const [n, setN] = React.useState(0);
@@ -1052,7 +1128,7 @@ const TREINO_NUDGES = [
 ];
 
 if (typeof window !== 'undefined') {
-  Object.assign(window, { TreinoPaladarHome, TreinoLicaoScreen, TreinoLigaScreen, TREINO_LESSONS: LESSONS, TREINO_UNITS: UNITS, TREINO_BADGES, TREINO_NUDGES });
+  Object.assign(window, { TreinoPaladarHome, TreinoLicaoScreen, TreinoLigaScreen, TreinoAprenderScreen, TREINO_LESSONS: LESSONS, TREINO_UNITS: UNITS, TREINO_BADGES, TREINO_NUDGES });
 }
 
-export { TreinoPaladarHome, TreinoLicaoScreen, TreinoLigaScreen, TREINO_BADGES, TREINO_NUDGES, LESSONS, UNITS, readTreino };
+export { TreinoPaladarHome, TreinoLicaoScreen, TreinoLigaScreen, TreinoAprenderScreen, TREINO_BADGES, TREINO_NUDGES, LESSONS, UNITS, readTreino };
