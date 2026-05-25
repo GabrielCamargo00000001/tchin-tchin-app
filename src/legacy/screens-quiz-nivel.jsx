@@ -205,22 +205,30 @@ function NivelCard({ option, pressed, dimmed, onClick }) {
 const UVAS_OPTIONS = [
   { id: 'cabernet_sauvignon', label: 'Cabernet Sauvignon', tint: '#4A1F24' },
   { id: 'merlot',             label: 'Merlot',             tint: '#5C2A30' },
-  { id: 'chardonnay',         label: 'Chardonnay',         tint: '#C8A85A' },
-  { id: 'pinot_noir',         label: 'Pinot Noir',         tint: '#722F37' },
   { id: 'malbec',             label: 'Malbec',             tint: '#3F1A1E' },
+  { id: 'pinot_noir',         label: 'Pinot Noir',         tint: '#722F37' },
+  { id: 'syrah',              label: 'Syrah',              tint: '#3A151A' },
+  { id: 'tannat',             label: 'Tannat',             tint: '#2E1014' },
+  { id: 'chardonnay',         label: 'Chardonnay',         tint: '#C8A85A' },
   { id: 'sauvignon_blanc',    label: 'Sauvignon Blanc',    tint: '#B8C68A' },
 ];
+const ESTILOS_OPTIONS = [
+  { id: 'rose',      label: 'Rosé',      tint: '#E8A0A8' },
+  { id: 'espumante', label: 'Espumante', tint: '#D9C07A' },
+];
 const REGIOES_OPTIONS = [
-  { id: 'vale_vinhedos',  label: 'Vale dos Vinhedos', flag: '🇧🇷', tint: '#2E5734' },
-  { id: 'bordeaux',       label: 'Bordeaux',          flag: '🇫🇷', tint: '#4A1F24' },
-  { id: 'toscana',        label: 'Toscana',           flag: '🇮🇹', tint: '#8A4A2A' },
-  { id: 'mendoza',        label: 'Mendoza',           flag: '🇦🇷', tint: '#6B3540' },
-  { id: 'douro',          label: 'Douro',             flag: '🇵🇹', tint: '#5B2730' },
-  { id: 'ribera_duero',   label: 'Ribera del Duero',  flag: '🇪🇸', tint: '#6E2B2F' },
+  { id: 'vale_vinhedos',      label: 'Vale dos Vinhedos',     flag: '🇧🇷', tint: '#2E5734' },
+  { id: 'serra_gaucha',       label: 'Serra Gaúcha',          flag: '🇧🇷', tint: '#356B3E' },
+  { id: 'vale_sao_francisco', label: 'Vale do São Francisco', flag: '🇧🇷', tint: '#8A6A2A' },
+  { id: 'mendoza',            label: 'Mendoza',               flag: '🇦🇷', tint: '#6B3540' },
+  { id: 'douro',              label: 'Douro',                 flag: '🇵🇹', tint: '#5B2730' },
+  { id: 'bordeaux',           label: 'Bordeaux',              flag: '🇫🇷', tint: '#4A1F24' },
+  { id: 'toscana',            label: 'Toscana',               flag: '🇮🇹', tint: '#8A4A2A' },
+  { id: 'rioja',              label: 'Rioja',                 flag: '🇪🇸', tint: '#6E2B2F' },
 ];
 const MIN_INTERESSES = 3;
 const MAX_INTERESSES = 8;
-const TOTAL_OPTIONS  = UVAS_OPTIONS.length + REGIOES_OPTIONS.length; // 12
+const TOTAL_OPTIONS  = UVAS_OPTIONS.length + ESTILOS_OPTIONS.length + REGIOES_OPTIONS.length; // 18
 
 function InteressesScreen({ go, params = {}, onInterestsSelected, initialSelected }) {
   const [selected, setSelected] = React.useState(initialSelected || []);
@@ -316,6 +324,18 @@ function InteressesScreen({ go, params = {}, onInterestsSelected, initialSelecte
             shake={shake}
             onToggle={toggle}
             renderArt={(item) => <GrapeArt tint={item.tint}/>}
+          />
+
+          <div style={{ height: 16 }}/>
+
+          {/* ESTILOS */}
+          <SectionLabel>ESTILOS</SectionLabel>
+          <InteresseGrid
+            items={ESTILOS_OPTIONS}
+            selected={selected}
+            shake={shake}
+            onToggle={toggle}
+            renderArt={(item) => <StyleArt tint={item.tint} sparkle={item.id === 'espumante'}/>}
           />
 
           <div style={{ height: 16 }}/>
@@ -500,7 +520,25 @@ function RegionArt({ tint = '#4A1F24', flag = '🇧🇷' }) {
   );
 }
 
-Object.assign(window, { QuizNivelScreen, NIVEL_OPTIONS, InteressesScreen, UVAS_OPTIONS, REGIOES_OPTIONS });
+// Stylized wine-glass SVG for styles (Rosé / Espumante) — abstract, on-brand
+function StyleArt({ tint = '#E8A0A8', sparkle = false }) {
+  return (
+    <svg width="100%" height="100%" viewBox="0 0 96 64" preserveAspectRatio="xMidYMid slice"
+      style={{ display: 'block', background: `linear-gradient(135deg, ${T.c.n100}, ${T.c.n50})` }}>
+      {/* Bowl */}
+      <path d="M37 14 L59 14 Q58 31 48 39 Q38 31 37 14 Z" fill={tint} opacity="0.9"/>
+      {/* Stem + base */}
+      <path d="M48 39 L48 51" stroke="#6B6B6B" strokeWidth="1.6" strokeLinecap="round"/>
+      <path d="M40 53 L56 53" stroke="#6B6B6B" strokeWidth="1.6" strokeLinecap="round"/>
+      {/* Bubbles for espumante */}
+      {sparkle && [[46, 30], [50, 26], [47, 22], [51, 18]].map(([cx, cy], i) => (
+        <circle key={i} cx={cx} cy={cy} r="1.3" fill="rgba(255,255,255,0.85)"/>
+      ))}
+    </svg>
+  );
+}
+
+Object.assign(window, { QuizNivelScreen, NIVEL_OPTIONS, InteressesScreen, UVAS_OPTIONS, ESTILOS_OPTIONS, REGIOES_OPTIONS });
 
 
-export { GrapeArt, InteresseCard, InteresseGrid, InteressesScreen, MAX_INTERESSES, MIN_INTERESSES, NIVEL_OPTIONS, NivelCard, QuizNivelScreen, REGIOES_OPTIONS, RegionArt, SectionLabel, TOTAL_OPTIONS, UVAS_OPTIONS };
+export { ESTILOS_OPTIONS, GrapeArt, InteresseCard, InteresseGrid, InteressesScreen, MAX_INTERESSES, MIN_INTERESSES, NIVEL_OPTIONS, NivelCard, QuizNivelScreen, REGIOES_OPTIONS, RegionArt, SectionLabel, StyleArt, TOTAL_OPTIONS, UVAS_OPTIONS };

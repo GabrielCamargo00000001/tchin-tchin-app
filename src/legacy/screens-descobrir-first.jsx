@@ -59,18 +59,22 @@ const DEFAULT_REGIOES = [
 const UVAS_BY_ID = {
   cabernet_sauvignon: { label: 'Cabernet Sauvignon', tint: '#4A1F24' },
   merlot:             { label: 'Merlot',             tint: '#5C2A30' },
-  chardonnay:         { label: 'Chardonnay',         tint: '#9A7E32' },
-  pinot_noir:         { label: 'Pinot Noir',         tint: '#722F37' },
   malbec:             { label: 'Malbec',             tint: '#3F1A1E' },
+  pinot_noir:         { label: 'Pinot Noir',         tint: '#722F37' },
+  syrah:              { label: 'Syrah',              tint: '#3A151A' },
+  tannat:             { label: 'Tannat',             tint: '#2E1014' },
+  chardonnay:         { label: 'Chardonnay',         tint: '#9A7E32' },
   sauvignon_blanc:    { label: 'Sauvignon Blanc',    tint: '#7A8A4A' },
 };
 const REGIOES_BY_ID = {
-  vale_vinhedos: { label: 'Vale dos Vinhedos', accent: '#2E5734' },
-  bordeaux:      { label: 'Bordeaux',          accent: '#4A1F24' },
-  toscana:       { label: 'Toscana',           accent: '#8A4A2A' },
-  mendoza:       { label: 'Mendoza',           accent: '#6B3540' },
-  douro:         { label: 'Douro',             accent: '#5B2730' },
-  ribera_duero:  { label: 'Ribera del Duero',  accent: '#6E2B2F' },
+  vale_vinhedos:      { label: 'Vale dos Vinhedos',     accent: '#2E5734' },
+  serra_gaucha:       { label: 'Serra Gaúcha',          accent: '#356B3E' },
+  vale_sao_francisco: { label: 'Vale do São Francisco', accent: '#8A6A2A' },
+  mendoza:            { label: 'Mendoza',               accent: '#6B3540' },
+  douro:              { label: 'Douro',                 accent: '#5B2730' },
+  bordeaux:           { label: 'Bordeaux',              accent: '#4A1F24' },
+  toscana:            { label: 'Toscana',               accent: '#8A4A2A' },
+  rioja:              { label: 'Rioja',                 accent: '#6E2B2F' },
 };
 
 function track(event, params) {
