@@ -23,6 +23,9 @@
 | 🟡 | **Parcial** — começada, incompleta |
 | ⛔ | **Só especificada** — está no doc, **sem tela** (ver Apêndice A — Backlog) |
 
+### 0.4 Screenshots (telas reais)
+Cada módulo embute o **print real** de cada tela, em `docs/spec/shots/<rota>.png` (141 telas capturadas). As imagens são geradas automaticamente por **`scripts/capture-shots.mjs`** (Playwright + um modo de captura no app: `?screen=<rota>&tab=<aba>`). **Para regenerar** após mudanças de UI: subir o dev server e rodar `node scripts/capture-shots.mjs` (precisa de `npx playwright install chromium` uma vez).
+
 ### 0.3 Template de cada tela (no módulo)
 Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entradas (de onde se chega) · Saídas (para onde vai) · Layout & componentes · Estados (default/vazio/loading/erro/variantes) · Interações & micro-comportamentos · Copy-chave · Dados (entrada/saída, mock×real) · Regras & critérios de aceite · Analytics · Sad paths/edge cases · ⚠️ Divergências · Status**.
 

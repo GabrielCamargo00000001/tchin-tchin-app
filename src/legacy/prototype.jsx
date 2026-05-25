@@ -101,9 +101,25 @@ function NavBar() {
 }
 
 // ─── App orchestrator ─────────────────────────────────────
+// Modo captura/dev: ?screen=<rota>&tab=<aba> abre direto numa tela (p/ screenshots da spec).
+function shotParams(screen) {
+  const W = (typeof MOCK_WINES !== 'undefined' && MOCK_WINES) || [];
+  const E = (typeof MOCK_EVENTS !== 'undefined' && MOCK_EVENTS) || [];
+  const P = (typeof MOCK_POSTS !== 'undefined' && MOCK_POSTS) || [];
+  return ({
+    'wine': { wine: W[0] }, 'comparar-vinhos': { wines: [W[0], W[1]] },
+    'event-detalhe': { event: E[0] }, 'evento-editar': { event: E[0] }, 'evento-presenca': { event: E[0] }, 'evento-pos-avaliar': { event: E[0] }, 'evento-pos-ata': { event: E[0] },
+    'post-detail': { post: P[0] }, 'comentarios': { post: P[0] },
+    'treino-licao': { lessonId: 'licao-01-tanino' },
+    'chat-conversa': { chat: { id: 'c1', name: 'Confraria do Vinho', type: 'group', members: 8 } },
+    'harmoniza-resultados': { prato: { nome: 'Picanha' } },
+  })[screen] || {};
+}
 function TchinApp({ initialScreen = 'onboarding' }) {
-  const [stack, setStack] = React.useState([{ screen: initialScreen, params: {} }]);
-  const [tab, setTab] = React.useState('descobrir');
+  const __q = (typeof window !== 'undefined') ? new URLSearchParams(window.location.search) : new URLSearchParams();
+  const __ss = __q.get('screen'); const __st = __q.get('tab');
+  const [stack, setStack] = React.useState([{ screen: __ss || initialScreen, params: __ss ? shotParams(__ss) : {} }]);
+  const [tab, setTab] = React.useState(__st || 'descobrir');
   const [toast, setToast] = React.useState(null);
   const [profileOpen, setProfileOpen] = React.useState(false);
   // Tutorial overlay state — active tutorial id or null

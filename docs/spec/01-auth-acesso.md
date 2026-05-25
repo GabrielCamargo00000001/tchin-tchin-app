@@ -15,6 +15,9 @@
 ---
 
 ## 01.1 `onboarding` — Slides pré-auth ⚠️
+
+<img src="shots/onboarding.png" width="240"/>
+
 **Propósito:** 3 slides editoriais antes do welcome, comunicando a tese do produto (reduzir drop pré-auth). Spec dedicada: **BUG-02-A**.
 **Entradas:** 1ª abertura do app (cold start, antes de logar). **Saídas:** → `welcome` (ao concluir/pular).
 **Layout & componentes:** carrossel horizontal de 3 slides; ilustração + título + subtítulo; indicador de progresso (3 dots); botão "Pular" (some no último); CTA "Avançar"/"Vamos começar".
@@ -29,6 +32,9 @@
 ---
 
 ## 01.2 `welcome` — Boas-vindas / porta de entrada ✅
+
+<img src="shots/welcome.png" width="240"/>
+
 **Propósito:** hub de entrada — criar conta, Google/social, ou login.
 **Entradas:** fim dos slides; logout; deep link. **Saídas:** `login-social` (Google), `cadastro`, `login`, `termos`/`politica-privacidade` (rodapé).
 **Layout & componentes (`WelcomeScreen`):**
@@ -47,6 +53,9 @@
 ---
 
 ## 01.3 `cadastro` — Criar conta (wizard 3 passos) ⚠️
+
+<img src="shots/cadastro.png" width="240"/>
+
 **Propósito:** criar conta por e-mail. **US-001** (+ US-004 termo embutido).
 **Entradas:** `welcome` → "Criar conta". **Saídas:** sucesso → `quiz-nivel` (Módulo 02); back → `welcome`; "já existe" → `login`.
 **Layout & componentes (`CadastroScreen`):** header (back + "Criar conta" + "passo N de 3") + barra de progresso de 3 segmentos. **3 passos:**
@@ -67,6 +76,9 @@
 ---
 
 ## 01.4 `login` — Entrar ✅
+
+<img src="shots/login.png" width="240"/>
+
 **Propósito:** autenticar usuário existente. **US-003.**
 **Entradas:** `welcome` → "Entrar"; link de "criar conta" cruzado. **Saídas:** sucesso → `home`; "Esqueceu a senha?" → `recuperar-email`; "Criar conta" → `cadastro`.
 **Layout (`LoginScreen`):** header back + logo+nome; título **"Que bom te ver de novo"** + sub "Entra com o e-mail que você usou no cadastro."; `Input` e-mail (erro inline "E-mail inválido…") + `Input` senha (olho); CTA "Entrar" (loading "Entrando…"); link "Esqueceu sua senha?"; divisor OU; bloco "Ainda não faz parte? Criar conta"; versão no rodapé.
@@ -79,6 +91,9 @@
 ---
 
 ## 01.5 `login-social` · `magic-link-enviado` · `verif-telefone-otp` · `verif-concluida` ✅
+
+<img src="shots/login-social.png" width="200"/> <img src="shots/magic-link-enviado.png" width="200"/> <img src="shots/verif-telefone-otp.png" width="200"/> <img src="shots/verif-concluida.png" width="200"/>
+
 **Propósito:** entrada por SSO/OAuth, magic link e verificação de telefone (OTP). **US-002.**
 - `login-social` — picker social (Google e outros); `mode` = 'cadastro'|'login'. Sucesso → `quiz-nivel` (novo) ou `home` (existente).
 - `magic-link-enviado` — confirmação de envio do link mágico ("confere seu e-mail").
@@ -92,6 +107,9 @@
 ---
 
 ## 01.6 Recuperação de senha — `recuperar-email` → `recuperar-enviado` → `recuperar-otp` → `recuperar-redefinir` → `recuperar-sucesso` ✅
+
+<img src="shots/recuperar-email.png" width="200"/> <img src="shots/recuperar-enviado.png" width="200"/> <img src="shots/recuperar-redefinir.png" width="200"/> <img src="shots/recuperar-sucesso.png" width="200"/>
+
 **Propósito:** redefinir senha esquecida.
 **Fluxo:** `login` → "Esqueceu a senha?" → **recuperar-email** (informa e-mail) → **recuperar-enviado** ("confere a caixa de entrada"; link expira 30 min; "não chegou? spam/tentar em 60s") → [`recuperar-otp` se fluxo por código] → **recuperar-redefinir** (nova senha + confirmação, mesma regra de força) → **recuperar-sucesso** → "Voltar para login".
 > Há duas variantes no protótipo: `recuperar` (`RecuperarSenhaScreen`, 2 etapas resumidas) e o fluxo granular `recuperar-*`. **Recomendação:** padronizar no fluxo granular `recuperar-*`; aposentar o `recuperar` duplicado — **decisão**.
@@ -102,6 +120,9 @@
 ---
 
 ## 01.7 `termos` · `politica-privacidade` ✅
+
+<img src="shots/termos.png" width="200"/> <img src="shots/politica-privacidade.png" width="200"/>
+
 **Propósito:** texto legal completo. **US-004** (consumo responsável).
 **Entradas:** rodapé do `welcome`, passo 3 do `cadastro`, config/conta. **Saídas:** back.
 **Layout:** título + corpo rolável (scroll dentro do frame) + back.
