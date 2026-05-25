@@ -161,6 +161,7 @@ Doc: "Construção de Marca Global — Tchin Tchin" (Jan/2026).
 | _(em seguida)_ | UX: scroll dentro do frame, "Pular" na apresentação, confraria abre em Eventos, abas reordenadas |
 | _(em seguida)_ | **Feature "Treine seu Paladar"** (`screens-treino-paladar.jsx`) + entradas no drawer e na tela de intenção |
 | _(Fase 3)_ | **#13** tela de interesses: 8 uvas (+ Syrah, Tannat), estilos Rosé/Espumante, regiões Brasil-first (Serra Gaúcha, Vale do São Francisco, Rioja) + lookup do feed sincronizado · **#12** copy de login/cadastro no tom da marca |
+| _(Fase 3+)_ | **Scroll dentro do frame** corrigido em todas as telas (min-height:0 no root) · **#8** round-trip do "Tchin sugere" (quiz volta pro wizard) · **#9** multi-seleção de vinhos na Adega e no Marketplace (`multi-select-wines.jsx`) |
 
 ### Mapa dos pedidos do cliente (numeração interna)
 - #1 Adega: surfaçar tela de adicionar vinho ✅
@@ -171,7 +172,7 @@ Doc: "Construção de Marca Global — Tchin Tchin" (Jan/2026).
 - #6 Template de evento (nome IA + capa) ✅
 - #7 Adicionar vinhos ao evento: filtro de preço + busca + scanner ✅
 - #8 "Escolher vs Tchin sugere" (auto → Meu Paladar → sugestão na faixa) ✅
-- #9 Seleção múltipla de vinhos ✅ (evento; adega/mkt = follow-up)
+- #9 Seleção múltipla de vinhos ✅ (evento, adega e marketplace)
 - #10 Distribuição de muitos vinhos na confirmação ✅
 - #11 Confrarias: buscar + abas Confrarias\|Eventos ✅
 - #12 Texto de login/cadastro pela marca ✅ **(Fase 3)**
@@ -185,9 +186,9 @@ Doc: "Construção de Marca Global — Tchin Tchin" (Jan/2026).
   Uvas: Cabernet, Merlot, Malbec, Pinot Noir, Syrah, Tannat, Chardonnay, Sauvignon
   Blanc + estilos Rosé/Espumante; regiões Brasil-first: Vale dos Vinhedos, Serra
   Gaúcha, Vale do São Francisco, Mendoza, Douro, Bordeaux, Toscana, Rioja.
-- **#9** multi-seleção também na **adega** e no **marketplace** (só evento feito).
-- **#8** round-trip do quiz de volta pro wizard (hoje o caminho auto manda pro
-  Meu Paladar mas não retorna sozinho ao wizard).
+- ~~**#8** round-trip do quiz → wizard~~ ✅ **concluído** (event-wizard-3 ↔ quiz; retoma na aba "Tchin sugere").
+- ~~**#9** multi-seleção na adega/marketplace~~ ✅ **concluído** (modal `multi-select-wines.jsx`; persistência é mock — só toast de confirmação).
+- ~~**Scroll dentro do frame**~~ ✅ **corrigido** (regra global `.tc-screen-host > * { min-height: 0 }`).
 - **Tutorial pós-criação:** decidir A (modal) vs B (spotlight funcional).
 - **Bundle:** ~1,2 MB num chunk só — considerar code-splitting por rota.
 - **Tipagem:** `src/legacy` é JS (`allowJs`, `@ts-nocheck`); telas não tipadas.
