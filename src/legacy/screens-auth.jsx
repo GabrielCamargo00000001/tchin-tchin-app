@@ -60,7 +60,7 @@ function WelcomeScreen({ go }) {
             maxWidth: 320, color: T.c.n0,
             textShadow: '0 2px 12px rgba(0,0,0,0.25)',
           }}>
-            Seu companheiro<br/>na busca pelo<br/>vinho perfeito
+            Onde cada vinho<br/>vira uma boa<br/>experiência
           </div>
         </div>
 
@@ -103,7 +103,7 @@ function WelcomeScreen({ go }) {
             fontSize: 14, color: 'rgba(255,255,255,0.9)', fontFamily: T.font,
             marginTop: 4,
           }}>
-            <span>Já possui uma conta? <strong style={{ fontWeight: 700, textDecoration: 'underline', textUnderlineOffset: 3, color: T.c.n0 }}>Entrar</strong></span>
+            <span>Já é do Tchin? <strong style={{ fontWeight: 700, textDecoration: 'underline', textUnderlineOffset: 3, color: T.c.n0 }}>Entrar</strong></span>
           </button>
         </div>
 
@@ -326,8 +326,8 @@ function LoginScreen({ go }) {
 
       <div style={{ flex: 1, padding: '24px 24px 16px', display: 'flex', flexDirection: 'column', gap: 20, overflowY: 'auto' }}>
         <div>
-          <div style={{ fontSize: 24, lineHeight: 1.2, fontWeight: 700, color: T.c.n950, marginBottom: 4 }}>Entre com sua conta</div>
-          <div style={{ fontSize: 14, color: T.c.n600, lineHeight: 1.45 }}>Use o e-mail cadastrado no Tchin Tchin.</div>
+          <div style={{ fontSize: 24, lineHeight: 1.2, fontWeight: 700, color: T.c.n950, marginBottom: 4 }}>Que bom te ver de novo</div>
+          <div style={{ fontSize: 14, color: T.c.n600, lineHeight: 1.45 }}>Entra com o e-mail que você usou no cadastro.</div>
         </div>
 
         <Input
@@ -381,7 +381,7 @@ function LoginScreen({ go }) {
         <div style={{
           display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, padding: '4px 0',
         }}>
-          <div style={{ fontSize: 14, color: T.c.n600 }}>Ainda não possui cadastro?</div>
+          <div style={{ fontSize: 14, color: T.c.n600 }}>Ainda não faz parte?</div>
           <button onClick={() => go('cadastro')} style={{
             minHeight: 48, padding: '8px 20px',
             background: 'none', border: 'none', cursor: 'pointer',
@@ -440,11 +440,11 @@ function CadastroScreen({ go }) {
     setTimeout(() => { setLoading(false); go('quiz-nivel'); }, 800);
   };
 
-  const titles = ['Vamos começar pelo básico', 'Quem é você?', 'Última etapa: confirme os termos'];
+  const titles = ['Bora começar pelo básico', 'Quem é você?', 'Quase lá! Só confirmar os termos'];
   const subs = [
     'Use um e-mail que você acessa com frequência.',
     'Seu nome aparece nas confrarias. A idade fica privada.',
-    'Leia, concorde e a gente segue.',
+    'Dá uma lida, concorda e a gente segue junto.',
   ];
 
   return (
