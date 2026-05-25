@@ -80,7 +80,7 @@ function PaladarRadar({ paladar, wine, size = 280, animate = true, showLabels = 
 }
 
 // ─── Quiz Paladar ──────────────────────────────────────────
-function QuizScreen({ go }) {
+function QuizScreen({ go, params = {} }) {
   const [step, setStep] = React.useState(0);
   const [answers, setAnswers] = React.useState({});
   const [pending, setPending] = React.useState(null);
@@ -99,7 +99,10 @@ function QuizScreen({ go }) {
     setAnswers(merged);
     setPending(null);
     if (step < total - 1) setStep(step + 1);
-    else go('quiz-result', { paladar: merged });
+    else {
+      try { window.__tcUserPaladar = merged; } catch (e) {}
+      go('quiz-result', { paladar: merged, returnTo: params.returnTo });
+    }
   };
 
   return (
@@ -277,11 +280,14 @@ function QuizResultScreen({ go, params }) {
         paddingBottom: 'max(24px, env(safe-area-inset-bottom))',
       }}>
         <Button variant="primary" size="lg" fullWidth
-          onClick={() => go('tela-intencao', { paladar })}
+          onClick={() => {
+            try { window.__tcUserPaladar = paladar; } catch (e) {}
+            if (params?.returnTo) go(params.returnTo); else go('tela-intencao', { paladar });
+          }}
           trailing={<Icon name="arrow_forward" size={18}/>}>
-          Continuar
+          {params?.returnTo ? 'Voltar e ver sugestões' : 'Continuar'}
         </Button>
-        <Button variant="ghost" size="md" fullWidth onClick={() => go('quiz')}>
+        <Button variant="ghost" size="md" fullWidth onClick={() => go('quiz', { returnTo: params?.returnTo })}>
           Refazer quiz
         </Button>
       </div>

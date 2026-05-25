@@ -306,7 +306,7 @@ function TchinApp({ initialScreen = 'onboarding' }) {
       case 'login':         return <LoginScreen go={go}/>;
       case 'cadastro':      return <CadastroScreen go={go}/>;
       case 'recuperar':     return <RecuperarSenhaScreen go={go}/>;
-      case 'quiz':          return <QuizScreen go={go}/>;
+      case 'quiz':          return <QuizScreen go={go} params={current.params}/>;
       case 'quiz-nivel':    return <QuizNivelScreen go={go}/>;
       case 'quiz-interesses': return <InteressesScreen go={go} params={current.params}/>;
       case 'quiz-result':   return <QuizResultScreen go={go} params={current.params}/>;

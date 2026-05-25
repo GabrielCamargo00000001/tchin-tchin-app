@@ -1006,7 +1006,12 @@ function WizardCriarEventoP3Screen({ go }) {
       eventType={eventType}
       initialData={draft.wines}
       userPaladar={userPaladar}
-      onOpenPaladar={() => go('quiz')}
+      onOpenPaladar={() => {
+        // #8 — retoma na aba "Tchin sugere" ao voltar do quiz, e volta pro wizard.
+        const d = readEventDraft() || {};
+        writeEventDraft({ ...d, wines: { ...(d.wines || {}), mode: 'auto' } });
+        go('quiz', { returnTo: 'event-wizard-3' });
+      }}
       onContinue={onContinue}
       onBack={onBack}
     />
