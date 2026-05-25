@@ -261,6 +261,38 @@ function TchinDuo({ size = 56 }) {
   );
 }
 
+// ─── Micro-vídeo-aula (placeholder — vídeo real entra com assets) ──
+function VideoAula({ onPlay }) {
+  return (
+    <button onClick={onPlay} aria-label="Assistir aula em vídeo" style={{ width: '100%', border: 'none', cursor: 'pointer', padding: 0, borderRadius: T.r.lg, overflow: 'hidden', marginBottom: 16, textAlign: 'left' }}>
+      <div style={{ position: 'relative', aspectRatio: '16 / 9', background: 'linear-gradient(135deg, #4A1F24, #722F37 60%, #8A4A2A)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ position: 'absolute', inset: 0, opacity: 0.18, backgroundImage: 'repeating-linear-gradient(135deg, rgba(255,255,255,0.5) 0 1px, transparent 1px 16px)' }}/>
+        <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(255,255,255,0.92)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 6px 18px rgba(0,0,0,0.35)' }}><Icon name="play_arrow" size={32} color={T.c.p700} fill={1}/></div>
+        <div style={{ position: 'absolute', left: 10, top: 10, display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 8px', borderRadius: T.r.full, background: 'rgba(0,0,0,0.45)', color: '#fff', fontFamily: T.font, fontSize: 11, fontWeight: 700 }}><Icon name="smart_display" size={14} color="#fff"/> AULA EM VÍDEO · 0:40</div>
+      </div>
+      <div style={{ padding: '10px 12px', background: T.c.n0, borderTop: `1px solid ${T.c.n100}` }}>
+        <div style={{ fontFamily: T.font, fontSize: 13, fontWeight: 700, color: T.c.n950 }}>Prefere ver? Veja em 40s (opcional)</div>
+        <div style={{ ...T.t.caption, color: T.c.n600 }}>O Tchin te explica em vídeo, sem pressa.</div>
+      </div>
+    </button>
+  );
+}
+function VideoModal({ title, onClose }) {
+  return (
+    <div onClick={onClose} style={{ position: 'absolute', inset: 0, zIndex: 80, background: 'rgba(0,0,0,0.88)', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 16, animation: 'tcFadeIn 200ms ease' }}>
+      <div onClick={(e) => e.stopPropagation()} style={{ borderRadius: T.r.lg, overflow: 'hidden', background: '#000' }}>
+        <div style={{ position: 'relative', aspectRatio: '16 / 9', background: 'linear-gradient(135deg, #4A1F24, #722F37 60%, #8A4A2A)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <TchinDuo size={72}/>
+          <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 4, background: 'rgba(255,255,255,0.25)' }}><div style={{ height: '100%', background: T.c.a500, animation: 'tcVideoBar 8s linear forwards' }}/></div>
+        </div>
+        <div style={{ padding: '12px 14px', background: '#111', display: 'flex', alignItems: 'center', gap: 10 }}><Icon name="pause" size={20} color="#fff"/><div style={{ flex: 1, color: '#fff', fontFamily: T.font, fontSize: 13, fontWeight: 700 }}>{title}</div><span style={{ color: 'rgba(255,255,255,0.7)', fontFamily: T.font, fontSize: 12 }}>0:40</span></div>
+      </div>
+      <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.7)', fontFamily: T.font, fontSize: 12, marginTop: 12 }}>Vídeo de demonstração — o conteúdo real entra aqui.</div>
+      <button onClick={onClose} style={{ marginTop: 14, alignSelf: 'center', background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff', fontFamily: T.font, fontSize: 14, fontWeight: 700, padding: '10px 22px', borderRadius: T.r.full, cursor: 'pointer' }}>Fechar</button>
+    </div>
+  );
+}
+
 // ─── HUD ───────────────────────────────────────────────────
 function HudStat({ icon, color, value, onClick, label }) {
   return (
@@ -681,6 +713,7 @@ function TreinoLicaoScreen({ go, params }) {
   const [mistakes, setMistakes] = React.useState(0);
   const [answered, setAnswered] = React.useState({});
   const [done, setDone] = React.useState(false);
+  const [video, setVideo] = React.useState(false);
   const startRef = React.useRef(Date.now());
   React.useEffect(() => { fbEvent('treino_lesson_started', { lesson_id: lesson.id }); }, []); // eslint-disable-line
 
@@ -705,11 +738,11 @@ function TreinoLicaoScreen({ go, params }) {
 
       <div key={idx} style={{ flex: 1, overflow: 'auto', minHeight: 0, padding: '8px 24px 16px', display: 'flex', flexDirection: 'column', animation: 'tcPushIn 260ms ease-out' }}>
         {step.type === 'concept' && (
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 18 }}><TchinDuo size={72}/></div>
-            <div style={{ fontFamily: '"Fraunces", Georgia, serif', fontSize: 24, fontWeight: 600, color: T.c.n950, lineHeight: 1.2, marginBottom: 12, textWrap: 'balance' }}>{lesson.title}</div>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', paddingTop: 4 }}>
+            <VideoAula onPlay={() => setVideo(true)}/>
+            <div style={{ fontFamily: '"Fraunces", Georgia, serif', fontSize: 25, fontWeight: 600, color: T.c.n950, lineHeight: 1.2, marginBottom: 12, textWrap: 'balance' }}>{lesson.title}</div>
             <div style={{ ...T.t.bodyLg, color: T.c.n800, lineHeight: 1.55, marginBottom: 14 }}>{lesson.hook}</div>
-            <div style={{ background: T.c.a100, borderRadius: T.r.md, padding: 14, display: 'flex', gap: 10 }}><Icon name="lightbulb" size={22} color={T.c.a700} fill={1}/><div style={{ ...T.t.body, color: T.c.n900, lineHeight: 1.5 }}>{lesson.concept}</div></div>
+            <div style={{ background: T.c.a100, borderRadius: T.r.md, padding: 16, display: 'flex', gap: 10 }}><Icon name="lightbulb" size={22} color={T.c.a700} fill={1}/><div style={{ ...T.t.body, color: T.c.n900, lineHeight: 1.5 }}>{lesson.concept}</div></div>
           </div>
         )}
         {step.type === 'exercise' && <ExerciseView ex={step.ex} result={answered[step.exIdx]} onAnswer={onAnswer}/>}
@@ -722,7 +755,8 @@ function TreinoLicaoScreen({ go, params }) {
         )}
       </div>
 
-      <FeedbackCta step={step} answered={answered} canAdvance={canAdvance} isLast={idx === steps.length - 1} advance={advance}/>
+      <FeedbackCta key={idx} step={step} lesson={lesson} answered={answered} canAdvance={canAdvance} isLast={idx === steps.length - 1} advance={advance}/>
+      {video && <VideoModal title={lesson.title} onClose={() => setVideo(false)}/>}
     </div>
   );
 }
@@ -738,7 +772,7 @@ function ExerciseView({ ex, result, onAnswer }) {
   return null;
 }
 function exLabel(s) { return <div style={{ ...T.t.overline, color: T.c.p700, marginBottom: 10 }}>{s}</div>; }
-function exQ(s) { return <div style={{ fontFamily: '"Fraunces", Georgia, serif', fontSize: 20, fontWeight: 600, color: T.c.n950, lineHeight: 1.25, marginBottom: 18 }}>{s}</div>; }
+function exQ(s) { return <div style={{ fontFamily: '"Fraunces", Georgia, serif', fontSize: 23, fontWeight: 600, color: T.c.n950, lineHeight: 1.3, marginBottom: 22 }}>{s}</div>; }
 
 function ExMC({ ex, result, onAnswer }) {
   const choice = result ? result.choice : null;
@@ -750,7 +784,7 @@ function ExMC({ ex, result, onAnswer }) {
           if (result != null) { if (i === ex.correct) { bg = T.c.s100; border = T.c.s700; color = T.c.s700; icon = 'check_circle'; } else if (i === choice) { bg = '#F7EBE3'; border = '#A0522D'; color = '#A0522D'; icon = 'cancel'; } else color = T.c.n400; }
           const anim = result == null ? 'tcStaggerIn 300ms ease-out both' : i === ex.correct ? 'tcLikePop 500ms ease' : i === choice ? 'tcShake 400ms ease' : 'none';
           return (
-            <button key={i} disabled={result != null} onClick={() => { if (result == null) onAnswer(i === ex.correct, i); }} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 15, textAlign: 'left', background: bg, border: `1.5px solid ${border}`, borderRadius: T.r.md, cursor: result != null ? 'default' : 'pointer', fontFamily: T.font, fontSize: 15, fontWeight: 600, color, animation: anim, animationDelay: result == null ? `${i * 55}ms` : '0ms' }}>
+            <button key={i} disabled={result != null} onClick={() => { if (result == null) onAnswer(i === ex.correct, i); }} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 18, textAlign: 'left', background: bg, border: `1.5px solid ${border}`, borderRadius: T.r.md, cursor: result != null ? 'default' : 'pointer', fontFamily: T.font, fontSize: 16, fontWeight: 600, color, animation: anim, animationDelay: result == null ? `${i * 55}ms` : '0ms' }}>
               <span style={{ flex: 1 }}>{opt}</span>{icon && <Icon name={icon} size={20} color={color} fill={1}/>}
             </button>
           );
@@ -764,7 +798,7 @@ function ExTF({ ex, result, onAnswer }) {
   const opt = (val, label, icon) => {
     let bg = T.c.n0, border = T.c.n300, color = T.c.n950;
     if (result != null) { if (val === ex.answer) { bg = T.c.s100; border = T.c.s700; color = T.c.s700; } else if (val === choice) { bg = '#F7EBE3'; border = '#A0522D'; color = '#A0522D'; } else color = T.c.n400; }
-    return <button disabled={result != null} onClick={() => { if (result == null) onAnswer(val === ex.answer, val); }} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, padding: '20px 12px', background: bg, border: `1.5px solid ${border}`, borderRadius: T.r.lg, cursor: result != null ? 'default' : 'pointer', fontFamily: T.font, fontWeight: 700, fontSize: 15, color }}><Icon name={icon} size={30} color={color} fill={1}/>{label}</button>;
+    return <button disabled={result != null} onClick={() => { if (result == null) onAnswer(val === ex.answer, val); }} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, padding: '24px 12px', background: bg, border: `1.5px solid ${border}`, borderRadius: T.r.lg, cursor: result != null ? 'default' : 'pointer', fontFamily: T.font, fontWeight: 700, fontSize: 16, color }}><Icon name={icon} size={30} color={color} fill={1}/>{label}</button>;
   };
   return <div style={{ paddingTop: 6 }}>{exLabel('VERDADEIRO OU FALSO?')}{exQ(ex.statement)}<div style={{ display: 'flex', gap: 12 }}>{opt(true, 'Verdadeiro', 'thumb_up')}{opt(false, 'Falso', 'thumb_down')}</div></div>;
 }
@@ -801,7 +835,7 @@ function ExFill({ ex, result, onAnswer }) {
           let bg = T.c.n0, border = T.c.n300, color = T.c.n950;
           if (result != null) { if (i === ex.correct) { bg = T.c.s100; border = T.c.s700; color = T.c.s700; } else if (i === choice) { bg = '#F7EBE3'; border = '#A0522D'; color = '#A0522D'; } else color = T.c.n400; }
           const anim = result == null ? 'tcStaggerIn 300ms ease-out both' : i === choice && i !== ex.correct ? 'tcShake 400ms ease' : 'none';
-          return <button key={i} disabled={result != null} onClick={() => { if (result == null) onAnswer(i === ex.correct, i); }} style={{ padding: '12px 18px', borderRadius: T.r.full, background: bg, border: `1.5px solid ${border}`, cursor: result != null ? 'default' : 'pointer', fontFamily: T.font, fontSize: 15, fontWeight: 700, color, animation: anim, animationDelay: result == null ? `${i * 55}ms` : '0ms' }}>{opt}</button>;
+          return <button key={i} disabled={result != null} onClick={() => { if (result == null) onAnswer(i === ex.correct, i); }} style={{ padding: '14px 22px', borderRadius: T.r.full, background: bg, border: `1.5px solid ${border}`, cursor: result != null ? 'default' : 'pointer', fontFamily: T.font, fontSize: 16, fontWeight: 700, color, animation: anim, animationDelay: result == null ? `${i * 55}ms` : '0ms' }}>{opt}</button>;
         })}
       </div>
     </div>
@@ -837,22 +871,37 @@ function ExType({ ex, result, onAnswer }) {
 }
 
 // ─── Feedback + CTA ────────────────────────────────────────
-function FeedbackCta({ step, answered, canAdvance, isLast, advance }) {
+function FeedbackCta({ step, lesson, answered, canAdvance, isLast, advance }) {
   const isEx = step.type === 'exercise';
   const res = isEx ? answered[step.exIdx] : null;
   const correct = res ? res.correct : null;
   const ex = isEx ? step.ex : null;
   const showFb = res != null;
+  const [showWhy, setShowWhy] = React.useState(false);
+  React.useEffect(() => { if (res && !res.correct) setShowWhy(true); }, [showFb]); // eslint-disable-line
   const bg = showFb ? (correct ? T.c.s100 : '#F7EBE3') : T.c.n0;
   const fg = correct ? T.c.s700 : '#A0522D';
-  // Para 'type', o botão de verificar está dentro do exercício; aqui só "Continuar".
   const waitingType = isEx && ex && ex.type === 'type' && res == null;
+  const why = ex ? (ex.explain || (lesson && lesson.concept)) : null;
   return (
-    <div style={{ flexShrink: 0, background: bg, borderTop: `1px solid ${showFb ? 'transparent' : T.c.n100}`, transition: 'background 200ms' }}>
+    <div style={{ flexShrink: 0, background: bg, borderTop: `1px solid ${showFb ? 'transparent' : T.c.n100}`, transition: 'background 200ms', maxHeight: '55%', overflowY: 'auto' }}>
       {showFb && (
         <div style={{ display: 'flex', gap: 10, padding: '14px 20px 0', animation: 'tcSlideUp 220ms ease-out' }}>
           <Icon name={correct ? 'celebration' : 'volunteer_activism'} size={24} color={fg} fill={1}/>
-          <div style={{ ...T.t.body, color: fg, fontWeight: 600, lineHeight: 1.45 }}>{correct ? (ex.ok || 'Mandou bem!') : (ex.wrong || 'Quase! Olha de novo.')}</div>
+          <div style={{ flex: 1, ...T.t.body, color: fg, fontWeight: 600, lineHeight: 1.45 }}>{correct ? (ex.ok || 'Mandou bem!') : (ex.wrong || 'Quase! Olha de novo.')}</div>
+        </div>
+      )}
+      {showFb && why && (
+        <div style={{ padding: '10px 20px 0' }}>
+          <button onClick={() => setShowWhy(v => !v)} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'transparent', border: 'none', cursor: 'pointer', color: fg, fontFamily: T.font, fontSize: 13, fontWeight: 800 }}>
+            <Icon name="menu_book" size={16} color={fg} fill={1}/> Entenda melhor <Icon name={showWhy ? 'expand_less' : 'expand_more'} size={18} color={fg}/>
+          </button>
+          {showWhy && (
+            <div style={{ marginTop: 8, background: 'rgba(255,255,255,0.65)', borderRadius: T.r.md, padding: 12 }}>
+              <div style={{ ...T.t.overline, color: fg, marginBottom: 4 }}>POR QUE</div>
+              <div style={{ ...T.t.body, color: T.c.n900, lineHeight: 1.5 }}>{why}</div>
+            </div>
+          )}
         </div>
       )}
       <div style={{ padding: '12px 20px 24px', paddingBottom: 'max(20px, env(safe-area-inset-bottom))' }}>
