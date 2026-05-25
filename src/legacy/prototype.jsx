@@ -71,6 +71,7 @@ import { BoraMarcarPrimeiroEncontroScreen } from './screens-wizard-confraria-p6.
 import { WizardCriarConfrariaP1Screen } from './screens-wizard-confraria.jsx';
 import { Icon, T } from './tokens.jsx';
 import { TchinOnboarding } from './onboarding-manager.js';
+import { TreinoPaladarHome, TreinoLicaoScreen } from './screens-treino-paladar.jsx';
 
 // Tchin Tchin — Interactive Prototype Shell (Android frame + navigation)
 
@@ -294,6 +295,8 @@ function TchinApp({ initialScreen = 'onboarding' }) {
     'push-primer', 'push-negado', 'push-canais', 'push-preview',
     // Jornada (42.x)
     'jornada', 'jornada-celebrar',
+    // Treine seu Paladar (feature)
+    'treino-paladar', 'treino-licao',
   ].includes(current.screen);
 
   const renderScreen = () => {
@@ -450,6 +453,10 @@ function TchinApp({ initialScreen = 'onboarding' }) {
       // ── Jornada (42.x) ──────────────────────────────────────
       case 'jornada':             return <JornadaScreen go={go} ctx={ctx}/>;
       case 'jornada-celebrar':    return <JornadaCelebrarScreen go={go} params={current.params}/>;
+
+      // ── Treine seu Paladar (feature) ──────────────────────
+      case 'treino-paladar':      return <TreinoPaladarHome go={go}/>;
+      case 'treino-licao':        return <TreinoLicaoScreen go={go} params={current.params}/>;
 
       case 'wine':          return <WineDetailScreen go={go} params={current.params}/>;
       case 'marketplace':   return <MarketplaceScreen go={go}/>;
@@ -667,6 +674,7 @@ function ProfileDrawer({ ctx, onClose, go, onToggleOnline }) {
       { icon: 'person_search',label: 'Buscar usuários',       onClick: () => go('busca') },
     ]},
     { title: 'Aprender & descobrir', items: [
+      { icon: 'fitness_center',  label: 'Treine seu Paladar',       onClick: () => go('treino-paladar') },
       { icon: 'menu_book',       label: 'Aprenda',                  onClick: () => go('aprenda') },
       { icon: 'restaurant',      label: 'Harmoniza Pra Mim',        onClick: () => go('harmoniza') },
       { icon: 'menu_open',       label: 'Modo Restaurante (carta)', onClick: () => go('modo-restaurante') },

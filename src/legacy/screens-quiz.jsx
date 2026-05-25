@@ -626,6 +626,12 @@ const INTENT_OPTIONS = [
     sub:  'Conteúdo curado pra começar do começo, no seu nível',
   },
   {
+    id: 'treino_paladar',
+    icon: 'fitness_center',
+    title: 'Treinar meu paladar todo dia',
+    sub:  'Lições de 90 segundos, estilo joguinho — com streak e conquistas',
+  },
+  {
     id: 'gps_primer_then_confrarias',
     icon: 'groups',
     title: 'Participar de uma confraria',
@@ -659,6 +665,9 @@ function TelaIntencaoScreen({ go, params, onIntentSelected }) {
       case 'learn':
         // 04.B is a self-contained destination — no tour, no welcome-final
         go('aprender', { intent, level: window.__tcUserLevel }); return;
+      case 'treino_paladar':
+        // Vai direto pra feature "Treine seu Paladar" (sem tour)
+        go('treino-paladar', { intent }); return;
       case 'gps_primer_then_confrarias':
         go('gps-primer', { next: 'confrarias', intent }); return;
       case 'gps_primer_then_wizard':

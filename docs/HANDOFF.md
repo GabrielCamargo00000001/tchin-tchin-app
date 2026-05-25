@@ -67,6 +67,13 @@ node scripts/smoke-test.mjs   # teste de fumaça headless (jsdom)
   vez; ver 3.4).
 - **`event-covers.jsx`** — capas de evento (#6): presets, `getEventCover`,
   `CoverPicker`, `suggestEventNames`.
+- **`screens-treino-paladar.jsx`** — feature **"Treine seu Paladar"** (Duolingo
+  do vinho): store em localStorage (`tc.treino.v1`), 7 lições seed, Home/Hub
+  (streak, XP, níveis, badges), Lição de 5 cards (hook→conceito→quiz failure-safe
+  →aplicação→recap). Rotas `treino-paladar` e `treino-licao`. Entradas: drawer do
+  perfil + tela de intenção. Usa `fbEvent` (stub) — **sem** PostHog/push reais (o
+  doc original pedia uma stack PWA separada; aqui foi adaptado às convenções do
+  projeto).
 - **`screens-*.jsx`** e numerados (`13.01_Avatar.jsx` → `f13_01_Avatar.jsx` etc.)
   — telas individuais.
 - Telas do **canvas do Claude Design** (`canvas-app`, `design-canvas`,
@@ -150,6 +157,9 @@ Doc: "Construção de Marca Global — Tchin Tchin" (Jan/2026).
 | `2bf5621` | **Fase 1** — #2 sugestão de nomes de confraria (cidade + repertório, "gerar outras"); #4 badges nos cards (Verificada/Evento esta semana/Em alta/Nova/Perto de você/Iniciantes); #11 abas Confrarias\|Eventos + busca (só confrarias) + Eventos (Das minhas/Inscritos). #5 templates já completos |
 | `63f6f8c` | UX: **scroll dentro do frame** (página não rola mais); "Pular" funcional na apresentação; confraria abre em **Eventos**; descrição só no topo; respiro no banner |
 | `335b1af` | Remove **aba Sobre** (regras ficam nos 3 pontos; checklist do admin foi pro topo de Eventos); remove passo "Desafios semanais" do tour rápido |
+| `6d8641d` | **docs/HANDOFF.md** (este documento) |
+| _(em seguida)_ | UX: scroll dentro do frame, "Pular" na apresentação, confraria abre em Eventos, abas reordenadas |
+| _(em seguida)_ | **Feature "Treine seu Paladar"** (`screens-treino-paladar.jsx`) + entradas no drawer e na tela de intenção |
 
 ### Mapa dos pedidos do cliente (numeração interna)
 - #1 Adega: surfaçar tela de adicionar vinho ✅
