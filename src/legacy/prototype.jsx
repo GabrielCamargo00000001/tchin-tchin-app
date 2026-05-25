@@ -221,6 +221,7 @@ function TchinApp({ initialScreen = 'onboarding' }) {
     'login-social', 'magic-link-enviado', 'verif-telefone-otp', 'verif-concluida',
     'quiz', 'quiz-nivel', 'quiz-interesses', 'quiz-result',
     'tela-intencao', 'gps-primer', 'gps-negado', 'welcome-final',
+    'confraria-welcome', 'confraria-apresentar', 'confraria-tour-rapido',
     'nudge-d1', 'nudge-d3', 'nudge-d7', 'nudge-d14',
   ]);
 
