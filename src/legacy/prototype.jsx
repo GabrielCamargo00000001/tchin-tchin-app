@@ -215,9 +215,37 @@ function TchinApp({ initialScreen = 'onboarding' }) {
     }
   }, [current.screen, tab, activeTutorial, tour, ctx.diary]);
 
+  // Telas de fluxo único (onboarding, login, quiz, GPS, nudges): o "voltar"
+  // nunca deve cair nelas vindo de uma tela real do app. Dentro do próprio
+  // onboarding, o voltar entre as etapas continua normal.
+  const BACK_SKIP = new Set([
+    'welcome', 'onboarding', 'login', 'cadastro',
+    'recuperar', 'recuperar-email', 'recuperar-enviado', 'recuperar-otp', 'recuperar-redefinir', 'recuperar-sucesso',
+    'login-social', 'magic-link-enviado', 'verif-telefone-otp', 'verif-concluida',
+    'quiz', 'quiz-nivel', 'quiz-interesses', 'quiz-result',
+    'tela-intencao', 'gps-primer', 'gps-negado', 'welcome-final',
+    'nudge-d1', 'nudge-d3', 'nudge-d7', 'nudge-d14',
+  ]);
+
   const go = (screen, params = {}) => {
     if (screen === 'back') {
-      if (stack.length > 1) setStack(s => s.slice(0, -1));
+      setStack(s => {
+        if (s.length <= 1) return s;
+        const leaving = s[s.length - 1].screen;
+        let next = s.slice(0, -1);
+        // Vindo de uma tela real do app, pula telas de fluxo único que
+        // ficaram na pilha (ex.: quiz aberto pelo Marketplace).
+        if (!BACK_SKIP.has(leaving)) {
+          while (next.length > 1 && BACK_SKIP.has(next[next.length - 1].screen)) {
+            next = next.slice(0, -1);
+          }
+          // Se só sobrou tela de fluxo único, cai na home.
+          if (BACK_SKIP.has(next[next.length - 1].screen)) {
+            return [{ screen: 'home', params: {} }];
+          }
+        }
+        return next;
+      });
       return;
     }
     if (screen === 'toast') {

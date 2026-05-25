@@ -221,3 +221,8 @@ Abas principais: **descobrir / adega / comunidade / confrarias**. Fluxos grandes
 onboarding → quiz de paladar → home; criar confraria (wizard 1–6) →
 detalhe; criar evento (wizard 1–5) → detalhe/gerenciar; scanner; harmonização;
 marketplace/checkout; perfil; configurações.
+
+**Voltar (`go('back')`):** vindo de uma tela real do app, pula telas de fluxo
+único (onboarding, login, quiz, GPS, nudges) que tenham ficado na pilha — o
+"voltar" nunca cai no onboarding/quiz de dentro do app. Dentro do próprio
+onboarding, o voltar entre as etapas continua normal.
