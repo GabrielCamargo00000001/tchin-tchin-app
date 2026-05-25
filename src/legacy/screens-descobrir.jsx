@@ -9,6 +9,7 @@ import { Avatar } from './f13_01_Avatar.jsx';
 import { EmptyState } from './f19_03_SecaoAprenda.jsx';
 import { PaladarRadar } from './screens-quiz.jsx';
 import { BottlePlaceholder, Icon, T } from './tokens.jsx';
+import { MultiSelectWinesModal } from './multi-select-wines.jsx';
 
 // Tchin Tchin — Descobrir (home, marketplace, detalhe vinho, scanner)
 
@@ -162,6 +163,7 @@ function MarketplaceScreen({ go, ctx }) {
   const [query, setQuery] = React.useState('');
   const [filtersActive, setFiltersActive] = React.useState({}); // {tipos:[], paises:[], minMatch:0, maxPrice:500}
   const [sheetOpen, setSheetOpen] = React.useState(false);
+  const [multiOpen, setMultiOpen] = React.useState(false); // #9 — multi-add ao carrinho
   const [loading, setLoading] = React.useState(true);
   const quizDone = !!(ctx?.user?.paladar);
 
@@ -288,12 +290,22 @@ function MarketplaceScreen({ go, ctx }) {
           </div>
         )}
 
-        {/* h2 */}
-        <div style={{ ...T.t.h2, color: T.c.n950, padding: '4px 0 12px' }}>
-          {quizDone ? 'Vinhos pra você' : 'Todos os vinhos'}
-          {!loading && wines.length > 0 && (
-            <span style={{ ...T.t.caption, color: T.c.n600, fontWeight: 400, marginLeft: 8 }}>· {wines.length}</span>
-          )}
+        {/* h2 + Adicionar vários (#9) */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 0 12px' }}>
+          <div style={{ ...T.t.h2, color: T.c.n950 }}>
+            {quizDone ? 'Vinhos pra você' : 'Todos os vinhos'}
+            {!loading && wines.length > 0 && (
+              <span style={{ ...T.t.caption, color: T.c.n600, fontWeight: 400, marginLeft: 8 }}>· {wines.length}</span>
+            )}
+          </div>
+          <button onClick={() => setMultiOpen(true)} aria-label="Adicionar vários ao carrinho" style={{
+            display: 'flex', alignItems: 'center', gap: 6, padding: '6px 10px', flexShrink: 0,
+            background: 'none', border: 'none', cursor: 'pointer',
+            color: T.c.p700, fontFamily: T.font, fontSize: 13, fontWeight: 700,
+          }}>
+            <Icon name="library_add" size={16}/>
+            Adicionar vários
+          </button>
         </div>
 
         {loading ? (
@@ -326,6 +338,19 @@ function MarketplaceScreen({ go, ctx }) {
           onApply={(f) => { setFiltersActive(f); setSheetOpen(false); }}
           onClose={() => setSheetOpen(false)}
           onClear={() => setFiltersActive({})}
+        />
+      )}
+
+      {multiOpen && (
+        <MultiSelectWinesModal
+          title="Adicionar ao carrinho"
+          confirmLabel={(n) => `Adicionar ${n} ao carrinho`}
+          wines={MOCK_WINES}
+          onConfirm={(ids) => {
+            setMultiOpen(false);
+            go('toast', { kind: 'success', message: `${ids.length} ${ids.length === 1 ? 'vinho adicionado' : 'vinhos adicionados'} ao carrinho` });
+          }}
+          onClose={() => setMultiOpen(false)}
         />
       )}
     </div>

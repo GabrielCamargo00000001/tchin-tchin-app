@@ -12,12 +12,14 @@ import { ModalSheet } from './screens-descobrir.jsx';
 import { PaladarRadar } from './screens-quiz.jsx';
 import { TourDiario } from './screens-tour-diario.jsx';
 import { BottlePlaceholder, Icon, T } from './tokens.jsx';
+import { MultiSelectWinesModal } from './multi-select-wines.jsx';
 
 // Tchin Tchin — Adega, Comunidade, Confrarias screens
 
 // ─── Adega Dashboard ──────────────────────────────────────
 function AdegaScreen({ go, ctx }) {
   const [tab, setTab] = React.useState('diario');
+  const [multiOpen, setMultiOpen] = React.useState(false); // #9 — adicionar vários à adega
   // Old diary tour (SVG mask) — superseded by the new TchinTutor system.
   const [diarioTourStep, setDiarioTourStep] = React.useState(null);
   const subtitleByTab = {
@@ -35,7 +37,14 @@ function AdegaScreen({ go, ctx }) {
           </div>
         </div>
         {/* Adicionar vinho — atalho sempre visível no topo da Adega (qualquer aba) */}
-        <div style={{ marginTop: 4 }} data-tour-anchor="diario-add-button">
+        <div style={{ marginTop: 4, display: 'flex', gap: 8 }} data-tour-anchor="diario-add-button">
+          <button onClick={() => setMultiOpen(true)} aria-label="Adicionar vários vinhos à adega" style={{
+            width: 36, height: 36, borderRadius: T.r.md, flexShrink: 0,
+            background: T.c.n0, border: `1px solid ${T.c.n300}`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
+          }}>
+            <Icon name="library_add" size={18} color={T.c.p700}/>
+          </button>
           <Button variant="primary" size="sm" leading={<Icon name="add" size={16}/>} onClick={() => go('register-consumo')}>
             Adicionar
           </Button>
@@ -89,6 +98,19 @@ function AdegaScreen({ go, ctx }) {
           onSkip={() => setDiarioTourStep(null)}
           onTourComplete={() => setDiarioTourStep(null)}
           onAddFirstWine={() => { setDiarioTourStep(null); go('register-consumo'); }}
+        />
+      )}
+
+      {multiOpen && (
+        <MultiSelectWinesModal
+          title="Adicionar à adega"
+          confirmLabel={(n) => `Adicionar ${n} à adega`}
+          wines={MOCK_WINES}
+          onConfirm={(ids) => {
+            setMultiOpen(false);
+            go('toast', { kind: 'success', message: `${ids.length} ${ids.length === 1 ? 'vinho adicionado' : 'vinhos adicionados'} à adega` });
+          }}
+          onClose={() => setMultiOpen(false)}
         />
       )}
     </div>
