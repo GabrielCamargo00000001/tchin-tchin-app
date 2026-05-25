@@ -48,6 +48,11 @@
     ::-webkit-scrollbar-track { background: transparent; }
     a { color: inherit; text-decoration: none; }
     input, textarea { font-family: 'Inter', system-ui, sans-serif; }
+    /* Scroll dentro do frame: cada tela é um flex item; sem min-height:0 o root
+       cresce até a altura do conteúdo e o scroll interno (overflow:auto) nunca
+       engata. Forçar o root da tela a poder encolher faz a rolagem funcionar. */
+    .tc-screen-host { min-height: 0; }
+    .tc-screen-host > * { min-height: 0; }
   </style>
 </head>
 <body>

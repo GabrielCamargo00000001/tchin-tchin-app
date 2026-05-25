@@ -577,8 +577,8 @@ function TchinApp({ initialScreen = 'onboarding' }) {
           notifCount={2}/>
       )}
       <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', background: T.c.n50, position: 'relative' }}>
-        <div key={`${tab}:${stack.length}:${current.screen}`} style={{
-          flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden',
+        <div key={`${tab}:${stack.length}:${current.screen}`} className="tc-screen-host" style={{
+          flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minHeight: 0,
           animation: stack.length > 1 ? 'tcPushIn 300ms ease-out' : 'tcFadeIn 150ms ease-out',
         }}>
           {renderScreen()}
