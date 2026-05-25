@@ -4,7 +4,7 @@
 > **leia isto primeiro**. Resume o que o app é, como foi construído, decisões
 > tomadas, o que já foi feito e o que falta.
 >
-> Última atualização: 2026-05-24.
+> Última atualização: 2026-05-25.
 
 ---
 
@@ -160,6 +160,7 @@ Doc: "Construção de Marca Global — Tchin Tchin" (Jan/2026).
 | `6d8641d` | **docs/HANDOFF.md** (este documento) |
 | _(em seguida)_ | UX: scroll dentro do frame, "Pular" na apresentação, confraria abre em Eventos, abas reordenadas |
 | _(em seguida)_ | **Feature "Treine seu Paladar"** (`screens-treino-paladar.jsx`) + entradas no drawer e na tela de intenção |
+| _(Fase 3)_ | **#13** tela de interesses: 8 uvas (+ Syrah, Tannat), estilos Rosé/Espumante, regiões Brasil-first (Serra Gaúcha, Vale do São Francisco, Rioja) + lookup do feed sincronizado · **#12** copy de login/cadastro no tom da marca |
 
 ### Mapa dos pedidos do cliente (numeração interna)
 - #1 Adega: surfaçar tela de adicionar vinho ✅
@@ -173,19 +174,17 @@ Doc: "Construção de Marca Global — Tchin Tchin" (Jan/2026).
 - #9 Seleção múltipla de vinhos ✅ (evento; adega/mkt = follow-up)
 - #10 Distribuição de muitos vinhos na confirmação ✅
 - #11 Confrarias: buscar + abas Confrarias\|Eventos ✅
-- #12 Texto de login/cadastro pela marca ⛔ **(Fase 3, falta)**
-- #13 Opções da tela de interesses ⛔ **(Fase 3, falta)**
+- #12 Texto de login/cadastro pela marca ✅ **(Fase 3)**
+- #13 Opções da tela de interesses ✅ **(Fase 3)**
 - #A Visão admin do evento (inscritos/pagamento) ✅
 
 ---
 
 ## 7. O que falta / follow-ups
-- **Fase 3 (copy):** #12 texto de login/cadastro no tom da marca; #13 revisar as
-  opções de uvas/regiões da tela de interesses (`screens-quiz-nivel.jsx`,
-  `InteressesScreen`). Proposta já levantada (uvas: Cabernet, Merlot, Malbec,
-  Pinot Noir, Syrah, Tannat, Chardonnay, Sauvignon Blanc + Rosé/Espumante;
-  regiões Brasil-first: Vale dos Vinhedos, Serra Gaúcha, Vale do São Francisco,
-  Mendoza, Douro, Bordeaux, Toscana, Rioja).
+- ~~**Fase 3 (copy):** #12 login/cadastro + #13 uvas/regiões~~ ✅ **concluído em 2026-05-25.**
+  Uvas: Cabernet, Merlot, Malbec, Pinot Noir, Syrah, Tannat, Chardonnay, Sauvignon
+  Blanc + estilos Rosé/Espumante; regiões Brasil-first: Vale dos Vinhedos, Serra
+  Gaúcha, Vale do São Francisco, Mendoza, Douro, Bordeaux, Toscana, Rioja.
 - **#9** multi-seleção também na **adega** e no **marketplace** (só evento feito).
 - **#8** round-trip do quiz de volta pro wizard (hoje o caminho auto manda pro
   Meu Paladar mas não retorna sozinho ao wizard).
