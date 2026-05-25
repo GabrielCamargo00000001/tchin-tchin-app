@@ -163,6 +163,7 @@ Doc: "Construção de Marca Global — Tchin Tchin" (Jan/2026).
 | _(Fase 3)_ | **#13** tela de interesses: 8 uvas (+ Syrah, Tannat), estilos Rosé/Espumante, regiões Brasil-first (Serra Gaúcha, Vale do São Francisco, Rioja) + lookup do feed sincronizado · **#12** copy de login/cadastro no tom da marca |
 | _(Fase 3+)_ | **Scroll dentro do frame** corrigido em todas as telas (min-height:0 no root) · **#8** round-trip do "Tchin sugere" (quiz volta pro wizard) · **#9** multi-seleção de vinhos na Adega e no Marketplace (`multi-select-wines.jsx`) |
 | _(Estante)_ | **Estante interativa** vira a **aba principal** da Adega (`EstanteTab` em `screens-app.jsx`): matriz de slots; cada vinho registrado ocupa um espaço; slot vazio abre o seletor (reusa `multi-select-wines`); persiste em `window.__tcCellar`. Adega-vazia e tutor ("Sua estante visual") ajustados · **`go('back')`** pula telas de fluxo único |
+| _(Estante v2)_ | Adega **vazia** abre direto na Estante interativa (ensino inline, sem overlay; `AdegaVazia` saiu do fluxo, tutorial 'adega' desativado) + visual de **rack de madeira** (cubículos recessados + garrafas em pé) |
 
 ### Mapa dos pedidos do cliente (numeração interna)
 - #1 Adega: surfaçar tela de adicionar vinho ✅

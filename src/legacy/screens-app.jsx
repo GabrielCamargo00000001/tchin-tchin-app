@@ -179,10 +179,32 @@ function EstanteTab({ ctx, go }) {
         </button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
+      {filled === 0 && (
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12,
+          padding: 12, borderRadius: T.r.md, background: T.c.p50, border: `1px solid ${T.c.p100}`,
+        }}>
+          <div style={{ width: 36, height: 36, flexShrink: 0, borderRadius: '50%', background: T.c.p100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Icon name="touch_app" size={20} color={T.c.p700}/>
+          </div>
+          <div style={{ fontFamily: T.font, fontSize: 13, lineHeight: 1.4, color: T.c.n800 }}>
+            Sua adega está vazia. <strong style={{ color: T.c.p700 }}>Toque num espaço</strong> da estante pra colocar seu primeiro vinho.
+          </div>
+        </div>
+      )}
+
+      {/* Rack de madeira com cubículos */}
+      <div style={{
+        display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8,
+        padding: 12, borderRadius: T.r.lg,
+        backgroundColor: '#6E4A2C',
+        backgroundImage: 'repeating-linear-gradient(90deg, rgba(0,0,0,0.10) 0 1px, transparent 1px 9px), linear-gradient(160deg, #7C5635 0%, #573922 100%)',
+        boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.4), 0 2px 6px rgba(0,0,0,0.12)',
+        border: '1px solid #46301B',
+      }}>
         {cells.map((w, i) => w
           ? <FilledSlot key={i} wine={w} onOpen={() => go('wine', { wine: w })} onRemove={() => removeAt(i)}/>
-          : <EmptySlot key={i} onAdd={() => setPickFor(i)}/>
+          : <EmptySlot key={i} onAdd={() => setPickFor(i)} highlight={filled === 0 && i === 0}/>
         )}
       </div>
 
@@ -204,42 +226,51 @@ function EstanteTab({ ctx, go }) {
   );
 }
 
-function EmptySlot({ onAdd }) {
+function EmptySlot({ onAdd, highlight }) {
   return (
     <button onClick={onAdd} aria-label="Espaço vazio — colocar vinho" style={{
-      aspectRatio: '3 / 4', borderRadius: T.r.md,
-      background: T.c.n50, border: `1.5px dashed ${T.c.n300}`,
+      aspectRatio: '3 / 4', borderRadius: 6,
+      background: 'rgba(0,0,0,0.20)',
+      boxShadow: 'inset 0 3px 8px rgba(0,0,0,0.45)',
+      border: highlight ? '2px solid #E2B86B' : '1px solid rgba(0,0,0,0.28)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      cursor: 'pointer', color: T.c.n400,
+      cursor: 'pointer',
+      animation: highlight ? 'tcBreath 1.8s ease-in-out infinite' : 'none',
     }}>
-      <Icon name="add" size={22}/>
+      <Icon name="add" size={20} color="rgba(255,255,255,0.55)"/>
     </button>
   );
 }
 
 function FilledSlot({ wine, onOpen, onRemove }) {
   return (
-    <div style={{ position: 'relative', aspectRatio: '3 / 4', borderRadius: T.r.md, overflow: 'hidden', border: `1px solid ${T.c.n200}` }}>
+    <div style={{
+      position: 'relative', aspectRatio: '3 / 4', borderRadius: 6, overflow: 'hidden',
+      background: 'rgba(0,0,0,0.20)', boxShadow: 'inset 0 3px 8px rgba(0,0,0,0.45)',
+      border: '1px solid rgba(0,0,0,0.28)',
+    }}>
       <button onClick={onOpen} aria-label={wine.name} style={{
-        width: '100%', height: '100%', padding: 0, border: 'none', cursor: 'pointer', position: 'relative',
+        width: '100%', height: '100%', padding: 0, border: 'none', cursor: 'pointer',
+        position: 'relative', background: 'transparent',
         display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
-        background: `linear-gradient(160deg, ${T.c.p100} 0%, ${T.c.p300} 55%, ${T.c.p700} 100%)`,
       }}>
-        <div style={{ position: 'absolute', top: '22%', left: 0, right: 0, display: 'flex', justifyContent: 'center', opacity: 0.9 }}>
-          <Icon name="wine_bar" size={26} color="#fff" fill={1}/>
+        {/* garrafa em pé no cubículo */}
+        <div style={{ position: 'absolute', top: '13%', left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div style={{ width: 4, height: 10, background: '#3A1116', borderRadius: '2px 2px 0 0' }}/>
+          <div style={{ width: 18, height: 34, background: 'linear-gradient(165deg, #9A4350 0%, #6E2A33 50%, #4A1F24 100%)', borderRadius: '4px 4px 5px 5px', boxShadow: '0 1px 3px rgba(0,0,0,0.45)' }}/>
         </div>
         <div style={{
-          width: '100%', padding: '4px 4px 6px', background: 'rgba(0,0,0,0.38)',
-          fontFamily: T.font, fontSize: 9, lineHeight: 1.15, fontWeight: 600, color: '#fff',
+          width: '100%', padding: '3px 3px 5px', background: 'rgba(0,0,0,0.45)',
+          fontFamily: T.font, fontSize: 9, lineHeight: 1.1, fontWeight: 600, color: '#fff',
           textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
         }}>{wine.name}</div>
       </button>
       <button onClick={onRemove} aria-label="Tirar da estante" style={{
-        position: 'absolute', top: 4, right: 4, width: 20, height: 20, borderRadius: '50%',
-        background: 'rgba(0,0,0,0.5)', border: 'none', cursor: 'pointer',
+        position: 'absolute', top: 3, right: 3, width: 18, height: 18, borderRadius: '50%',
+        background: 'rgba(0,0,0,0.55)', border: 'none', cursor: 'pointer',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}>
-        <Icon name="close" size={12} color="#fff"/>
+        <Icon name="close" size={11} color="#fff"/>
       </button>
     </div>
   );

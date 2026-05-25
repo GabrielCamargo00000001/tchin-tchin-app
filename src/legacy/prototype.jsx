@@ -208,11 +208,8 @@ function TchinApp({ initialScreen = 'onboarding' }) {
       const t = setTimeout(() => fire(tutId), 360);
       return () => clearTimeout(t);
     }
-    // Also auto-fire on Adega first time (via tab + empty diary)
-    if (current.screen === 'home' && tab === 'adega' && (ctx.diary || []).length === 0 && !isTutorDone('adega')) {
-      const t = setTimeout(() => fire('adega'), 360);
-      return () => clearTimeout(t);
-    }
+    // Adega: o onboarding agora é inline na Estante interativa (sem overlay),
+    // então não disparamos mais o tutorial 'adega' aqui.
   }, [current.screen, tab, activeTutorial, tour, ctx.diary]);
 
   // Telas de fluxo único (onboarding, login, quiz, GPS, nudges): o "voltar"
@@ -536,16 +533,9 @@ function TchinApp({ initialScreen = 'onboarding' }) {
             onProfileOpen={() => setProfileOpen(true)}
           />
         );
-        if (isAdegaFirstTime) return (
-          <AdegaVazia
-            user={ctx.user}
-            onRegistrarVinho={() => go('register-consumo')}
-            onEscanearRotulo={() => { if (!requiresNetwork()) go('scanner'); }}
-            onPaladarTabTap={() => go('quiz')}
-            onNotifOpen={() => go('notificacoes')}
-            onProfileOpen={() => setProfileOpen(true)}
-          />
-        );
+        // Adega vazia agora abre direto na Estante interativa (AdegaScreen),
+        // que ensina inline a colocar os vinhos. (AdegaVazia mantida só p/ ref.)
+        void isAdegaFirstTime;
         if (isFeedFirstTime) return (
           <FeedFirstTime
             userLevel={(typeof window !== 'undefined' && window.__tcUserLevel) || ctx.user.level || 'iniciante'}
@@ -596,7 +586,6 @@ function TchinApp({ initialScreen = 'onboarding' }) {
       <OfflineBanner online={ctx.online} syncing={syncing} onToggle={toggleOnline}/>
       {isAppScreen && current.screen === 'home'
          && !(tab === 'descobrir' && !ctx.user.paladar)
-         && !(tab === 'adega' && (ctx.diary || []).length === 0)
          && !(tab === 'comunidade' && (typeof window !== 'undefined') && window.__tcLastIntent === 'skip_to_feed') && (
         <AppHeader
           onScan={() => { if (!requiresNetwork()) go('scanner'); }}
