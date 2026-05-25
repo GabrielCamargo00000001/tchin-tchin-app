@@ -437,6 +437,9 @@ function CadastroScreen({ go }) {
     }
     // final
     setLoading(true);
+    // Conta nova = estado da feature "Treine seu Paladar" zerado, pra o
+    // onboarding da feature aparecer pra quem acabou de criar conta.
+    try { window.localStorage.removeItem('tc.treino.v3'); } catch (e) {}
     setTimeout(() => { setLoading(false); go('quiz-nivel'); }, 800);
   };
 
