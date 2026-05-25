@@ -16,7 +16,9 @@
 
 ## 01.1 `onboarding` — Slides pré-auth ⚠️
 
-<img src="shots/onboarding.png" width="240"/>
+_Slides 1, 2 e 3 (carrossel):_
+
+<img src="shots/onboarding-1.png" width="200"/> <img src="shots/onboarding-2.png" width="200"/> <img src="shots/onboarding-3.png" width="200"/>
 
 **Propósito:** 3 slides editoriais antes do welcome, comunicando a tese do produto (reduzir drop pré-auth). Spec dedicada: **BUG-02-A**.
 **Entradas:** 1ª abertura do app (cold start, antes de logar). **Saídas:** → `welcome` (ao concluir/pular).
