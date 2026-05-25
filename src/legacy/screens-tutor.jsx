@@ -852,7 +852,7 @@ registerTutorial({
     {
       variant: 'spotlight',
       title: 'Sua estante visual',
-      body: 'Vê suas garrafas como prateleira de verdade. Vai enchendo conforme você bebe.',
+      body: 'É a tela principal da Adega: toque num espaço pra colocar um vinho. Vai enchendo conforme você bebe.',
       anchor: 'matrix-empty',
     },
     {

@@ -18,11 +18,12 @@ import { MultiSelectWinesModal } from './multi-select-wines.jsx';
 
 // ─── Adega Dashboard ──────────────────────────────────────
 function AdegaScreen({ go, ctx }) {
-  const [tab, setTab] = React.useState('diario');
+  const [tab, setTab] = React.useState('estante'); // Estante é a aba principal
   const [multiOpen, setMultiOpen] = React.useState(false); // #9 — adicionar vários à adega
   // Old diary tour (SVG mask) — superseded by the new TchinTutor system.
   const [diarioTourStep, setDiarioTourStep] = React.useState(null);
   const subtitleByTab = {
+    estante: 'Sua estante visual — toque num espaço pra colocar um vinho',
     diario: `${ctx.diary.length} ${ctx.diary.length === 1 ? 'vinho registrado' : 'vinhos registrados'} · desde ${ctx.user.joined}`,
     indicadores: 'Padrões do seu paladar ao longo do tempo',
     paladar: 'Seu perfil sensorial em 5 dimensões',
@@ -68,6 +69,7 @@ function AdegaScreen({ go, ctx }) {
       </div>
       <div style={{ display: 'flex', padding: '0 16px', borderBottom: `1px solid ${T.c.n200}`, gap: 4 }}>
         {[
+          { id: 'estante', label: 'Estante' },
           { id: 'diario', label: 'Diário' },
           { id: 'indicadores', label: 'Indicadores' },
           { id: 'paladar', label: 'Paladar' },
@@ -81,6 +83,7 @@ function AdegaScreen({ go, ctx }) {
         ))}
       </div>
       <div style={{ flex: 1, overflow: 'auto' }}>
+        {tab === 'estante' && <EstanteTab ctx={ctx} go={go}/>}
         {tab === 'diario' && <DiarioTab ctx={ctx} go={go}/>}
         {tab === 'indicadores' && <IndicadoresTab ctx={ctx} go={go}/>}
         {tab === 'paladar' && <PaladarTab ctx={ctx} go={go}/>}
@@ -113,6 +116,131 @@ function AdegaScreen({ go, ctx }) {
           onClose={() => setMultiOpen(false)}
         />
       )}
+    </div>
+  );
+}
+
+// ─── Estante (adega visual) — matriz de slots ──────────────
+// Cada vinho registrado ocupa um quadradinho; slots vazios abrem o seletor
+// de vinho. Persiste em window.__tcCellar durante a sessão.
+function EstanteTab({ ctx, go }) {
+  const diaryWines = React.useMemo(
+    () => (ctx.diary || []).map((e) => e && e.wine).filter(Boolean),
+    [ctx.diary]
+  );
+  const SLOTS = Math.max(24, Math.ceil((diaryWines.length + 6) / 4) * 4);
+
+  const [cells, setCells] = React.useState(() => {
+    let base = (typeof window !== 'undefined' && Array.isArray(window.__tcCellar))
+      ? window.__tcCellar.slice() : null;
+    if (!base) {
+      base = Array.from({ length: SLOTS }, (_, i) => diaryWines[i] || null);
+    } else {
+      if (base.length < SLOTS) base = base.concat(Array.from({ length: SLOTS - base.length }, () => null));
+      const present = new Set(base.filter(Boolean).map((w) => w.id));
+      diaryWines.forEach((w) => {
+        if (!present.has(w.id)) {
+          const empty = base.indexOf(null);
+          if (empty >= 0) { base[empty] = w; present.add(w.id); }
+        }
+      });
+    }
+    if (typeof window !== 'undefined') window.__tcCellar = base;
+    return base;
+  });
+  const [pickFor, setPickFor] = React.useState(null);
+
+  const persist = (next) => { setCells(next); if (typeof window !== 'undefined') window.__tcCellar = next; };
+  const filled = cells.filter(Boolean).length;
+
+  const fillFrom = (startIdx, wines) => {
+    const next = cells.slice();
+    let wi = 0;
+    for (let i = startIdx; i < next.length && wi < wines.length; i++) {
+      if (!next[i]) next[i] = wines[wi++];
+    }
+    while (wi < wines.length) next.push(wines[wi++]);
+    persist(next);
+  };
+  const removeAt = (idx) => { const next = cells.slice(); next[idx] = null; persist(next); };
+
+  return (
+    <div style={{ padding: '16px 16px 96px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+        <div style={{ ...T.t.caption, color: T.c.n600 }}>
+          <strong style={{ color: T.c.n950 }}>{filled}</strong> de {cells.length} espaços ocupados
+        </div>
+        <button onClick={() => { const i = cells.indexOf(null); setPickFor(i >= 0 ? i : cells.length); }} style={{
+          display: 'flex', alignItems: 'center', gap: 6, padding: '6px 10px',
+          background: 'none', border: 'none', cursor: 'pointer',
+          color: T.c.p700, fontFamily: T.font, fontSize: 13, fontWeight: 700,
+        }}>
+          <Icon name="add" size={16}/> Colocar vinho
+        </button>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
+        {cells.map((w, i) => w
+          ? <FilledSlot key={i} wine={w} onOpen={() => go('wine', { wine: w })} onRemove={() => removeAt(i)}/>
+          : <EmptySlot key={i} onAdd={() => setPickFor(i)}/>
+        )}
+      </div>
+
+      {pickFor != null && (
+        <MultiSelectWinesModal
+          title="Colocar na estante"
+          confirmLabel={(n) => `Colocar ${n} na estante`}
+          wines={MOCK_WINES}
+          onConfirm={(ids) => {
+            const ws = ids.map((id) => MOCK_WINES.find((w) => w.id === id)).filter(Boolean);
+            fillFrom(pickFor, ws);
+            setPickFor(null);
+            go('toast', { kind: 'success', message: `${ws.length} ${ws.length === 1 ? 'vinho colocado' : 'vinhos colocados'} na estante` });
+          }}
+          onClose={() => setPickFor(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+function EmptySlot({ onAdd }) {
+  return (
+    <button onClick={onAdd} aria-label="Espaço vazio — colocar vinho" style={{
+      aspectRatio: '3 / 4', borderRadius: T.r.md,
+      background: T.c.n50, border: `1.5px dashed ${T.c.n300}`,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      cursor: 'pointer', color: T.c.n400,
+    }}>
+      <Icon name="add" size={22}/>
+    </button>
+  );
+}
+
+function FilledSlot({ wine, onOpen, onRemove }) {
+  return (
+    <div style={{ position: 'relative', aspectRatio: '3 / 4', borderRadius: T.r.md, overflow: 'hidden', border: `1px solid ${T.c.n200}` }}>
+      <button onClick={onOpen} aria-label={wine.name} style={{
+        width: '100%', height: '100%', padding: 0, border: 'none', cursor: 'pointer', position: 'relative',
+        display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
+        background: `linear-gradient(160deg, ${T.c.p100} 0%, ${T.c.p300} 55%, ${T.c.p700} 100%)`,
+      }}>
+        <div style={{ position: 'absolute', top: '22%', left: 0, right: 0, display: 'flex', justifyContent: 'center', opacity: 0.9 }}>
+          <Icon name="wine_bar" size={26} color="#fff" fill={1}/>
+        </div>
+        <div style={{
+          width: '100%', padding: '4px 4px 6px', background: 'rgba(0,0,0,0.38)',
+          fontFamily: T.font, fontSize: 9, lineHeight: 1.15, fontWeight: 600, color: '#fff',
+          textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+        }}>{wine.name}</div>
+      </button>
+      <button onClick={onRemove} aria-label="Tirar da estante" style={{
+        position: 'absolute', top: 4, right: 4, width: 20, height: 20, borderRadius: '50%',
+        background: 'rgba(0,0,0,0.5)', border: 'none', cursor: 'pointer',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+      }}>
+        <Icon name="close" size={12} color="#fff"/>
+      </button>
     </div>
   );
 }

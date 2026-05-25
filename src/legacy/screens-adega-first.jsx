@@ -25,15 +25,15 @@ function AdegaVazia({
   onNotifOpen,
   onProfileOpen,
 }) {
-  const [activeTab, setActiveTab] = React.useState('diario');
+  const [activeTab, setActiveTab] = React.useState('estante');
 
   // The old 3-step TourAdega has been superseded by the new TchinTutor system
   // (auto-fires on this screen from TchinApp). Keep state but always null.
   const [tourStep, setTourStep] = React.useState(null);
 
   const TABS = [
-    { id: 'diario',   label: 'Diário',     hasContent: false },
     { id: 'estante',  label: 'Estante',    hasContent: false },
+    { id: 'diario',   label: 'Diário',     hasContent: false },
     { id: 'wishlist', label: 'Wishlist',   hasContent: false },
     { id: 'paladar',  label: 'Meu Paladar', hasContent: false },
   ];
