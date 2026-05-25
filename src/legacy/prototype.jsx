@@ -71,7 +71,7 @@ import { BoraMarcarPrimeiroEncontroScreen } from './screens-wizard-confraria-p6.
 import { WizardCriarConfrariaP1Screen } from './screens-wizard-confraria.jsx';
 import { Icon, T } from './tokens.jsx';
 import { TchinOnboarding } from './onboarding-manager.js';
-import { TreinoPaladarHome, TreinoLicaoScreen } from './screens-treino-paladar.jsx';
+import { TreinoPaladarHome, TreinoLicaoScreen, TreinoLigaScreen } from './screens-treino-paladar.jsx';
 
 // Tchin Tchin — Interactive Prototype Shell (Android frame + navigation)
 
@@ -322,7 +322,7 @@ function TchinApp({ initialScreen = 'onboarding' }) {
     // Jornada (42.x)
     'jornada', 'jornada-celebrar',
     // Treine seu Paladar (feature)
-    'treino-paladar', 'treino-licao',
+    'treino-paladar', 'treino-licao', 'treino-liga',
   ].includes(current.screen);
 
   const renderScreen = () => {
@@ -483,6 +483,7 @@ function TchinApp({ initialScreen = 'onboarding' }) {
       // ── Treine seu Paladar (feature) ──────────────────────
       case 'treino-paladar':      return <TreinoPaladarHome go={go}/>;
       case 'treino-licao':        return <TreinoLicaoScreen go={go} params={current.params}/>;
+      case 'treino-liga':         return <TreinoLigaScreen go={go}/>;
 
       case 'wine':          return <WineDetailScreen go={go} params={current.params}/>;
       case 'marketplace':   return <MarketplaceScreen go={go}/>;
