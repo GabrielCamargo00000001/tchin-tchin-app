@@ -372,7 +372,7 @@ function TreinoPaladarHome({ go }) {
       <div style={{ flexShrink: 0, background: T.c.n0, borderBottom: `1px solid ${T.c.n100}` }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 2, padding: '6px 6px' }}>
           <button onClick={() => go('back')} aria-label="Voltar" style={btnRound}><Icon name="arrow_back" size={22} color={T.c.n950}/></button>
-          <button onClick={() => setShowIntro(true)} aria-label="Como funciona" style={btnRound}><Icon name="help" size={22} color={T.c.n500}/></button>
+          <button onClick={() => setShowIntro(true)} aria-label="Ver tutorial" style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 12px', borderRadius: T.r.full, border: `1px solid ${T.c.p300 || T.c.n200}`, background: T.c.p50, cursor: 'pointer', fontFamily: T.font, fontSize: 12, fontWeight: 800, color: T.c.p700 }}><Icon name="help" size={16} color={T.c.p700} fill={1}/> Tutorial</button>
           <div style={{ flex: 1 }}/>
           <HudStat icon="local_fire_department" color={s.streak > 0 ? '#E8772E' : T.c.n400} value={s.streak} onClick={() => setSheet('streak')} label="Sequência"/>
           <HudStat icon="favorite" color={T.c.e700 || '#C0392B'} value={s.hearts} onClick={() => setSheet('hearts')} label="Vidas"/>
