@@ -396,10 +396,12 @@ function TreinoPaladarHome({ go }) {
                   const offset = [0, 56, 80, 56, 0, -56, -80, -56][idxAll % 8];
                   return (
                     <div key={l.id} style={{ transform: `translateX(${offset}px)`, transition: 'transform 200ms' }}>
-                      <PathNode lesson={l} state={completed ? 'done' : isCurrent ? 'current' : 'locked'}
-                        onStart={() => { fbEvent('treino_lesson_cta', { lesson_id: l.id }); go('treino-licao', { lessonId: l.id }); }}
-                        onLockedTap={() => go('toast', { kind: 'info', message: 'Conclua a lição anterior pra liberar esta.' })}
-                        doneToday={completed && doneToday}/>
+                      <div style={{ animation: 'tcStaggerIn 420ms ease-out both', animationDelay: `${idxAll * 45}ms` }}>
+                        <PathNode lesson={l} state={completed ? 'done' : isCurrent ? 'current' : 'locked'}
+                          onStart={() => { fbEvent('treino_lesson_cta', { lesson_id: l.id }); go('treino-licao', { lessonId: l.id }); }}
+                          onLockedTap={() => go('toast', { kind: 'info', message: 'Conclua a lição anterior pra liberar esta.' })}
+                          doneToday={completed && doneToday}/>
+                      </div>
                     </div>
                   );
                 })}
@@ -587,13 +589,13 @@ function TreinoOnboarding({ hasCurrent, onFinish }) {
       {/* mascote + balão */}
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '8px 20px 4px', flexShrink: 0 }}>
         <div style={{ flexShrink: 0 }}><TchinDuo size={56}/></div>
-        <div style={{ flex: 1, position: 'relative', background: T.c.n50, border: `1px solid ${T.c.n200}`, borderRadius: 16, padding: '12px 14px', animation: 'tcPopIn 300ms cubic-bezier(0.2,0.8,0.2,1)' }}>
+        <div key={'bubble' + step} style={{ flex: 1, position: 'relative', background: T.c.n50, border: `1px solid ${T.c.n200}`, borderRadius: 16, padding: '12px 14px', animation: 'tcPopIn 320ms cubic-bezier(0.2,0.8,0.2,1)' }}>
           <div style={{ fontFamily: T.font, fontSize: 15, color: T.c.n950, lineHeight: 1.4 }}>{cur.q || cur.body || cur.title}</div>
         </div>
       </div>
 
       {/* corpo */}
-      <div key={step} style={{ flex: 1, overflow: 'auto', minHeight: 0, padding: '14px 20px 8px', display: 'flex', flexDirection: 'column' }}>
+      <div key={step} style={{ flex: 1, overflow: 'auto', minHeight: 0, padding: '14px 20px 8px', display: 'flex', flexDirection: 'column', animation: 'tcPushIn 320ms ease-out' }}>
         {(cur.kind === 'intro' || cur.kind === 'say' || cur.kind === 'final') && (
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, textAlign: 'center' }}>
             <div style={{ animation: 'tcPopIn 360ms cubic-bezier(0.2,0.8,0.2,1)' }}><TchinDuo size={120}/></div>
@@ -608,10 +610,10 @@ function TreinoOnboarding({ hasCurrent, onFinish }) {
         )}
         {cur.kind === 'choose' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {cur.opts.map(o => {
+            {cur.opts.map((o, oi) => {
               const sel = ans[cur.key] === o.id;
               return (
-                <button key={o.id} onClick={() => choose(cur.key, o.id)} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: 14, textAlign: 'left', background: sel ? T.c.p50 : T.c.n0, border: `2px solid ${sel ? T.c.p700 : T.c.n200}`, borderRadius: T.r.lg, cursor: 'pointer', fontFamily: T.font }}>
+                <button key={o.id} onClick={() => choose(cur.key, o.id)} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: 14, textAlign: 'left', background: sel ? T.c.p50 : T.c.n0, border: `2px solid ${sel ? T.c.p700 : T.c.n200}`, borderRadius: T.r.lg, cursor: 'pointer', fontFamily: T.font, animation: 'tcStaggerIn 320ms ease-out both', animationDelay: `${oi * 60}ms` }}>
                   <div style={{ width: 44, height: 44, flexShrink: 0, borderRadius: T.r.md, background: T.c.p50, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon name={o.icon} size={24} color={T.c.p700} fill={1}/></div>
                   <div style={{ flex: 1 }}><div style={{ fontSize: 15, fontWeight: 700, color: T.c.n950 }}>{o.label}</div>{o.sub && <div style={{ ...T.t.caption, color: T.c.n600 }}>{o.sub}</div>}</div>
                   {sel && <Icon name="check_circle" size={22} color={T.c.p700} fill={1}/>}
@@ -750,8 +752,9 @@ function ExMC({ ex, result, onAnswer }) {
         {ex.options.map((opt, i) => {
           let bg = T.c.n0, border = T.c.n300, color = T.c.n950, icon = null;
           if (result != null) { if (i === ex.correct) { bg = T.c.s100; border = T.c.s700; color = T.c.s700; icon = 'check_circle'; } else if (i === choice) { bg = '#F7EBE3'; border = '#A0522D'; color = '#A0522D'; icon = 'cancel'; } else color = T.c.n400; }
+          const anim = result == null ? 'tcStaggerIn 300ms ease-out both' : i === ex.correct ? 'tcLikePop 500ms ease' : i === choice ? 'tcShake 400ms ease' : 'none';
           return (
-            <button key={i} disabled={result != null} onClick={() => { if (result == null) onAnswer(i === ex.correct, i); }} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 15, textAlign: 'left', background: bg, border: `1.5px solid ${border}`, borderRadius: T.r.md, cursor: result != null ? 'default' : 'pointer', fontFamily: T.font, fontSize: 15, fontWeight: 600, color }}>
+            <button key={i} disabled={result != null} onClick={() => { if (result == null) onAnswer(i === ex.correct, i); }} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 15, textAlign: 'left', background: bg, border: `1.5px solid ${border}`, borderRadius: T.r.md, cursor: result != null ? 'default' : 'pointer', fontFamily: T.font, fontSize: 15, fontWeight: 600, color, animation: anim, animationDelay: result == null ? `${i * 55}ms` : '0ms' }}>
               <span style={{ flex: 1 }}>{opt}</span>{icon && <Icon name={icon} size={20} color={color} fill={1}/>}
             </button>
           );
@@ -801,7 +804,8 @@ function ExFill({ ex, result, onAnswer }) {
         {ex.options.map((opt, i) => {
           let bg = T.c.n0, border = T.c.n300, color = T.c.n950;
           if (result != null) { if (i === ex.correct) { bg = T.c.s100; border = T.c.s700; color = T.c.s700; } else if (i === choice) { bg = '#F7EBE3'; border = '#A0522D'; color = '#A0522D'; } else color = T.c.n400; }
-          return <button key={i} disabled={result != null} onClick={() => { if (result == null) onAnswer(i === ex.correct, i); }} style={{ padding: '12px 18px', borderRadius: T.r.full, background: bg, border: `1.5px solid ${border}`, cursor: result != null ? 'default' : 'pointer', fontFamily: T.font, fontSize: 15, fontWeight: 700, color }}>{opt}</button>;
+          const anim = result == null ? 'tcStaggerIn 300ms ease-out both' : i === choice && i !== ex.correct ? 'tcShake 400ms ease' : 'none';
+          return <button key={i} disabled={result != null} onClick={() => { if (result == null) onAnswer(i === ex.correct, i); }} style={{ padding: '12px 18px', borderRadius: T.r.full, background: bg, border: `1.5px solid ${border}`, cursor: result != null ? 'default' : 'pointer', fontFamily: T.font, fontSize: 15, fontWeight: 700, color, animation: anim, animationDelay: result == null ? `${i * 55}ms` : '0ms' }}>{opt}</button>;
         })}
       </div>
     </div>
@@ -905,12 +909,12 @@ function TreinoCompleta({ lesson, prevState, mistakes, elapsedMs, go }) {
         <div style={{ fontFamily: '"Fraunces", Georgia, serif', fontSize: 26, fontWeight: 700, color: T.c.n950, marginBottom: 6 }}>{result.perfect ? 'Lição perfeita! 🍷' : 'Mandou bem!'}</div>
         <div style={{ ...T.t.body, color: T.c.n700, marginBottom: 18 }}>{lesson.recap}</div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, width: '100%', marginBottom: 16 }}>
-          <StatCard icon="bolt" tone={T.c.a700} label="XP ganho" value={`+${result.xpGain}`}/>
+          <StatCard icon="bolt" tone={T.c.a700} label="XP ganho" value={<CountUp to={result.xpGain} prefix="+"/>}/>
           <StatCard icon="target" tone={T.c.s700} label="Acerto" value={`${accuracy}%`}/>
           <StatCard icon="schedule" tone={T.c.p700} label="Tempo" value={`${secs}s`}/>
         </div>
         <div style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: 12, background: '#E8F7FC', borderRadius: T.r.md, marginBottom: 12 }}>
-          <Gem size={24}/><div style={{ textAlign: 'left', flex: 1 }}><div style={{ fontFamily: T.font, fontSize: 14, fontWeight: 800, color: T.c.n950 }}>+{result.gemsGain} cristais</div></div>
+          <Gem size={24}/><div style={{ textAlign: 'left', flex: 1 }}><div style={{ fontFamily: T.font, fontSize: 14, fontWeight: 800, color: T.c.n950 }}><CountUp to={result.gemsGain} prefix="+"/> cristais</div></div>
         </div>
         {result.bonus > 0 && (
           <div style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12, padding: 14, background: T.c.a100, borderRadius: T.r.md, marginBottom: 12, animation: 'tcPopIn 500ms 200ms both' }}>
@@ -977,6 +981,16 @@ function TreinoLigaScreen({ go }) {
 }
 
 // ─── helpers visuais ───────────────────────────────────────
+function CountUp({ to, prefix = '' }) {
+  const [n, setN] = React.useState(0);
+  React.useEffect(() => {
+    let raf, start; const dur = 700;
+    const tick = (t) => { if (!start) start = t; const p = Math.min(1, (t - start) / dur); setN(Math.round(p * to)); if (p < 1) raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [to]);
+  return <React.Fragment>{prefix}{n}</React.Fragment>;
+}
 function Pill({ icon, tone, children }) { return <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: T.r.full, background: `${tone}1A`, color: tone, fontFamily: T.font, fontSize: 14, fontWeight: 800 }}><Icon name={icon} size={18} color={tone} fill={1}/>{children}</div>; }
 function Confetti() {
   const bits = Array.from({ length: 14 });
