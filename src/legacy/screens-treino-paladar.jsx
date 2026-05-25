@@ -37,7 +37,7 @@ function defaultTreino() {
     xp: 0, streak: 0, bestStreak: 0, lastDone: null, done: [], badges: [],
     freezes: 1, hearts: MAX_HEARTS, heartsTs: Date.now(),
     goal: 'regular', dailyXp: 0, dailyDate: null,
-    weekXp: 0, weekKey: null, perfectCount: 0,
+    weekXp: 0, weekKey: null, perfectCount: 0, onboarded: false,
   };
 }
 function readTreino() {
@@ -303,6 +303,7 @@ function GoalRing({ pct, size = 40 }) {
 function TreinoPaladarHome({ go }) {
   const [s, setS] = React.useState(readTreino);
   const [sheet, setSheet] = React.useState(null); // 'streak' | 'hearts' | 'goal' | null
+  const [showIntro, setShowIntro] = React.useState(() => !s.onboarded);
   React.useEffect(() => { fbEvent('treino_home_viewed', { streak: s.streak, xp: s.xp }); }, []); // eslint-disable-line
 
   const lvl = levelFor(s.xp);
@@ -314,6 +315,11 @@ function TreinoPaladarHome({ go }) {
   const currentId = nextIdx >= 0 ? LESSONS[nextIdx].id : null;
   const allDone = nextIdx < 0;
   const social = 8000 + (new Date().getDate() * 137) % 900;
+  const finishIntro = (startLesson) => {
+    const st = readTreino(); st.onboarded = true; writeTreino(st);
+    setShowIntro(false);
+    if (startLesson && currentId) { fbEvent('treino_intro_start', { lesson_id: currentId }); go('treino-licao', { lessonId: currentId }); }
+  };
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: T.c.n50, overflow: 'hidden' }}>
@@ -322,6 +328,9 @@ function TreinoPaladarHome({ go }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 6px' }}>
           <button onClick={() => go('back')} aria-label="Voltar" style={{ width: 40, height: 40, borderRadius: '50%', border: 'none', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
             <Icon name="arrow_back" size={22} color={T.c.n950}/>
+          </button>
+          <button onClick={() => setShowIntro(true)} aria-label="Como funciona" style={{ width: 40, height: 40, borderRadius: '50%', border: 'none', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+            <Icon name="help" size={22} color={T.c.n500}/>
           </button>
           <div style={{ flex: 1 }}/>
           <HudStat icon="local_fire_department" color={s.streak > 0 ? '#E8772E' : T.c.n400} value={s.streak} onClick={() => setSheet('streak')} ariaLabel="Sequência"/>
@@ -433,6 +442,7 @@ function TreinoPaladarHome({ go }) {
       </div>
 
       {sheet && <TreinoSheet kind={sheet} s={s} onClose={() => setSheet(null)} onGoal={(g) => { const st = readTreino(); st.goal = g; writeTreino(st); setS(readTreino()); }} go={go}/>}
+      {showIntro && <TreinoOnboarding onClose={() => finishIntro(false)} onStart={() => finishIntro(true)} hasCurrent={!!currentId}/>}
     </div>
   );
 }
@@ -972,6 +982,71 @@ function Confetti() {
           animation: `tcConfetti${i % 2} ${1200 + (i % 5) * 160}ms ${i * 40}ms ease-in forwards`,
         }}/>
       ))}
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════
+//  ONBOARDING guiado (1ª vez) — o mascote Tchin ensina a usar
+// ════════════════════════════════════════════════════════════
+function OnbHud() {
+  const item = (icon, color, label, ring) => (
+    <div style={{ textAlign: 'center' }}>
+      {ring ? <GoalRing pct={60} size={42}/> : <Icon name={icon} size={36} color={color} fill={1}/>}
+      <div style={{ color: '#fff', fontFamily: T.font, fontSize: 11, marginTop: 4, fontWeight: 600 }}>{label}</div>
+    </div>
+  );
+  return (
+    <div style={{ display: 'flex', gap: 18, alignItems: 'flex-start', background: 'rgba(255,255,255,0.1)', padding: '18px 22px', borderRadius: T.r.lg }}>
+      {item('local_fire_department', '#E8772E', 'sequência')}
+      {item('favorite', '#E74C3C', 'vidas')}
+      {item(null, null, 'meta', true)}
+    </div>
+  );
+}
+
+function TreinoOnboarding({ onClose, onStart, hasCurrent }) {
+  const [step, setStep] = React.useState(0);
+  const steps = [
+    { render: <TchinDuo size={104}/>, title: 'Oi! Eu sou o Tchin 🍷', body: 'Em 2 minutinhos por dia eu te ensino a entender vinho — sem decoreba e sem frescura. Bora?' },
+    { icon: 'route', title: 'Esta é a sua trilha', body: 'Você avança uma lição de cada vez. Toque no botão roxo "COMEÇAR" (ele fica pulando) pra iniciar a lição de hoje.' },
+    { hud: true, title: 'O placar lá em cima', body: '🔥 é a sua sequência — volte todo dia pra não perder. ❤️ são vidas: errou, perde uma… mas relaxa, aqui ninguém trava. O aro verde é a sua meta do dia.' },
+    { icon: 'auto_stories', title: 'Como é uma lição', body: 'Rapidinha: uma ideia simples, umas perguntas pra fixar e — o melhor — uma dica de qual vinho comprar de verdade, pro seu gosto.' },
+    { icon: 'emoji_events', title: 'Ganhe XP e suba de nível', body: 'Cada lição dá XP. Você sobe de nível, ganha conquistas e ainda disputa a Liga com outras pessoas. Vamos pra sua primeira lição?' },
+  ];
+  const cur = steps[step];
+  const isLast = step === steps.length - 1;
+  return (
+    <div style={{ position: 'absolute', inset: 0, zIndex: 70, background: 'rgba(20,8,10,0.80)', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', animation: 'tcFadeIn 200ms ease' }}>
+      <button onClick={onClose} style={{ position: 'absolute', top: 12, right: 12, background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff', fontFamily: T.font, fontSize: 13, fontWeight: 700, padding: '8px 14px', borderRadius: T.r.full, cursor: 'pointer' }}>Pular</button>
+
+      <div key={step} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+        <div style={{ animation: 'tcPopIn 380ms cubic-bezier(0.2,0.8,0.2,1)' }}>
+          {cur.render ? cur.render : cur.hud ? <OnbHud/> : (
+            <div style={{ width: 124, height: 124, borderRadius: '50%', background: 'rgba(255,255,255,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Icon name={cur.icon} size={62} color={T.c.a500} fill={1}/>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div style={{ background: T.c.n0, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: '22px 22px 24px', paddingBottom: 'max(22px, env(safe-area-inset-bottom))', animation: 'tcSlideUp 320ms cubic-bezier(0.2,0.8,0.2,1)' }}>
+        <div style={{ fontFamily: '"Fraunces", Georgia, serif', fontSize: 22, fontWeight: 700, color: T.c.n950, marginBottom: 8, textWrap: 'balance' }}>{cur.title}</div>
+        <div style={{ ...T.t.bodyLg, color: T.c.n700, lineHeight: 1.5, marginBottom: 18 }}>{cur.body}</div>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginBottom: 16 }}>
+          {steps.map((_, i) => (
+            <div key={i} style={{ width: i === step ? 22 : 8, height: 8, borderRadius: 4, background: i === step ? T.c.p700 : T.c.n300, transition: 'all 240ms' }}/>
+          ))}
+        </div>
+        {isLast ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <Button variant="primary" size="lg" fullWidth onClick={onStart}>{hasCurrent ? 'Começar minha 1ª lição' : 'Explorar a trilha'}</Button>
+            {hasCurrent && <Button variant="ghost" size="md" fullWidth onClick={onClose}>Só explorar por enquanto</Button>}
+          </div>
+        ) : (
+          <Button variant="primary" size="lg" fullWidth onClick={() => setStep(s => s + 1)} trailing={<Icon name="arrow_forward" size={18}/>}>Avançar</Button>
+        )}
+      </div>
     </div>
   );
 }
