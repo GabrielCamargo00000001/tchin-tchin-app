@@ -49,7 +49,7 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 |---|---|---|---|
 | 01 | **[Auth & Acesso](01-auth-acesso.md)** ✅ | welcome, onboarding slides, login, cadastro, social/magic/verif, recuperar senha, termos | MVP1 Épico 1, SPEC Onboarding slides |
 | 02 | **[Onboarding educacional & Roteamento](02-onboarding-roteamento.md)** ✅ | quiz-nível, interesses, tela-intenção, GPS primer, welcome-final, tutoriais, destinos first-time | Revisão UI/UX v2.1, MVP1 Épico 1 |
-| 03 | **Meu Paladar (quiz)** | quiz, quiz-result | Sprint 11-13 Épico T1 |
+| 03 | **[Meu Paladar (quiz)](03-meu-paladar.md)** ✅ | quiz, quiz-result | Sprint 11-13 Épico T1 |
 | 04 | **Descobrir & Marketplace** | home/descobrir, marketplace, wine, busca, filtros, lista-desejos, comparar | MVP1 Épico 5/6, Sprint 11-13 |
 | 05 | **Carrinho & Checkout** | carrinho, endereço, pagamento, pedido-confirmado | MVP1 |
 | 06 | **Scanner & Aprenda Bebendo (contextual)** | scanner(+v2/result/fallback), modo-restaurante, carta-matches, porque-combina | MVP1 Épico 4, Sprint 11-13 Épico T3 |
@@ -84,8 +84,9 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 `quiz-nivel` ✅ · `quiz-interesses` ✅ · `tela-intencao` ✅ · `gps-primer` ✅ · `gps-negado` ✅ · `welcome-final` ✅ · `tutoriais` ✅ · (destinos first-time = variações de `home`) ✅
 **Estados extra capturados:** `nivel-default`, `interesses-default|min|max|overflow`, `intencao-default|skip-modal`, `gps-primer-default|dialog|wizard-variant`, `gps-negado-default`, `welcome-final-default`, `tutoriais-hub`.
 
-### Módulo 03 — Meu Paladar
+### Módulo 03 — Meu Paladar [📄 doc completo](03-meu-paladar.md)
 `quiz` ✅ · `quiz-result` ✅
+**Estados extra capturados:** `paladar-q1|q1-selected|q2|q3|q4|q5`, `paladar-result`.
 
 ### Módulo 04 — Descobrir & Marketplace
 `home/descobrir` ✅ · `marketplace` ✅ · `wine` ✅ · `busca` ✅ · `filtros-avancados` ✅ · `lista-desejos` ✅ · `comparar-vinhos` ✅

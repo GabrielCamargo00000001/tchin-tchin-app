@@ -94,6 +94,28 @@ const SEQ = [
     { shot: 'tutoriais-hub' },
   ]},
 
+  // ── Módulo 03 — Meu Paladar (Quiz 5 perguntas + Radar 5D) ──
+  { url: '?screen=quiz', ops: [
+    { shot: 'paladar-q1' },
+    { click: 'Amargo, sem açúcar' },
+    { shot: 'paladar-q1-selected' },
+    { click: 'Continuar' },
+    { shot: 'paladar-q2' },
+    { click: 'Apimentado, sabor marcado' },
+    { click: 'Continuar' },
+    { shot: 'paladar-q3' },
+    { click: 'Morango maduro' },
+    { click: 'Continuar' },
+    { shot: 'paladar-q4' },
+    { click: 'Meio amargo' },
+    { click: 'Continuar' },
+    { shot: 'paladar-q5' },
+    { click: 'Mais encorpada, intensa' },
+    { click: 'Ver meu paladar' },
+    { wait: 600 },
+    { shot: 'paladar-result' },
+  ]},
+
   // ── Módulo 03+ — Home sub-tabs ─────────────────────────
   { url: '?screen=home&tab=adega', ops: [
     { shot: 'home-adega-estante' },
