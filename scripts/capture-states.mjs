@@ -2,7 +2,8 @@
 // capture-shots.mjs não pega (ele só captura o estado inicial de cada rota).
 // Cada sequência abre uma URL e executa "ops" em ordem:
 //   {shot:'nome'}                -> screenshot docs/spec/shots/nome.png
-//   {click:'Texto do botão'}     -> clica botão por texto
+//   {click:'Texto do botão'}     -> clica botão por texto (has-text)
+//   {clickAll:['t1','t2',...]}   -> clica múltiplos botões por texto (em ordem)
 //   {fill:['placeholder','valor']} -> preenche input por placeholder
 //   {fillType:['date','1990-01-01']} -> preenche input por type
 //   {wait: ms}
@@ -14,6 +15,7 @@ const OUT = 'docs/spec/shots';
 fs.mkdirSync(OUT, { recursive: true });
 
 const SEQ = [
+  // ── Módulo 01 — Auth & Acesso ───────────────────────────
   { url: '?screen=onboarding', ops: [
     { shot: 'onboarding-1' },
     { click: 'Avançar' }, { shot: 'onboarding-2' },
@@ -28,6 +30,71 @@ const SEQ = [
     { fillType: ['date', '1990-01-01'] },
     { click: 'Continuar' }, { shot: 'cadastro-3' },
   ]},
+
+  // ── Módulo 02 — Onboarding educacional & Roteamento ─────
+  // 03.01 — Quiz de Nível (1 de 3) — apenas estado inicial
+  { url: '?screen=quiz-nivel', ops: [
+    { shot: 'nivel-default' },
+  ]},
+
+  // 03.02 — Interesses (2 de 3) — default / 3 selecionados / 8 selecionados
+  { url: '?screen=quiz-interesses', ops: [
+    { shot: 'interesses-default' },
+    // Selecionar 3 (mínimo) — Cabernet Sauvignon, Malbec, Mendoza
+    { click: 'Cabernet Sauvignon' },
+    { click: 'Malbec' },
+    { click: 'Mendoza' },
+    { shot: 'interesses-min' },
+    // Adicionar mais 5 (chegar a 8 — máximo) — Merlot, Pinot Noir, Syrah, Tannat, Bordeaux
+    { click: 'Merlot' },
+    { click: 'Pinot Noir' },
+    { click: 'Syrah' },
+    { click: 'Tannat' },
+    { click: 'Bordeaux' },
+    { shot: 'interesses-max' },
+    // Tentar selecionar 9º — deve disparar shake + toast
+    { click: 'Chardonnay' },
+    { wait: 150 },
+    { shot: 'interesses-overflow' },
+  ]},
+
+  // 05.01 — Tela de Intenção (3 de 3) — default + skip modal
+  { url: '?screen=tela-intencao', ops: [
+    { shot: 'intencao-default' },
+    { click: 'Ainda não sei, me leva pro app' },
+    { wait: 250 },
+    { shot: 'intencao-skip-modal' },
+  ]},
+
+  // 06.01 — GPS Primer — default + dialog "Permitir" aberto (rota D: confrarias)
+  { url: '?screen=gps-primer', ops: [
+    { shot: 'gps-primer-default' },
+    { click: 'Ativar localização' },
+    { wait: 500 },
+    { shot: 'gps-primer-dialog' },
+  ]},
+
+  // 06.01.E — GPS Primer (rota E: criar confraria) — copy variante
+  { url: '?screen=gps-primer&intent=gps_primer_then_wizard', ops: [
+    { shot: 'gps-primer-wizard-variant' },
+  ]},
+
+  // 06.03 — GPS Negado (estado único, já temos em gps-negado.png, refazendo p/ nome consistente)
+  { url: '?screen=gps-negado', ops: [
+    { shot: 'gps-negado-default' },
+  ]},
+
+  // 07.01 — Welcome Final (intent skip por default — sem __tcLastIntent setado)
+  { url: '?screen=welcome-final', ops: [
+    { shot: 'welcome-final-default' },
+  ]},
+
+  // 35.x — Tutoriais hub
+  { url: '?screen=tutoriais', ops: [
+    { shot: 'tutoriais-hub' },
+  ]},
+
+  // ── Módulo 03+ — Home sub-tabs ─────────────────────────
   { url: '?screen=home&tab=adega', ops: [
     { shot: 'home-adega-estante' },
     { click: 'Diário' }, { shot: 'home-adega-diario' },

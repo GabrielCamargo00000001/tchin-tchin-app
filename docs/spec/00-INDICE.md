@@ -47,8 +47,8 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 
 | # | Módulo | Telas | Doc principal |
 |---|---|---|---|
-| 01 | **Auth & Acesso** | welcome, onboarding slides, login, cadastro, social/magic/verif, recuperar senha, termos | MVP1 Épico 1, SPEC Onboarding slides |
-| 02 | **Onboarding educacional & Roteamento** | quiz-nível, interesses, tela-intenção, GPS primer, welcome-final, tutoriais, destinos first-time | Revisão UI/UX v2.1, MVP1 Épico 1 |
+| 01 | **[Auth & Acesso](01-auth-acesso.md)** ✅ | welcome, onboarding slides, login, cadastro, social/magic/verif, recuperar senha, termos | MVP1 Épico 1, SPEC Onboarding slides |
+| 02 | **[Onboarding educacional & Roteamento](02-onboarding-roteamento.md)** ✅ | quiz-nível, interesses, tela-intenção, GPS primer, welcome-final, tutoriais, destinos first-time | Revisão UI/UX v2.1, MVP1 Épico 1 |
 | 03 | **Meu Paladar (quiz)** | quiz, quiz-result | Sprint 11-13 Épico T1 |
 | 04 | **Descobrir & Marketplace** | home/descobrir, marketplace, wine, busca, filtros, lista-desejos, comparar | MVP1 Épico 5/6, Sprint 11-13 |
 | 05 | **Carrinho & Checkout** | carrinho, endereço, pagamento, pedido-confirmado | MVP1 |
@@ -80,8 +80,9 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 ### Módulo 01 — Auth & Acesso
 `welcome` ✅ · `onboarding` (slides pré-auth) ⚠️ · `login` ✅ · `cadastro` ⚠️ · `login-social` ✅ · `magic-link-enviado` ✅ · `verif-telefone-otp` ✅ · `verif-concluida` ✅ · `recuperar` ✅ · `recuperar-email` ✅ · `recuperar-enviado` ✅ · `recuperar-otp` ✅ · `recuperar-redefinir` ✅ · `recuperar-sucesso` ✅ · `termos` ✅ · `politica-privacidade` ✅
 
-### Módulo 02 — Onboarding educacional & Roteamento
+### Módulo 02 — Onboarding educacional & Roteamento [📄 doc completo](02-onboarding-roteamento.md)
 `quiz-nivel` ✅ · `quiz-interesses` ✅ · `tela-intencao` ✅ · `gps-primer` ✅ · `gps-negado` ✅ · `welcome-final` ✅ · `tutoriais` ✅ · (destinos first-time = variações de `home`) ✅
+**Estados extra capturados:** `nivel-default`, `interesses-default|min|max|overflow`, `intencao-default|skip-modal`, `gps-primer-default|dialog|wizard-variant`, `gps-negado-default`, `welcome-final-default`, `tutoriais-hub`.
 
 ### Módulo 03 — Meu Paladar
 `quiz` ✅ · `quiz-result` ✅
