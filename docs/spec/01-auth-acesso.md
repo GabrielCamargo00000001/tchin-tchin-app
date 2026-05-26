@@ -56,7 +56,9 @@ _Slides 1, 2 e 3 (carrossel):_
 
 ## 01.3 `cadastro` — Criar conta (wizard 3 passos) ⚠️
 
-<img src="shots/cadastro.png" width="240"/>
+_Passo 1 (e-mail/senha) · Passo 2 (nome/nascimento) · Passo 3 (termos):_
+
+<img src="shots/cadastro-1.png" width="200"/> <img src="shots/cadastro-2.png" width="200"/> <img src="shots/cadastro-3.png" width="200"/>
 
 **Propósito:** criar conta por e-mail. **US-001** (+ US-004 termo embutido).
 **Entradas:** `welcome` → "Criar conta". **Saídas:** sucesso → `quiz-nivel` (Módulo 02); back → `welcome`; "já existe" → `login`.
