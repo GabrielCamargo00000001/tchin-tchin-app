@@ -52,7 +52,7 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 | 03 | **[Meu Paladar (quiz)](03-meu-paladar.md)** ✅ | quiz, quiz-result | Sprint 11-13 Épico T1 |
 | 04 | **[Descobrir & Marketplace](04-descobrir-marketplace.md)** ✅ | home/descobrir, marketplace, wine, busca, filtros, lista-desejos, comparar | MVP1 Épico 5/6, Sprint 11-13 |
 | 05 | **[Carrinho & Checkout](05-carrinho-checkout.md)** ⚠️ | carrinho, endereço, pagamento, pedido-confirmado | MVP1 Épico 6 + Sprint 11-13 |
-| 06 | **Scanner & Aprenda Bebendo (contextual)** | scanner(+v2/result/fallback), modo-restaurante, carta-matches, porque-combina | MVP1 Épico 4, Sprint 11-13 Épico T3 |
+| 06 | **[Scanner & Aprenda Bebendo](06-scanner-aprenda-bebendo.md)** ✅ | scanner(+v2/result/fallback), modo-restaurante, carta-matches, porque-combina | MVP1 Épico 4, Sprint 11-13 Épico T3 |
 | 07 | **Adega, Diário & Estante** | home/adega (Estante/Diário/Indicadores/Paladar), register-consumo, registro rápido/completo/confirmação, relatório mensal, favoritos | MVP1 Épico 7, Sprint 11-13 Épico T2 |
 | 08 | **Treine seu Paladar (Duolingo do vinho)** 🆕 | treino-paladar, treino-licao, treino-liga, treino-aprender | Sprint 11-13 Épico T3, MVP2 Épico 8/9/10 |
 | 09 | **Aprenda (hub educacional)** | aprender, aprenda, aprenda-detalhe | MVP2 Épico 10 |
@@ -97,8 +97,10 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 **Estados extra capturados:** `carrinho-default|cupom-ok`, `endereco-default|novo`, `pagamento-cartao|pix|boleto`, `pedido-confirmado-default`.
 **⛔ Faltam no app (vêm dos épicos):** gateway real (Celcoin/Pagar.me), frete real (Correios), NFe, tracking real, histórico de pedidos, recompra rápida, Apple/Google Pay, cartão salvo, PIX por chave, ViaCEP, múltiplas transportadoras, verificação de idade no recebimento.
 
-### Módulo 06 — Scanner & Aprenda Bebendo
-`scanner` ✅ · `scanner-result` ✅ · `scanner-v2` ✅ · `scanner-result-v2` ✅ · `scanner-fallback` ✅ · `modo-restaurante` ✅ · `carta-matches` ✅ · `porque-combina` ✅
+### Módulo 06 — Scanner & Aprenda Bebendo [📄 doc completo](06-scanner-aprenda-bebendo.md)
+`scanner` ⚠️ (legado v1) · `scanner-result` ⚠️ (legado v1) · `scanner-v2` ✅ · `scanner-result-v2` ✅ · `scanner-fallback` ✅ · `modo-restaurante` ✅ · `carta-matches` ✅ · `porque-combina` ✅
+**Estados extra capturados:** `scanner-v1-tooltip|default`, `scanner-v2-default`, `scanner-result-v2-default`, `scanner-fallback-default`, `modo-restaurante-default`, `carta-matches-default`, `porque-combina-default`.
+**⛔ Faltam no app (vêm dos épicos):** OCR real (rótulo + carta), NLG real do "Por que combina", base de vinhos populada, calibração de câmera, histórico de scans, histórico de cartas com lookup por restaurante (GPS), modo "lista digitada", fuzzy match "Você quis dizer X?", integração com Treino seu Paladar.
 
 ### Módulo 07 — Adega, Diário & Estante
 `home/adega` (Estante 🆕 / Diário / Indicadores / Paladar) ✅ · `register-consumo` ✅ · `registro-rapido` ✅ · `registro-completo` ✅ · `registro-confirmacao` ✅ · `relatorio-mensal` ✅ · `favoritos` ✅

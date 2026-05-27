@@ -94,6 +94,49 @@ const SEQ = [
     { shot: 'tutoriais-hub' },
   ]},
 
+  // ── Módulo 06 — Scanner & Aprenda Bebendo ───────────────
+  // Scanner v1 (legacy): viewfinder default
+  { url: '?screen=scanner', ops: [
+    { wait: 1100 },  // espera tooltip "Como funciona" aparecer
+    { shot: 'scanner-v1-tooltip' },
+    { click: 'Entendi' },
+    { wait: 400 },
+    { shot: 'scanner-v1-default' },
+  ]},
+
+  // Scanner v2 (canonico): viewfinder com guia maior
+  { url: '?screen=scanner-v2', ops: [
+    { wait: 600 },
+    { shot: 'scanner-v2-default' },
+  ]},
+
+  // Scanner-result-v2 (ResultadoScan completo com radar + match + acoes)
+  { url: '?screen=scanner-result-v2', ops: [
+    { wait: 700 },
+    { shot: 'scanner-result-v2-default' },
+  ]},
+
+  // Fallback (nao identificou)
+  { url: '?screen=scanner-fallback', ops: [
+    { shot: 'scanner-fallback-default' },
+  ]},
+
+  // Modo restaurante (captura de carta — ate 3 paginas)
+  { url: '?screen=modo-restaurante', ops: [
+    { shot: 'modo-restaurante-default' },
+  ]},
+
+  // Carta-matches (lista de matches identificados na carta)
+  { url: '?screen=carta-matches', ops: [
+    { shot: 'carta-matches-default' },
+  ]},
+
+  // Por que combina (explicacao com radar sobreposto)
+  { url: '?screen=porque-combina', ops: [
+    { wait: 500 },
+    { shot: 'porque-combina-default' },
+  ]},
+
   // ── Módulo 05 — Carrinho & Checkout ─────────────────────
   // Carrinho: default (2 items + cupom area) · cupom BRINDE10 aplicado
   { url: '?screen=carrinho', ops: [
