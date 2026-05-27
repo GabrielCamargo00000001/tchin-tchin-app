@@ -51,7 +51,7 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 | 02 | **[Onboarding educacional & Roteamento](02-onboarding-roteamento.md)** ✅ | quiz-nível, interesses, tela-intenção, GPS primer, welcome-final, tutoriais, destinos first-time | Revisão UI/UX v2.1, MVP1 Épico 1 |
 | 03 | **[Meu Paladar (quiz)](03-meu-paladar.md)** ✅ | quiz, quiz-result | Sprint 11-13 Épico T1 |
 | 04 | **[Descobrir & Marketplace](04-descobrir-marketplace.md)** ✅ | home/descobrir, marketplace, wine, busca, filtros, lista-desejos, comparar | MVP1 Épico 5/6, Sprint 11-13 |
-| 05 | **Carrinho & Checkout** | carrinho, endereço, pagamento, pedido-confirmado | MVP1 |
+| 05 | **[Carrinho & Checkout](05-carrinho-checkout.md)** ⚠️ | carrinho, endereço, pagamento, pedido-confirmado | MVP1 Épico 6 + Sprint 11-13 |
 | 06 | **Scanner & Aprenda Bebendo (contextual)** | scanner(+v2/result/fallback), modo-restaurante, carta-matches, porque-combina | MVP1 Épico 4, Sprint 11-13 Épico T3 |
 | 07 | **Adega, Diário & Estante** | home/adega (Estante/Diário/Indicadores/Paladar), register-consumo, registro rápido/completo/confirmação, relatório mensal, favoritos | MVP1 Épico 7, Sprint 11-13 Épico T2 |
 | 08 | **Treine seu Paladar (Duolingo do vinho)** 🆕 | treino-paladar, treino-licao, treino-liga, treino-aprender | Sprint 11-13 Épico T3, MVP2 Épico 8/9/10 |
@@ -92,8 +92,10 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 `home/descobrir` ✅ · `marketplace` ⚠️ · `wine` ⚠️ · `busca` ✅ · `filtros-avancados` ⚠️ · `lista-desejos` ⚠️ · `comparar-vinhos` ⚠️
 **Estados extra capturados:** `marketplace-default|filtersheet|search|multi`, `wine-default`, `busca-empty|results`, `filtros-default|applied`, `desejos-default|selecting`, `comparar-default`.
 
-### Módulo 05 — Carrinho & Checkout
-`carrinho` ✅ · `endereco` ✅ · `pagamento` ✅ · `pedido-confirmado` ✅
+### Módulo 05 — Carrinho & Checkout [📄 doc completo](05-carrinho-checkout.md)
+`carrinho` ⚠️ · `endereco` ⚠️ · `pagamento` ⚠️ · `pedido-confirmado` ⚠️
+**Estados extra capturados:** `carrinho-default|cupom-ok`, `endereco-default|novo`, `pagamento-cartao|pix|boleto`, `pedido-confirmado-default`.
+**⛔ Faltam no app (vêm dos épicos):** gateway real (Celcoin/Pagar.me), frete real (Correios), NFe, tracking real, histórico de pedidos, recompra rápida, Apple/Google Pay, cartão salvo, PIX por chave, ViaCEP, múltiplas transportadoras, verificação de idade no recebimento.
 
 ### Módulo 06 — Scanner & Aprenda Bebendo
 `scanner` ✅ · `scanner-result` ✅ · `scanner-v2` ✅ · `scanner-result-v2` ✅ · `scanner-fallback` ✅ · `modo-restaurante` ✅ · `carta-matches` ✅ · `porque-combina` ✅

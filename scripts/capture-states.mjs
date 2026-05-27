@@ -94,6 +94,41 @@ const SEQ = [
     { shot: 'tutoriais-hub' },
   ]},
 
+  // ── Módulo 05 — Carrinho & Checkout ─────────────────────
+  // Carrinho: default (2 items + cupom area) · cupom BRINDE10 aplicado
+  { url: '?screen=carrinho', ops: [
+    { shot: 'carrinho-default' },
+    { fill: ['Ex.: BRINDE10', 'BRINDE10'] },
+    { click: 'Aplicar' },
+    { wait: 400 },
+    { shot: 'carrinho-cupom-ok' },
+  ]},
+
+  // Endereco: default (lista) · modal "novo endereco" aberto
+  { url: '?screen=endereco', ops: [
+    { shot: 'endereco-default' },
+    { click: 'Adicionar novo endereço' },
+    { wait: 350 },
+    { shot: 'endereco-novo' },
+  ]},
+
+  // Pagamento: cartao (default) · pix (QR) · boleto (form)
+  { url: '?screen=pagamento', ops: [
+    { shot: 'pagamento-cartao' },
+    { click: 'Pix' },
+    { wait: 350 },
+    { shot: 'pagamento-pix' },
+    { click: 'Boleto bancário' },
+    { wait: 350 },
+    { shot: 'pagamento-boleto' },
+  ]},
+
+  // Pedido confirmado
+  { url: '?screen=pedido-confirmado', ops: [
+    { wait: 500 },
+    { shot: 'pedido-confirmado-default' },
+  ]},
+
   // ── Módulo 04 — Descobrir & Marketplace ─────────────────
   // Marketplace: default · sheet de filtros · modal multi-select · search ativa
   // (dispensa o tutorial "Vamos começar" antes de seguir)
