@@ -95,13 +95,31 @@ const SEQ = [
   ]},
 
   // ── Módulo 06 — Scanner & Aprenda Bebendo ───────────────
-  // Scanner v1 (legacy): viewfinder default
+  // Scanner v1 (legacy): viewfinder default + tooltip + help sheet
   { url: '?screen=scanner', ops: [
     { wait: 1100 },  // espera tooltip "Como funciona" aparecer
     { shot: 'scanner-v1-tooltip' },
     { click: 'Entendi' },
     { wait: 400 },
     { shot: 'scanner-v1-default' },
+  ]},
+
+  // Scanner v1 — abrir help sheet (botao "?" no canto superior direito)
+  // Dispensa tooltip via localStorage, depois clica no botao help (3o botao = icone help_outline)
+  { url: '?screen=scanner', ops: [
+    { setLs: ['tc:scanner:firstUse', '1'] },
+    { wait: 600 },
+    { clickIcon: 'help_outline' },
+    { wait: 400 },
+    { shot: 'scanner-v1-help' },
+  ]},
+
+  // Scanner v1 result — sucesso high confidence (default mock)
+  // Tela "scanner-result" sem params cai em fail (default no prototype.jsx)
+  // entao precisamos forcar status=success via URL
+  { url: '?screen=scanner-result', ops: [
+    { wait: 400 },
+    { shot: 'scanner-result-v1-fail' },
   ]},
 
   // Scanner v2 (canonico): viewfinder com guia maior
@@ -126,15 +144,55 @@ const SEQ = [
     { shot: 'modo-restaurante-default' },
   ]},
 
-  // Carta-matches (lista de matches identificados na carta)
+  // Carta-matches (lista de matches identificados na carta) — sort default + Por preco + nao identificados expandido
   { url: '?screen=carta-matches', ops: [
     { shot: 'carta-matches-default' },
+    { click: 'Por preço' },
+    { wait: 300 },
+    { shot: 'carta-matches-por-preco' },
+    { click: 'Por tipo' },
+    { wait: 300 },
+    { shot: 'carta-matches-por-tipo' },
   ]},
 
   // Por que combina (explicacao com radar sobreposto)
   { url: '?screen=porque-combina', ops: [
     { wait: 500 },
     { shot: 'porque-combina-default' },
+  ]},
+
+  // ── Módulo 06 — Tutoriais (overlays conversacionais) ─────
+  // keepTutors:true + resetTutors:[id] pra limpar localStorage e overlay aparecer
+  { url: '?screen=scanner-v2', keepTutors: true, resetTutors: ['scanner'], ops: [
+    { wait: 1500 },  // espera 360ms do useEffect + render
+    { shot: 'tutor-scanner-intro' },
+    { click: 'Vamos começar' },
+    { wait: 600 },
+    { shot: 'tutor-scanner-step-1' },
+    { click: 'Próximo' },
+    { wait: 600 },
+    { shot: 'tutor-scanner-step-2' },
+    { click: 'Próximo' },
+    { wait: 600 },
+    { shot: 'tutor-scanner-step-3' },
+  ]},
+
+  // Tutorial Modo Restaurante — 4 steps
+  { url: '?screen=modo-restaurante', keepTutors: true, resetTutors: ['modo-restaurante'], ops: [
+    { wait: 1500 },
+    { shot: 'tutor-restaurante-intro' },
+    { click: 'Vamos começar' },
+    { wait: 600 },
+    { shot: 'tutor-restaurante-step-1' },
+    { click: 'Próximo' },
+    { wait: 600 },
+    { shot: 'tutor-restaurante-step-2' },
+    { click: 'Próximo' },
+    { wait: 600 },
+    { shot: 'tutor-restaurante-step-3' },
+    { click: 'Próximo' },
+    { wait: 600 },
+    { shot: 'tutor-restaurante-step-4' },
   ]},
 
   // ── Módulo 05 — Carrinho & Checkout ─────────────────────
@@ -274,24 +332,78 @@ const SEQ = [
 
 const browser = await chromium.launch();
 const ctx = await browser.newContext({ viewport: { width: 430, height: 924 }, deviceScaleFactor: 2 });
-// Marca todos os tutoriais conhecidos como concluídos antes de cada navegação,
-// pra capturas não serem encobertas pelos overlays de "primeira visita".
-await ctx.addInitScript(() => {
-  try {
-    const known = ['marketplace','wine_detail','adega','diario','confraria','wizard_confraria','event_wizard','scanner','scanner_v2','carta_matches','harmoniza','radar_paladar','feed','comunidade','registro_consumo','ata_evento','treino_paladar','jornada'];
-    const done = Object.fromEntries(known.map(id => [id, true]));
-    window.localStorage.setItem('tc.tutor.done', JSON.stringify(done));
-  } catch (e) {}
-});
 const page = await ctx.newPage();
+
+// Pre-marca tutoriais conhecidos como done — chamado nas sequências que
+// historicamente dependiam de não ver o overlay "primeira visita".
+// Sequências de TUTORIAL (que QUEREM mostrar o overlay) pulam esta etapa.
+const KNOWN_TUTORS = ['marketplace','wine_detail','adega','diario','confraria','wizard_confraria','event_wizard','scanner','scanner_v2','carta_matches','harmoniza','radar_paladar','feed','comunidade','registro_consumo','ata_evento','treino_paladar','jornada','modo-restaurante'];
+async function dismissAllTutors() {
+  await page.evaluate((known) => {
+    try {
+      const done = Object.fromEntries(known.map(id => [id, true]));
+      window.localStorage.setItem('tc.tutor.done', JSON.stringify(done));
+    } catch (e) {}
+  }, KNOWN_TUTORS);
+}
 for (const s of SEQ) {
+  // Reseta tutoriais alvo no localStorage ANTES de navegar (se a sequência pediu)
+  if (Array.isArray(s.resetTutors) && s.resetTutors.length) {
+    // precisa estar em ALGUM origin pra ter acesso ao localStorage; navega no root primeiro
+    if (page.url() === 'about:blank') {
+      await page.goto(BASE + '/', { waitUntil: 'load', timeout: 15000 });
+      await page.waitForTimeout(300);
+    }
+    await page.evaluate((ids) => {
+      try {
+        const raw = window.localStorage.getItem('tc.tutor.done') || '{}';
+        const done = JSON.parse(raw);
+        ids.forEach(id => { delete done[id]; });
+        window.localStorage.setItem('tc.tutor.done', JSON.stringify(done));
+      } catch (e) {}
+    }, s.resetTutors);
+  }
   await page.goto(BASE + '/' + s.url, { waitUntil: 'load', timeout: 15000 });
   await page.waitForTimeout(900);
+  // Por padrão dispensa tutoriais; sequências de tutorial usam keepTutors:true
+  if (!s.keepTutors) {
+    await dismissAllTutors();
+    await page.reload({ waitUntil: 'load' });
+    await page.waitForTimeout(600);
+  }
   for (const op of s.ops) {
     try {
       if (op.fill) { await page.getByPlaceholder(op.fill[0]).first().fill(op.fill[1]); await page.waitForTimeout(200); }
       else if (op.fillType) { await page.locator(`input[type=${op.fillType[0]}]`).first().fill(op.fillType[1]); await page.waitForTimeout(200); }
       else if (op.click) { await page.locator(`button:has-text("${op.click}")`).first().click({ timeout: 5000 }); await page.waitForTimeout(750); }
+      else if (op.clickAria) { await page.locator(`button[aria-label="${op.clickAria}"], [role="button"][aria-label="${op.clickAria}"]`).first().click({ timeout: 5000 }); await page.waitForTimeout(750); }
+      else if (op.clickIcon) {
+        // Botao que contem um icone Material Symbol (texto do span do icone)
+        const idx = op.iconNth || 0;
+        const buttons = await page.locator(`button:has-text("${op.clickIcon}")`).all();
+        if (buttons[idx]) { await buttons[idx].click({ timeout: 5000 }); await page.waitForTimeout(750); }
+        else { throw new Error(`clickIcon: nao achou botao [${idx}] com icone ${op.clickIcon}`); }
+      }
+      else if (op.setLs) {
+        await page.evaluate(([k, v]) => { try { window.localStorage.setItem(k, v); } catch (e) {} }, op.setLs);
+        await page.reload({ waitUntil: 'load' });
+        await page.waitForTimeout(500);
+      }
+      else if (op.resetTutor) {
+        // Marca os tutorials informados como NAO-feitos no localStorage (forca overlay aparecer)
+        const ids = op.resetTutor;
+        await page.evaluate((toReset) => {
+          try {
+            const raw = window.localStorage.getItem('tc.tutor.done') || '{}';
+            const done = JSON.parse(raw);
+            toReset.forEach(id => { delete done[id]; });
+            window.localStorage.setItem('tc.tutor.done', JSON.stringify(done));
+          } catch (e) {}
+        }, ids);
+        // Reload pra effect re-disparar
+        await page.reload({ waitUntil: 'load' });
+        await page.waitForTimeout(400);
+      }
       else if (op.wait) { await page.waitForTimeout(op.wait); }
       else if (op.shot) { await page.screenshot({ path: `${OUT}/${op.shot}.png` }); console.log('ok   ' + op.shot); }
     } catch (e) { console.log('FALHA op ' + JSON.stringify(op) + ' :: ' + String(e.message).split('\n')[0]); }

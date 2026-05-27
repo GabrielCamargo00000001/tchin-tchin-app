@@ -99,7 +99,8 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 
 ### Módulo 06 — Scanner & Aprenda Bebendo [📄 doc completo](06-scanner-aprenda-bebendo.md)
 `scanner` ⚠️ (legado v1) · `scanner-result` ⚠️ (legado v1) · `scanner-v2` ✅ · `scanner-result-v2` ✅ · `scanner-fallback` ✅ · `modo-restaurante` ✅ · `carta-matches` ✅ · `porque-combina` ✅
-**Estados extra capturados:** `scanner-v1-tooltip|default`, `scanner-v2-default`, `scanner-result-v2-default`, `scanner-fallback-default`, `modo-restaurante-default`, `carta-matches-default`, `porque-combina-default`.
+**Estados extra capturados:** `scanner-v1-tooltip|default|help`, `scanner-result-v1-fail`, `scanner-v2-default`, `scanner-result-v2-default`, `scanner-fallback-default`, `modo-restaurante-default`, `carta-matches-default|por-preco|por-tipo`, `porque-combina-default`.
+**Tutoriais conversacionais capturados:** `tutor-scanner-{intro,step-1,step-2,step-3}` (3 steps), `tutor-restaurante-{intro,step-1,step-2,step-3,step-4}` (4 steps).
 **⛔ Faltam no app (vêm dos épicos):** OCR real (rótulo + carta), NLG real do "Por que combina", base de vinhos populada, calibração de câmera, histórico de scans, histórico de cartas com lookup por restaurante (GPS), modo "lista digitada", fuzzy match "Você quis dizer X?", integração com Treino seu Paladar.
 
 ### Módulo 07 — Adega, Diário & Estante
