@@ -94,6 +94,71 @@ const SEQ = [
     { shot: 'tutoriais-hub' },
   ]},
 
+  // ── Módulo 04 — Descobrir & Marketplace ─────────────────
+  // Marketplace: default · sheet de filtros · modal multi-select · search ativa
+  // (dispensa o tutorial "Vamos começar" antes de seguir)
+  { url: '?screen=marketplace', ops: [
+    { wait: 800 },
+    { click: 'Vamos começar' },
+    { wait: 400 },
+    { shot: 'marketplace-default' },
+    { click: 'Filtrar' },
+    { wait: 350 },
+    { shot: 'marketplace-filtersheet' },
+  ]},
+  { url: '?screen=marketplace', ops: [
+    { wait: 800 },
+    { click: 'Vamos começar' },
+    { wait: 400 },
+    { fill: ['Digite o nome do vinho', 'Malbec'] },
+    { wait: 800 },
+    { shot: 'marketplace-search' },
+  ]},
+  { url: '?screen=marketplace', ops: [
+    { wait: 800 },
+    { click: 'Vamos começar' },
+    { wait: 400 },
+    { click: 'Adicionar vários' },
+    { wait: 450 },
+    { shot: 'marketplace-multi' },
+  ]},
+
+  // Wine detail — default (com paladar overlay)
+  { url: '?screen=wine', ops: [
+    { shot: 'wine-default' },
+  ]},
+
+  // Busca — empty (sugestões) · com query
+  { url: '?screen=busca', ops: [
+    { shot: 'busca-empty' },
+    { fill: ['Buscar pessoas, vinhos, confrarias…', 'Malbec'] },
+    { wait: 600 },
+    { shot: 'busca-results' },
+  ]},
+
+  // Filtros avançados — default · com filtros aplicados
+  { url: '?screen=filtros-avancados', ops: [
+    { shot: 'filtros-default' },
+    { click: 'Tinto' },
+    { click: 'Argentina' },
+    { click: 'Malbec' },
+    { wait: 200 },
+    { shot: 'filtros-applied' },
+  ]},
+
+  // Lista de desejos — default · modo Comparar (selecionando)
+  { url: '?screen=lista-desejos', ops: [
+    { shot: 'desejos-default' },
+    { click: 'Comparar' },
+    { wait: 250 },
+    { shot: 'desejos-selecting' },
+  ]},
+
+  // Comparar vinhos
+  { url: '?screen=comparar-vinhos', ops: [
+    { shot: 'comparar-default' },
+  ]},
+
   // ── Módulo 03 — Meu Paladar (Quiz 5 perguntas + Radar 5D) ──
   { url: '?screen=quiz', ops: [
     { shot: 'paladar-q1' },
@@ -131,6 +196,15 @@ const SEQ = [
 
 const browser = await chromium.launch();
 const ctx = await browser.newContext({ viewport: { width: 430, height: 924 }, deviceScaleFactor: 2 });
+// Marca todos os tutoriais conhecidos como concluídos antes de cada navegação,
+// pra capturas não serem encobertas pelos overlays de "primeira visita".
+await ctx.addInitScript(() => {
+  try {
+    const known = ['marketplace','wine_detail','adega','diario','confraria','wizard_confraria','event_wizard','scanner','scanner_v2','carta_matches','harmoniza','radar_paladar','feed','comunidade','registro_consumo','ata_evento','treino_paladar','jornada'];
+    const done = Object.fromEntries(known.map(id => [id, true]));
+    window.localStorage.setItem('tc.tutor.done', JSON.stringify(done));
+  } catch (e) {}
+});
 const page = await ctx.newPage();
 for (const s of SEQ) {
   await page.goto(BASE + '/' + s.url, { waitUntil: 'load', timeout: 15000 });
