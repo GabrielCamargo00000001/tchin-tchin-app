@@ -3,7 +3,7 @@ node('master') {
         checkout scm
     }
     stage ('Build') {
-        sh "docker build --build-arg SERVER_PORT=${SERVER_PORT} -t livi/lp:B${BUILD_NUMBER} -f Dockerfile ."
+        sh "docker build --build-arg SERVER_PORT=${SERVER_PORT} -t tchintchin/prototipo:B${BUILD_NUMBER} -f Dockerfile ."
     }
     stage ('Deployment') {
         try {
@@ -17,7 +17,7 @@ node('master') {
             docker run -d \
             -p ${SERVER_PORT}:80 \
             --name tchintchin_prototipo \
-            livi/lp:B${BUILD_NUMBER}
+            tchintchin/prototipo:B${BUILD_NUMBER}
         """
     }
 }
