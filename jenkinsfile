@@ -1,0 +1,23 @@
+node('master') {
+    stage ('Checkout') {
+        checkout scm
+    }
+    stage ('Build') {
+        sh "docker build --build-arg SERVER_PORT=${SERVER_PORT} -t tchintchin/prototipo:B${BUILD_NUMBER} -f Dockerfile ."
+    }
+    stage ('Deployment') {
+        try {
+            sh "docker stop tchintchin_prototipo"
+            sh "docker rm tchintchin_prototipo"
+        } catch (Exception e) {
+            sh "echo 'container not running'"
+        }
+        sh """
+        
+            docker run -d \
+            -p ${SERVER_PORT}:80 \
+            --name tchintchin_prototipo \
+            tchintchin/prototipo:B${BUILD_NUMBER}
+        """
+    }
+}
