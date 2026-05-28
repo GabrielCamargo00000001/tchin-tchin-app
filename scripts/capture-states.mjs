@@ -94,6 +94,20 @@ const SEQ = [
     { shot: 'tutoriais-hub' },
   ]},
 
+  // ── Módulo 14 — Perfil & Social ─────────────────────────
+  { url: '?screen=perfil-outro',              ops: [ { wait: 600 }, { shot: 'perfil-outro' } ]},
+  { url: '?screen=editar-perfil',             ops: [ { wait: 500 }, { shot: 'editar-perfil' } ]},
+  { url: '?screen=editar-perfil-foto',        ops: [ { wait: 500 }, { shot: 'editar-perfil-foto' } ]},
+  { url: '?screen=editar-perfil-paladar',     ops: [ { wait: 500 }, { shot: 'editar-perfil-paladar' } ]},
+  { url: '?screen=editar-perfil-privacidade', ops: [ { wait: 500 }, { shot: 'editar-perfil-privacidade' } ]},
+  { url: '?screen=perfil-seguidores',         ops: [ { wait: 500 }, { shot: 'perfil-seguidores' } ]},
+  { url: '?screen=perfil-seguindo',           ops: [ { wait: 500 }, { shot: 'perfil-seguindo' } ]},
+  { url: '?screen=perfil-atividade-publica',  ops: [ { wait: 500 }, { shot: 'perfil-atividade-publica' } ]},
+  { url: '?screen=perfil-vinhos-provados',    ops: [ { wait: 500 }, { shot: 'perfil-vinhos-provados' } ]},
+  { url: '?screen=perfil-sugestoes',          ops: [ { wait: 500 }, { shot: 'perfil-sugestoes' } ]},
+  { url: '?screen=perfil-comparar-paladar',   ops: [ { wait: 600 }, { shot: 'perfil-comparar-paladar' } ]},
+  { url: '?screen=badges-galeria',            ops: [ { wait: 500 }, { shot: 'badges-galeria' } ]},
+
   // ── Módulo 13 — Comunidade & Feed ───────────────────────
   // home/comunidade já capturada como home-comunidade.png (capture-shots)
   { url: '?screen=criar-post', ops: [

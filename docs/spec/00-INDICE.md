@@ -60,7 +60,7 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 | 11 | **[Confrarias](11-confrarias.md)** ✅ | home/confrarias, detalhe (4 abas), wizard 1-6, config/convidar/sair/transferir/regras, welcome/apresentar/tour | MVP2 Épicos 1-7, Filtros das Confrarias |
 | 12 | **[Eventos](12-eventos.md)** ✅ | wizard 1-5, detalhe, editar, presença/RSVP/pagamentos, pós-evento (avaliar/ata) | MVP2 Épico 2 + 3 (Financeiro) |
 | 13 | **[Comunidade & Feed](13-comunidade-feed.md)** ✅ | home/comunidade, criar-post, criar-momento, post-detail, comentários | MVP1 Épico 2, MVP2 Épico 15 |
-| 14 | **Perfil & Social** | perfil-outro, editar-perfil (+foto/paladar/privacidade), seguidores/seguindo/atividade/vinhos/sugestões/comparar, badges-galeria | MVP1, MVP2 |
+| 14 | **[Perfil & Social](14-perfil-social.md)** ✅ | perfil-outro, editar-perfil (+foto/paladar/privacidade), seguidores/seguindo/atividade/vinhos/sugestões/comparar, badges-galeria | MVP1, MVP2 |
 | 15 | **Expert** | virar/aplicar/pendente, Q&A, responder, perguntar | MVP1 Épico 2 (badge expert) |
 | 16 | **Indicação & Convites** | indicação (landing/compartilhar/meus-convites/recompensas), convite-recebido | Filtros das Confrarias (Convites US-C) |
 | 17 | **Chat / DMs** | chat-lista, chat-conversa | MVP2 Épico 13 |
@@ -145,8 +145,11 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 **⚠️ Divergências:** Momentos/Stories desconectados do feed (sem régua); `comentarios` duplica comentários inline do post-detail.
 **⛔ Faltam no app (épicos):** feed real (ranking/paginação), upload de foto, moderação, régua de stories, filtros do feed, menções @/hashtag autocomplete, respostas aninhadas.
 
-### Módulo 14 — Perfil & Social
-`perfil-outro` ✅ · `editar-perfil` ✅ · `editar-perfil-foto` ✅ · `editar-perfil-paladar` ✅ · `editar-perfil-privacidade` ✅ · `perfil-seguidores` ✅ · `perfil-seguindo` ✅ · `perfil-atividade-publica` ✅ · `perfil-vinhos-provados` ✅ · `perfil-sugestoes` ✅ · `perfil-comparar-paladar` ✅ · `badges-galeria` ✅
+### Módulo 14 — Perfil & Social [📄 doc completo](14-perfil-social.md)
+`perfil-outro` ✅ · `editar-perfil` ⚠️ · `editar-perfil-foto` ✅ · `editar-perfil-paladar` ✅ · `editar-perfil-privacidade` ✅ · `perfil-seguidores` ✅ · `perfil-seguindo` ✅ · `perfil-atividade-publica` ✅ · `perfil-vinhos-provados` ✅ · `perfil-sugestoes` ✅ · `perfil-comparar-paladar` ✅ · `badges-galeria` ✅
+**Estados extra capturados:** 12 telas (`perfil-outro`, `editar-perfil*`, `perfil-{seguidores,seguindo,atividade-publica,vinhos-provados,sugestoes,comparar-paladar}`, `badges-galeria`).
+**⚠️ Divergências:** privacidade não-enforced; @handle sem unicidade; badges fragmentadas (Treino+perfil+jornada); perfil próprio é sheet (sem rota).
+**⛔ Faltam no app (épicos):** grafo social real, edição/upload de foto reais, privacidade enforced, bloquear/denunciar reais, busca nas listas.
 
 ### Módulo 15 — Expert
 `expert-virar` ✅ · `expert-aplicar` ✅ · `expert-pendente` ✅ · `expert-q-a` ✅ · `expert-responder` ✅ · `perguntar-expert` ✅
