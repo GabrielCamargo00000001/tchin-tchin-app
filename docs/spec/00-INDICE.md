@@ -61,7 +61,7 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 | 12 | **[Eventos](12-eventos.md)** ✅ | wizard 1-5, detalhe, editar, presença/RSVP/pagamentos, pós-evento (avaliar/ata) | MVP2 Épico 2 + 3 (Financeiro) |
 | 13 | **[Comunidade & Feed](13-comunidade-feed.md)** ✅ | home/comunidade, criar-post, criar-momento, post-detail, comentários | MVP1 Épico 2, MVP2 Épico 15 |
 | 14 | **[Perfil & Social](14-perfil-social.md)** ✅ | perfil-outro, editar-perfil (+foto/paladar/privacidade), seguidores/seguindo/atividade/vinhos/sugestões/comparar, badges-galeria | MVP1, MVP2 |
-| 15 | **Expert** | virar/aplicar/pendente, Q&A, responder, perguntar | MVP1 Épico 2 (badge expert) |
+| 15 | **[Expert](15-expert.md)** ✅ | virar/aplicar/pendente, Q&A, responder, perguntar | MVP1 Épico 2 (badge expert) |
 | 16 | **Indicação & Convites** | indicação (landing/compartilhar/meus-convites/recompensas), convite-recebido | Filtros das Confrarias (Convites US-C) |
 | 17 | **Chat / DMs** | chat-lista, chat-conversa | MVP2 Épico 13 |
 | 18 | **Notificações & Engajamento** | notificações, push (primer/negado/canais/preview), nudges D1/D3/D7/D14, plus-one | MVP1, Sprint 11-13 |
@@ -151,8 +151,10 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 **⚠️ Divergências:** privacidade não-enforced; @handle sem unicidade; badges fragmentadas (Treino+perfil+jornada); perfil próprio é sheet (sem rota).
 **⛔ Faltam no app (épicos):** grafo social real, edição/upload de foto reais, privacidade enforced, bloquear/denunciar reais, busca nas listas.
 
-### Módulo 15 — Expert
+### Módulo 15 — Expert [📄 doc completo](15-expert.md)
 `expert-virar` ✅ · `expert-aplicar` ✅ · `expert-pendente` ✅ · `expert-q-a` ✅ · `expert-responder` ✅ · `perguntar-expert` ✅
+**Estados extra capturados:** os 6 (`expert-{virar,aplicar,pendente,q-a,responder}`, `perguntar-expert`).
+**⛔ Faltam no app (épicos):** fila de curadoria real, Q&A real (roteamento/thread/publicar), checagem de requisitos, notificações (decisão/pergunta/resposta), reputação do expert.
 
 ### Módulo 16 — Indicação & Convites
 `indicacao-landing` ✅ · `indicacao-compartilhar` ✅ · `indicacao-meus-convites` ✅ · `indicacao-recompensas` ✅ · `convite-recebido` ✅

@@ -94,6 +94,14 @@ const SEQ = [
     { shot: 'tutoriais-hub' },
   ]},
 
+  // ── Módulo 15 — Expert ──────────────────────────────────
+  { url: '?screen=expert-virar',     ops: [ { wait: 500 }, { shot: 'expert-virar' } ]},
+  { url: '?screen=expert-aplicar',   ops: [ { wait: 500 }, { shot: 'expert-aplicar' } ]},
+  { url: '?screen=expert-pendente',  ops: [ { wait: 500 }, { shot: 'expert-pendente' } ]},
+  { url: '?screen=expert-q-a',       ops: [ { wait: 500 }, { shot: 'expert-q-a' } ]},
+  { url: '?screen=expert-responder', ops: [ { wait: 500 }, { shot: 'expert-responder' } ]},
+  { url: '?screen=perguntar-expert', ops: [ { wait: 500 }, { shot: 'perguntar-expert' } ]},
+
   // ── Módulo 14 — Perfil & Social ─────────────────────────
   { url: '?screen=perfil-outro',              ops: [ { wait: 600 }, { shot: 'perfil-outro' } ]},
   { url: '?screen=editar-perfil',             ops: [ { wait: 500 }, { shot: 'editar-perfil' } ]},
