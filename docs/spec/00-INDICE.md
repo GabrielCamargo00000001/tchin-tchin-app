@@ -63,7 +63,7 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 | 14 | **[Perfil & Social](14-perfil-social.md)** ✅ | perfil-outro, editar-perfil (+foto/paladar/privacidade), seguidores/seguindo/atividade/vinhos/sugestões/comparar, badges-galeria | MVP1, MVP2 |
 | 15 | **[Expert](15-expert.md)** ✅ | virar/aplicar/pendente, Q&A, responder, perguntar | MVP1 Épico 2 (badge expert) |
 | 16 | **[Indicação & Convites](16-indicacao-convites.md)** ✅ | indicação (landing/compartilhar/meus-convites/recompensas), convite-recebido | Filtros das Confrarias (Convites US-C) |
-| 17 | **Chat / DMs** | chat-lista, chat-conversa | MVP2 Épico 13 |
+| 17 | **[Chat / DMs](17-chat-dms.md)** ✅ | chat-lista, chat-conversa | MVP2 Épico 13 |
 | 18 | **Notificações & Engajamento** | notificações, push (primer/negado/canais/preview), nudges D1/D3/D7/D14, plus-one | MVP1, Sprint 11-13 |
 | 19 | **Jornada & Desafios** | jornada, jornada-celebrar, desafio-detalhe, badges | MVP2 Épico 7/9 |
 | 20 | **Config & Suporte** | config (notif/privacidade/conta/bloqueados), suporte (FAQ/contato) | MVP1 |
@@ -161,8 +161,10 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 **Estados extra capturados:** os 5 (`indicacao-{landing,compartilhar,meus-convites,recompensas}`, `convite-recebido`).
 **⛔ Faltam no app (épicos):** link único rastreável + deep link + atribuição de ref no cadastro, carteira de créditos + consumo no checkout (M05), anti-fraude, funil real, config server-side dos valores.
 
-### Módulo 17 — Chat / DMs
-`chat-lista` ✅ · `chat-conversa` ✅ *(UI pronta; DM completo é MVP2 Épico 13)*
+### Módulo 17 — Chat / DMs [📄 doc completo](17-chat-dms.md)
+`chat-lista` ✅ · `chat-conversa` ✅
+**Estados extra capturados:** `chat-lista`, `chat-conversa`.
+**⛔ Faltam no app (épicos):** mensageria real (WebSocket/Firestore), entregue/lido, push de nova msg, nova conversa, anexos/reações/"digitando…", moderação no chat. *(UI pronta; DM completo é MVP2 Épico 13)*
 
 ### Módulo 18 — Notificações & Engajamento
 `notificacoes` ✅ · `push-primer` ✅ · `push-negado` ✅ · `push-canais` ✅ · `push-preview` ✅ · `nudge-d1/d3/d7/d14` ✅ · `plus-one` ✅

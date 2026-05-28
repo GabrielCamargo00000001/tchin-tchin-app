@@ -94,6 +94,10 @@ const SEQ = [
     { shot: 'tutoriais-hub' },
   ]},
 
+  // ── Módulo 17 — Chat / DMs ──────────────────────────────
+  { url: '?screen=chat-lista',    ops: [ { wait: 500 }, { shot: 'chat-lista' } ]},
+  { url: '?screen=chat-conversa', ops: [ { wait: 500 }, { shot: 'chat-conversa' } ]},
+
   // ── Módulo 16 — Indicação & Convites ────────────────────
   { url: '?screen=indicacao-landing',       ops: [ { wait: 500 }, { shot: 'indicacao-landing' } ]},
   { url: '?screen=indicacao-compartilhar',  ops: [ { wait: 500 }, { shot: 'indicacao-compartilhar' } ]},
