@@ -56,7 +56,7 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 | 07 | **[Adega, Diário & Estante](07-adega-diario-estante.md)** ✅ 🆕 | home/adega (Estante/Diário/Indicadores/Paladar), register-consumo, registro rápido/completo/confirmação, relatório mensal, favoritos | MVP1 Épico 7, Sprint 11-13 Épico T2 |
 | 08 | **[Treine seu Paladar (Duolingo do vinho)](08-treine-seu-paladar.md)** ✅ 🆕 | treino-paladar, treino-licao, treino-liga, treino-aprender | Sprint 11-13 Épico T3, MVP2 Épico 8/9/10 |
 | 09 | **[Aprenda (hub educacional)](09-aprenda.md)** ✅ | aprender, aprenda, aprenda-detalhe | MVP2 Épico 10 |
-| 10 | **Harmoniza** | harmoniza, harmoniza-resultados (+ reversa) | Sprint 11-13 Épico T4 |
+| 10 | **[Harmoniza](10-harmoniza.md)** ✅ | harmoniza, harmoniza-resultados (+ reversa) | Sprint 11-13 Épico T4 |
 | 11 | **Confrarias** | home/confrarias, detalhe (4 abas), wizard 1-6, config/convidar/sair/transferir/regras, welcome/apresentar/tour | MVP2 Épicos 1-7, Filtros das Confrarias |
 | 12 | **Eventos** | wizard 1-5, detalhe, editar, presença/RSVP/QR, pós-evento (avaliar/ata) | MVP2 Épico 2 |
 | 13 | **Comunidade & Feed** | home/comunidade, criar-post, criar-momento, post-detail, comentários | MVP1 Épico 2, MVP2 Épico 15 |
@@ -120,8 +120,11 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 **⚠️ Sobreposição com Módulo 08** ("Aprenda" editorial vs "Aprenda bebendo" gamificado) — decisão PO.
 **⛔ Faltam no app (épicos):** CMS de artigos, progresso de leitura real, favoritar artigo, marcar como lido, link Aprenda↔Treino.
 
-### Módulo 10 — Harmoniza
-`harmoniza` ✅ · `harmoniza-resultados` ✅ · (reversa/calibração nos componentes f23_*) ✅
+### Módulo 10 — Harmoniza [📄 doc completo](10-harmoniza.md)
+`harmoniza` ✅ · `harmoniza-resultados` ✅ · (reversa/calibração nos componentes f23_*, sem rota dedicada) ⛔
+**Estados extra capturados:** `harmoniza-default`, `harmoniza-autocomplete`, `harmoniza-resultados-default`.
+**🐛 Bug corrigido:** `shotParams` passava `prato` como objeto (quebrava a tela em capture-mode) → corrigido p/ string.
+**⛔ Faltam no app (épicos):** motor de matching real (prato→perfil→ranking), base de pratos, NLG da razão, harmonização reversa (vinho→pratos), foto do prato, ranking ciente do paladar.
 
 ### Módulo 11 — Confrarias
 `home/confrarias` (abas Confrarias|Eventos) ✅ · `confraria-detalhe` ✅ · `wizard-confraria-1…6` ✅ · `confraria-config` ✅ · `confraria-convidar` ✅ · `confraria-sair` ✅ · `confraria-transferir` ✅ · `confraria-regras` ✅ · `confraria-welcome` ✅ · `confraria-apresentar` ✅ · `confraria-tour-rapido` ✅

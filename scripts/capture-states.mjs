@@ -94,6 +94,21 @@ const SEQ = [
     { shot: 'tutoriais-hub' },
   ]},
 
+  // ── Módulo 10 — Harmoniza ───────────────────────────────
+  // harmoniza (digitar prato) — default + com prato digitado (autocomplete)
+  { url: '?screen=harmoniza', ops: [
+    { wait: 500 },
+    { shot: 'harmoniza-default' },
+    { fill: ['Ex: picanha grelhada', 'Picanha'] },
+    { wait: 500 },
+    { shot: 'harmoniza-autocomplete' },
+  ]},
+  // harmoniza-resultados (melhor match + outras opções)
+  { url: '?screen=harmoniza-resultados', ops: [
+    { wait: 1400 },
+    { shot: 'harmoniza-resultados-default' },
+  ]},
+
   // ── Módulo 09 — Aprenda (hub educacional) ───────────────
   // aprender (04.B "Você veio no lugar certo" — preview por nível)
   { url: '?screen=aprender', ops: [

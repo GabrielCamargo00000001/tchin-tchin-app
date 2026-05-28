@@ -112,7 +112,7 @@ function shotParams(screen) {
     'post-detail': { post: P[0] }, 'comentarios': { post: P[0] },
     'treino-licao': { lessonId: 'licao-01-tanino' },
     'chat-conversa': { chat: { id: 'c1', name: 'Confraria do Vinho', type: 'group', members: 8 } },
-    'harmoniza-resultados': { prato: { nome: 'Picanha' } },
+    'harmoniza-resultados': { prato: 'Picanha grelhada' },
   })[screen] || {};
 }
 function TchinApp({ initialScreen = 'onboarding' }) {
