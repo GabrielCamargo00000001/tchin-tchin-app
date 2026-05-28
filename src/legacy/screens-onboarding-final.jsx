@@ -64,10 +64,20 @@ function writeTourState(state) {
 }
 
 // ─── 07.01 WelcomeFinalScreen ─────────────────────────────
+// Copy personalizada por intent (Gabriel: adaptar a mensagem ao que o usuário escolheu)
+const WELCOME_SUBTITLE_BY_INTENT = {
+  discover_home:              'Bora achar a próxima garrafa pro seu paladar. Te mostro o app em 30 segundos.',
+  diary_empty:               'Sua adega começa agora. Te mostro o app em 30 segundos.',
+  gps_primer_then_confrarias: 'Confrarias perto de você te esperam. Te mostro o app em 30 segundos.',
+  gps_primer_then_wizard:    'Sua confraria vai sair do papel. Antes, te mostro o app em 30 segundos.',
+  skip_to_feed:              'Sem pressa pra escolher — te mostro o app em 30 segundos e você explora.',
+};
+
 function WelcomeFinalScreen({ go, ctx, setCtx, startTour }) {
   const name        = (ctx && ctx.user && ctx.user.name) ? ctx.user.name.split(' ')[0] : 'você';
   const intent      = (typeof window !== 'undefined' && window.__tcLastIntent) || 'skip_to_feed';
   const destination = DESTINATION_BY_INTENT[intent] || 'comunidade';
+  const subtitle    = WELCOME_SUBTITLE_BY_INTENT[intent] || WELCOME_SUBTITLE_BY_INTENT.skip_to_feed;
 
   // The discover_home intent means the user opted into the discover flow
   // without taking the Paladar quiz — strip paladar from ctx so the descobrir
@@ -138,7 +148,7 @@ function WelcomeFinalScreen({ go, ctx, setCtx, startTour }) {
           fontSize: 14, lineHeight: 1.5, color: T.c.n800,
           textWrap: 'pretty',
         }}>
-          Antes de te liberar, te mostro como o app funciona em 30 segundos.
+          {subtitle}
         </p>
 
         <div style={{ height: 32 }}/>

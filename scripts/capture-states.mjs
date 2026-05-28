@@ -66,27 +66,64 @@ const SEQ = [
     { shot: 'intencao-skip-modal' },
   ]},
 
-  // 06.01 — GPS Primer — default + dialog "Permitir" aberto (rota D: confrarias)
-  { url: '?screen=gps-primer', ops: [
-    { shot: 'gps-primer-default' },
+  // 06.01 — GPS Primer — agora em TODAS as rotas, narrativa por intent.
+  // Default (discover_home) + dialog "Permitir" aberto.
+  { url: '?screen=gps-primer&intent=discover_home', ops: [
+    { shot: 'gps-primer-discover' },
     { click: 'Ativar localização' },
     { wait: 500 },
     { shot: 'gps-primer-dialog' },
   ]},
+  // Narrativas por intent (cada clique monta sua história)
+  { url: '?screen=gps-primer&intent=diary_empty',    ops: [ { wait: 300 }, { shot: 'gps-primer-diario' } ]},
+  { url: '?screen=gps-primer&intent=learn',          ops: [ { wait: 300 }, { shot: 'gps-primer-aprender' } ]},
+  { url: '?screen=gps-primer&intent=treino_paladar', ops: [ { wait: 300 }, { shot: 'gps-primer-treino' } ]},
+  { url: '?screen=gps-primer&intent=gps_primer_then_confrarias', ops: [ { wait: 300 }, { shot: 'gps-primer-confraria' } ]},
+  { url: '?screen=gps-primer&intent=gps_primer_then_wizard',     ops: [ { wait: 300 }, { shot: 'gps-primer-wizard' } ]},
+  { url: '?screen=gps-primer&intent=skip_to_feed',   ops: [ { wait: 300 }, { shot: 'gps-primer-skip' } ]},
 
-  // 06.01.E — GPS Primer (rota E: criar confraria) — copy variante
-  { url: '?screen=gps-primer&intent=gps_primer_then_wizard', ops: [
-    { shot: 'gps-primer-wizard-variant' },
-  ]},
-
-  // 06.03 — GPS Negado (estado único, já temos em gps-negado.png, refazendo p/ nome consistente)
-  { url: '?screen=gps-negado', ops: [
+  // 06.03 — GPS Negado
+  { url: '?screen=gps-negado&intent=discover_home', ops: [
     { shot: 'gps-negado-default' },
   ]},
 
-  // 07.01 — Welcome Final (intent skip por default — sem __tcLastIntent setado)
-  { url: '?screen=welcome-final', ops: [
-    { shot: 'welcome-final-default' },
+  // 07.01 — Welcome Final — tela de congrats (copy personalizada por intent)
+  // clearLs tc.tour evita overlay de tour residual de sequência anterior.
+  { url: '?screen=welcome-final&intent=discover_home', keepTutors: true, clearLs: ['tc.tour'], ops: [
+    { wait: 700 }, { shot: 'welcome-final-default' },
+  ]},
+  // Welcome-final com copy de outro intent (confraria)
+  { url: '?screen=welcome-final&intent=gps_primer_then_confrarias', keepTutors: true, clearLs: ['tc.tour'], ops: [
+    { wait: 700 }, { shot: 'welcome-final-confraria' },
+  ]},
+
+  // 07.02–05 — Tour de 4 passos. Dirigido determinísticamente pelo estado
+  // persistido tc.tour = {destination, step}; cada passo é uma rota home/<tab>
+  // com o overlay TutorialTooltip renderizado por cima (glow na tab do passo).
+  // (sem keepTutors → dismissAllTutors roda e popula tc.tutor.done, evitando
+  //  que o tutorial da aba apareça por cima do tooltip do tour)
+  { url: '?screen=home&tab=comunidade', ops: [
+    { setLs: ['tc.tour', '{"destination":"descobrir","step":0}'] },
+    { wait: 700 }, { shot: 'tour-passo-1-comunidade' },
+  ]},
+  { url: '?screen=home&tab=confrarias', ops: [
+    { setLs: ['tc.tour', '{"destination":"descobrir","step":1}'] },
+    { wait: 700 }, { shot: 'tour-passo-2-confrarias' },
+  ]},
+  { url: '?screen=home&tab=descobrir', ops: [
+    { setLs: ['tc.tour', '{"destination":"descobrir","step":2}'] },
+    { wait: 700 }, { shot: 'tour-passo-3-descobrir' },
+  ]},
+  { url: '?screen=home&tab=adega', ops: [
+    { setLs: ['tc.tour', '{"destination":"descobrir","step":3}'] },
+    { wait: 700 }, { shot: 'tour-passo-4-adega' },
+  ]},
+  // 07.06 — Celebração: último passo (adega) → "Começar a usar" → CelebrationToast.
+  // O onDone limpa tc.tour, então não vaza pra próxima sequência.
+  { url: '?screen=home&tab=adega', ops: [
+    { setLs: ['tc.tour', '{"destination":"descobrir","step":3}'] },
+    { wait: 600 },
+    { click: 'Começar a usar' }, { wait: 600 }, { shot: 'tour-celebracao' },
   ]},
 
   // 35.x — Tutoriais hub
@@ -622,7 +659,16 @@ async function dismissAllTutors() {
     } catch (e) {}
   }, KNOWN_TUTORS);
 }
+// Filtro opcional: SEQ_ONLY="tour-,welcome-final" roda só sequências cujo url
+// ou nome de shot contenha algum dos termos (acelera re-capturas pontuais).
+const ONLY = process.env.SEQ_ONLY ? process.env.SEQ_ONLY.split(',').map(t => t.trim()).filter(Boolean) : null;
+function seqMatches(s) {
+  if (!ONLY) return true;
+  const hay = (s.url || '') + ' ' + (s.ops || []).map(o => o.shot || '').join(' ');
+  return ONLY.some(t => hay.includes(t));
+}
 for (const s of SEQ) {
+  if (!seqMatches(s)) continue;
   // Remove chaves de localStorage ANTES de navegar (ex.: forçar onboarding de feature)
   if (Array.isArray(s.clearLs) && s.clearLs.length) {
     if (page.url() === 'about:blank') {

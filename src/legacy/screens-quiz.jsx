@@ -296,106 +296,113 @@ function QuizResultScreen({ go, params }) {
 }
 
 // ─── 06.01 GPS Permission Primer ──────────────────────────
-// Explains *why* GPS is needed BEFORE calling the native OS prompt.
-// Material 3 / Apple HIG best practice: never trigger the cold native prompt.
-//
-// API (explicit — used when the screen is rendered directly):
-//   variant            'D' (find confrarias) | 'E' (create confraria wizard)
-//   onActivateLocation callback fired on user tap of primary CTA
-//   onSkip             callback fired on "Agora não"
-//
-// Routing (legacy — used when navigated via the prototype's go() with params):
-//   params.next     'confrarias' | 'wizard-confraria'
-//   params.intent   'gps_primer_then_confrarias' | 'gps_primer_then_wizard'
-function GpsPrimerScreen({
-  go, params = {},
-  variant,
-  onActivateLocation,
-  onSkip,
-}) {
+// Explica *por que* o GPS importa ANTES de chamar o prompt nativo do SO.
+// Gabriel: GPS aparece em TODAS as rotas (todos os intents), com uma
+// NARRATIVA adaptada a cada intent. Continua skippável ("Agora não").
+//   params.intent  → define copy + destino pós-permissão.
+
+// Narrativa + destino por intent. dest(go, status) roteia pós-permissão.
+const GPS_INTENT = {
+  discover_home: {
+    title: 'Pra mostrar vinhos e lojas perto de você',
+    body:  'Usamos sua localização pra recomendar onde comprar e o que rola na sua região. Desativável quando quiser.',
+    toast: 'Tudo certo! Mostrando o que tem perto de você.',
+    dest:  (go, s) => go('welcome-final', { intent: 'discover_home', location_status: s }),
+  },
+  diary_empty: {
+    title: 'Pra lembrar onde você provou cada vinho',
+    body:  'Com a localização, cada registro guarda o lugar — vira memória da sua jornada. Desativável depois.',
+    toast: 'Tudo certo! Seus registros vão guardar o lugar.',
+    dest:  (go, s) => go('welcome-final', { intent: 'diary_empty', location_status: s }),
+  },
+  learn: {
+    title: 'Pra trazer conteúdo e eventos da sua região',
+    body:  'A localização ajuda a sugerir aulas, degustações e novidades perto de você. Desativável quando quiser.',
+    toast: 'Tudo certo! Conteúdo da sua região liberado.',
+    dest:  (go, s) => go('aprender', { intent: 'learn', level: (typeof window !== 'undefined' && window.__tcUserLevel) || null, location_status: s }),
+  },
+  treino_paladar: {
+    title: 'Pra te colocar na liga da sua região',
+    body:  'A localização conecta você com gente treinando o paladar por perto. Desativável a qualquer momento.',
+    toast: 'Tudo certo! Bora treinar.',
+    dest:  (go, s) => go('treino-paladar', { intent: 'treino_paladar', location_status: s }),
+  },
+  gps_primer_then_confrarias: {
+    title: 'Pra encontrar confrarias perto de você',
+    body:  'Usamos sua localização só pra mostrar confrarias e eventos da sua região. Desativável a qualquer momento.',
+    toast: 'Tudo certo! Mostrando confrarias da sua região.',
+    dest:  (go, s) => go('welcome-final', { intent: 'gps_primer_then_confrarias', location_status: s }),
+  },
+  gps_primer_then_wizard: {
+    title: 'Pra cadastrar onde sua confraria se encontra',
+    body:  'Você pode escolher cidade e UF manualmente também — mas o GPS é mais rápido. Desativável depois.',
+    toast: 'Tudo certo!',
+    dest:  (go, s) => go('wizard-confraria-1', { intent: 'gps_primer_then_wizard', location_status: s }),
+  },
+  skip_to_feed: {
+    title: 'Pra personalizar seu feed com gente da sua região',
+    body:  'A localização ajuda a mostrar pessoas, posts e eventos perto de você. Desativável quando quiser.',
+    toast: 'Tudo certo!',
+    dest:  (go, s) => go('welcome-final', { intent: 'skip_to_feed', location_status: s }),
+  },
+};
+const GPS_FALLBACK = GPS_INTENT.discover_home;
+
+function GpsPrimerScreen({ go, params = {} }) {
   const [requesting, setRequesting] = React.useState(false);
   const [dialog, setDialog]         = React.useState(false);
 
-  // Resolve variant: explicit prop wins, then derive from params
-  const isWizard = variant === 'E'
-    || params.intent === 'gps_primer_then_wizard'
-    || params.next === 'wizard-confraria';
-  const next     = params.next || (isWizard ? 'wizard-confraria' : 'confrarias');
-  const rota     = isWizard ? 'E' : 'D';
+  const intent = params.intent || 'discover_home';
+  const cfg    = GPS_INTENT[intent] || GPS_FALLBACK;
+  const copy   = { title: cfg.title, body: cfg.body };
 
-  // Copy variants — discovery (default) vs. wizard (create-confraria)
-  const copy = isWizard
-    ? {
-        title: 'Pra cadastrar onde sua confraria se encontra',
-        body:  'Você pode escolher cidade e UF manualmente também — mas usar GPS é mais rápido. Desativável depois.',
-      }
-    : {
-        title: 'Pra encontrar confrarias perto de você',
-        body:  'Usamos sua localização só pra mostrar confrarias e eventos da sua região. Você pode desativar a qualquer momento nas Configurações.',
-      };
-
-  // Analytics — fire 'gps_primer_shown' once on mount
+  // Analytics
   React.useEffect(() => {
     try {
-      if (typeof window.tcAnalytics === 'function') window.tcAnalytics('gps_primer_shown', { rota });
-      else if (typeof window.gtag === 'function')   window.gtag('event', 'gps_primer_shown', { rota });
+      if (typeof window.tcAnalytics === 'function') window.tcAnalytics('gps_primer_shown', { intent });
+      else if (typeof window.gtag === 'function')   window.gtag('event', 'gps_primer_shown', { intent });
     } catch (e) {}
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const trackResponse = (response) => {
     try {
-      const payload = { rota, response };
+      const payload = { intent, response };
       if (typeof window.tcAnalytics === 'function') window.tcAnalytics('gps_primer_response', payload);
       else if (typeof window.gtag === 'function')   window.gtag('event', 'gps_primer_response', payload);
     } catch (e) {}
   };
 
-  // Routes the user to their post-primer destination, tagging the
-  // location_status. Wizard intent skips welcome-final — the create-confraria
-  // wizard takes priority over the tour overlay per matriz §4.
   const routeToDest = (locationStatus) => {
-    const i = params.intent || (isWizard ? 'gps_primer_then_wizard' : 'gps_primer_then_confrarias');
-    try { window.__tcLastIntent = i; } catch (e) {}
-    if (i === 'gps_primer_then_wizard' || next === 'wizard-confraria') {
-      go('wizard-confraria-1', { location_status: locationStatus, intent: i });
-      return;
-    }
-    go('welcome-final', { intent: i, location_status: locationStatus });
+    try { window.__tcLastIntent = intent; } catch (e) {}
+    cfg.dest(go, locationStatus);
   };
 
-  // CTA — Allow → triggers (simulated) native OS prompt
+  // CTA — Allow → prompt nativo (simulado)
   const onAllow = () => {
     if (requesting) return;
-    if (typeof onActivateLocation === 'function') {
-      onActivateLocation();
-      return;
-    }
     setRequesting(true);
     window.setTimeout(() => { setRequesting(false); setDialog(true); }, 350);
   };
-  // OS prompt outcomes
   const systemGrant = () => {
     setDialog(false);
     trackResponse('granted');
-    go('toast', { variant: 'success', message: 'Tudo certo! Mostrando confrarias da sua região.' });
+    go('toast', { variant: 'success', message: cfg.toast });
     window.setTimeout(() => routeToDest('granted'), 220);
   };
   const systemDeny = () => {
     setDialog(false);
     trackResponse('denied');
-    // 06.03 — hard deny state (system-level denial)
-    go('gps-negado', { next, intent: params.intent });
+    go('gps-negado', { intent });
   };
-  // "Agora não" — soft deny, never destructive styling
+  // "Agora não" — soft deny
   const onNotNow = () => {
     trackResponse('soft');
-    if (typeof onSkip === 'function') { onSkip(); return; }
     routeToDest('denied_soft');
   };
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: T.c.n0, position: 'relative' }}>
-      {/* Top bar — back + "Etapa 7 de 7" caption */}
+      {/* Top bar — só back (sem chip de etapa) */}
       <div style={{
         display: 'flex', alignItems: 'center', gap: 8,
         padding: '8px 16px 8px 4px', minHeight: 56,
@@ -411,13 +418,6 @@ function GpsPrimerScreen({
           <Icon name="arrow_back" size={24}/>
         </button>
         <div style={{ flex: 1 }}/>
-        <div style={{
-          ...T.t.caption, color: T.c.n600,
-          fontFamily: T.mono, fontWeight: 600,
-          padding: '4px 10px', background: T.c.n100, borderRadius: T.r.full,
-        }}>
-          Etapa 7 de 7
-        </div>
       </div>
 
       {/* Body — generous vertical spacing per spec (64 / 32 / 12 / 48) */}
@@ -527,18 +527,15 @@ function GpsPrimerScreen({
 // Reached when the user denied the OS prompt. Offers a manual path forward
 // and a way to retry via system settings.
 function GpsNegadoScreen({ go, params = {} }) {
-  const next = params.next || 'confrarias';
+  const intent = params.intent || 'discover_home';
+  const cfg = (typeof GPS_INTENT !== 'undefined' && GPS_INTENT[intent]) || GPS_FALLBACK;
 
+  // Seguir manualmente → mesmo destino do intent (status 'denied')
   const proceedManual = () => {
-    const i = params.intent || 'gps_primer_then_confrarias';
-    try { window.__tcLastIntent = i; } catch (e) {}
-    if (i === 'gps_primer_then_wizard' || params.next === 'wizard-confraria') {
-      go('wizard-confraria-1', { location_status: 'denied', intent: i });
-      return;
-    }
-    go('welcome-final', { intent: i, location_status: 'denied' });
+    try { window.__tcLastIntent = intent; } catch (e) {}
+    cfg.dest(go, 'denied');
   };
-  const tryAgain      = () => go('gps-primer', { next, intent: params.intent });
+  const tryAgain = () => go('gps-primer', { intent });
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: T.c.n0 }}>
@@ -555,13 +552,6 @@ function GpsNegadoScreen({ go, params = {} }) {
           <Icon name="arrow_back" size={24}/>
         </button>
         <div style={{ flex: 1 }}/>
-        <div style={{
-          ...T.t.caption, color: T.c.n600,
-          fontFamily: T.mono, fontWeight: 600,
-          padding: '4px 10px', background: T.c.n100, borderRadius: T.r.full,
-        }}>
-          Etapa 7 de 7
-        </div>
       </div>
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 24px', overflow: 'auto' }}>
@@ -656,33 +646,14 @@ function TelaIntencaoScreen({ go, params, onIntentSelected }) {
   const [routing, setRouting]   = React.useState(false);  // lock to prevent double-tap
   const [showSkip, setShowSkip] = React.useState(false);
 
-  // Resolve a route name to the prototype's navigation. The component still
-  // honors the typed `onIntentSelected` callback when provided. Every intent
-  // funnels through 07.01 WelcomeFinal — it owns the tour entry + skip path.
+  // TODOS os intents passam pelo GPS primer (Gabriel: GPS em todas as rotas,
+  // com narrativa adaptada por intent). O GpsPrimerScreen resolve o destino
+  // final pós-permissão com base no intent.
   const commit = (intent) => {
     if (typeof onIntentSelected === 'function') onIntentSelected(intent);
-    // Stash for WelcomeFinal so it can resolve the post-tour destination
     try { window.__tcLastIntent = intent; } catch (e) {}
-    switch (intent) {
-      case 'discover_home':
-        go('welcome-final', { intent }); return;
-      case 'diary_empty':
-        go('welcome-final', { intent }); return;
-      case 'learn':
-        // 04.B is a self-contained destination — no tour, no welcome-final
-        go('aprender', { intent, level: window.__tcUserLevel }); return;
-      case 'treino_paladar':
-        // Vai direto pra feature "Treine seu Paladar" (sem tour)
-        go('treino-paladar', { intent }); return;
-      case 'gps_primer_then_confrarias':
-        go('gps-primer', { next: 'confrarias', intent }); return;
-      case 'gps_primer_then_wizard':
-        go('gps-primer', { next: 'wizard-confraria', intent }); return;
-      case 'skip_to_feed':
-      default:
-        try { window.__tcSkipTimestamp = Date.now(); } catch (e) {}
-        go('welcome-final', { intent: 'skip_to_feed' }); return;
-    }
+    if (intent === 'skip_to_feed') { try { window.__tcSkipTimestamp = Date.now(); } catch (e) {} }
+    go('gps-primer', { intent });
   };
 
   const tapCard = (id) => {

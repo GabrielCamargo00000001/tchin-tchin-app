@@ -117,8 +117,10 @@ function shotParams(screen) {
 }
 function TchinApp({ initialScreen = 'onboarding' }) {
   const __q = (typeof window !== 'undefined') ? new URLSearchParams(window.location.search) : new URLSearchParams();
-  const __ss = __q.get('screen'); const __st = __q.get('tab');
-  const [stack, setStack] = React.useState([{ screen: __ss || initialScreen, params: __ss ? shotParams(__ss) : {} }]);
+  const __ss = __q.get('screen'); const __st = __q.get('tab'); const __si = __q.get('intent');
+  const __params = __ss ? shotParams(__ss) : {};
+  if (__si) { __params.intent = __si; try { window.__tcLastIntent = __si; } catch (e) {} } // capture-mode: ?intent= injeta o intent (gps-primer narrativas + welcome-final copy)
+  const [stack, setStack] = React.useState([{ screen: __ss || initialScreen, params: __params }]);
   const [tab, setTab] = React.useState(__st || 'descobrir');
   const [toast, setToast] = React.useState(null);
   const [profileOpen, setProfileOpen] = React.useState(false);

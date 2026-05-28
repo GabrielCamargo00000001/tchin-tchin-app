@@ -84,7 +84,7 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 
 ### Módulo 02 — Onboarding educacional & Roteamento [📄 doc completo](02-onboarding-roteamento.md)
 `quiz-nivel` ✅ · `quiz-interesses` ✅ · `tela-intencao` ✅ · `gps-primer` ✅ · `gps-negado` ✅ · `welcome-final` ✅ · `tutoriais` ✅ · (destinos first-time = variações de `home`) ✅
-**Estados extra capturados:** `nivel-default`, `interesses-default|min|max|overflow`, `intencao-default|skip-modal`, `gps-primer-default|dialog|wizard-variant`, `gps-negado-default`, `welcome-final-default`, `tutoriais-hub`.
+**Estados extra capturados:** `nivel-default`, `interesses-default|min|max|overflow`, `intencao-default|skip-modal`, `gps-primer-{discover|diario|aprender|treino|confraria|wizard|skip}` (narrativa por intent) + `gps-primer-dialog`, `gps-negado-default`, `welcome-final-{default|confraria}`, tour completo `tour-passo-1-comunidade|2-confrarias|3-descobrir|4-adega` + `tour-celebracao`, `tutoriais-hub`.
 
 ### Módulo 03 — Meu Paladar [📄 doc completo](03-meu-paladar.md)
 `quiz` ✅ · `quiz-result` ✅

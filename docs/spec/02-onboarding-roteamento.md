@@ -4,15 +4,17 @@
 > **Fonte de verdade:** telas em `src/legacy/screens-quiz-nivel.jsx` (Nível + Interesses), `src/legacy/screens-quiz.jsx` (Intenção, GPS), `src/legacy/screens-onboarding-final.jsx` (Welcome final + Tour) e `src/legacy/screens-tutor.jsx` (Tutoriais hub) — UI/UX. Doc funcional: MVP2 Épico Onboarding + Relatório HP3.
 > **Épicos/US:** US-006 (Nível), US-007 (Interesses), US-008 (Tutorial/Tour), US-009 (Personalização do feed), US-010 (Intenção/Roteamento), US-011 (GPS contextual).
 
-**Regra de negócio canônica:** o **Quiz de Paladar** (5 perguntas sensoriais) **não** está no onboarding — vira contextual no Descobrir (Módulo 03). O onboarding educacional tem **3 passos curtos** (Nível → Interesses → Intenção), com **GPS** opcional só para confraria, **Welcome Final** + tour opcional de 4 abas. Nenhum tour bloqueia — todos têm "pular".
+**Regra de negócio canônica:** o **Quiz de Paladar** (5 perguntas sensoriais) **não** está no onboarding — vira contextual no Descobrir (Módulo 03). O onboarding educacional tem **3 passos curtos** (Nível → Interesses → Intenção). **🆕 GPS aparece em TODAS as rotas** (Gabriel) — depois da Intenção, **qualquer** intent passa pelo `gps-primer`, com uma **narrativa adaptada ao intent** (cada clique "monta sua história"). Continua **skippável** ("Agora não"). Depois: **Welcome Final** + tour opcional de 4 abas (exceto `learn`/`treino_paladar`, que têm onboarding próprio). Nenhum tour bloqueia — todos têm "pular".
 
 ## Mapa do fluxo
 ```
-[cadastro ok] → quiz-nivel → quiz-interesses → tela-intencao ─┬─ discover_home / diary_empty / skip → welcome-final → tour? → home/<tab>
-                                                              ├─ learn                                → aprender (direto, sem tour)
-                                                              ├─ treino_paladar                       → treino-paladar (Módulo 08, sem tour)
-                                                              └─ gps_primer_then_(confrarias|wizard)  → gps-primer ─┬─ granted/soft → welcome-final ou wizard
-                                                                                                                    └─ deny → gps-negado → manual
+[cadastro ok] → quiz-nivel → quiz-interesses → tela-intencao ──(qualquer intent)──→ gps-primer (narrativa por intent)
+                                                                                       ├─ granted/soft ─┬─ discover_home / diary_empty / skip → welcome-final → tour? → home/<tab>
+                                                                                       │                 ├─ learn          → aprender (direto)
+                                                                                       │                 ├─ treino_paladar → treino-paladar (Módulo 08)
+                                                                                       │                 ├─ confrarias     → welcome-final → tour? → home/confrarias
+                                                                                       │                 └─ wizard         → wizard-confraria-1
+                                                                                       └─ deny (sistema) → gps-negado → manual → mesmo destino do intent
 ```
 
 ---
@@ -56,7 +58,7 @@ Bottom bar **sticky**: contagem `aria-live` "X de 18 selecionados" (com "faltam 
 **Estado/persistência:** `window.__tcUserInterests` + payload `interests_completed { count, interests }`.
 **Analytics:** `interests_completed { count, interests:[ids] }` no tap "Continuar".
 > **⚠️ DIVERGÊNCIA — scroll:** ao tocar um item fora do viewport (ex.: Mendoza nas Regiões), os cards selecionados acima saem da tela. Não é bug — a contagem persiste. **Recomendação:** **mini-resumo sticky** com chips (X) acima da CTA. Backlog.
-> **⚠️ DIVERGÊNCIA — mínimo:** doc antigo pedia ≥5; tela usa **≥3** (HP3, menor barreira). **Recomendação:** manter 3. Gabriel decide.
+> **✅ GABRIEL DECIDIU — mínimo = 3:** doc antigo pedia ≥5; **fica ≥3** (HP3, menor barreira). Resolvido.
 **Backlog:** "Meus interesses" editável em `editar-perfil-paladar`.
 **Status:** ✅
 
@@ -69,16 +71,9 @@ _Default · modal de confirmação de skip:_
 <img src="shots/intencao-default.png" width="200"/> <img src="shots/intencao-skip-modal.png" width="200"/>
 
 **Propósito:** a tela mais importante deste módulo — descobrir **por onde o usuário quer começar** e roteá-lo direto. Reduz drop pós-onboarding ao eliminar o "e agora, o que faço?". **US-010.**
-**Entradas:** `quiz-interesses` → `tela-intencao { level, interests }`. **Saídas (single-tap commit):**
-- **`discover_home`** → `welcome-final` → home/descobrir FirstTime (zera paladar do ctx para forçar variação).
-- **`diary_empty`** → `welcome-final` → home/adega FirstTime/Estante (zera diary do ctx).
-- **`learn`** → `aprender { intent, level }` *(direto, sem `welcome-final`)*.
-- **`treino_paladar`** → `treino-paladar` *(direto, sem tour — feature tem onboarding próprio)*.
-- **`gps_primer_then_confrarias`** → `gps-primer { next: 'confrarias' }`.
-- **`gps_primer_then_wizard`** → `gps-primer { next: 'wizard-confraria' }`.
-- **`skip_to_feed`** (link "Ainda não sei…") → abre `SkipConfirmModal` → confirma → `welcome-final` → home/comunidade.
+**Entradas:** `quiz-interesses` → `tela-intencao { level, interests }`. **Saída (single-tap commit):** 🆕 **TODOS os intents agora vão para `gps-primer { intent }`** (Gabriel: GPS em todas as rotas). O destino final pós-GPS é resolvido pelo `gps-primer` conforme o intent (ver 02.4). O `skip_to_feed` (link "Ainda não sei…") passa antes pelo `SkipConfirmModal`; confirmando, também vai pro `gps-primer`.
 
-**Layout (`TelaIntencaoScreen`):** top bar back + chip "Etapa 3 de 3"; H1 Fraunces 32 **"Por onde você quer começar?"**; sub Geist 16 **"A gente te leva direto. Você pode explorar tudo depois."**. 6 `IntentCard` (vertical, gap 12, min-height 72dp):
+**Layout (`TelaIntencaoScreen`):** top bar back + chip "3 de 3"; H1 Fraunces 32 **"Por onde você quer começar?"**; sub Geist 16 **"A gente te leva direto. Você pode explorar tudo depois."**. 6 `IntentCard` (vertical, gap 12, min-height 72dp):
 - **`discover_home`** (`local_bar`) — "Descobrir vinhos pro meu paladar · Veja recomendações com base no seu DNA".
 - **`diary_empty`** (`menu_book`) — "Registrar um vinho que provei · Comece sua adega pessoal com 1 registro de 15 segundos".
 - **`learn`** (`school`) — "Aprender sobre vinho · Conteúdo curado pra começar do começo, no seu nível".
@@ -90,34 +85,41 @@ Abaixo, link ghost centralizado **"Ainda não sei, me leva pro app"** → abre `
 **Interação:** single-tap commit (200ms pressed feedback) + lock contra double-tap; stash `window.__tcLastIntent` (lido depois pelo `welcome-final`).
 **SkipConfirmModal** (bottom sheet, Nielsen #5 — prevenção de erro): drag handle + H3 Fraunces 20 **"Tem certeza que quer pular?"** + body Geist 14 **"Sem isso a gente vai te mostrar conteúdo geral. Você pode preencher depois no seu perfil."** + CTA **primária** burgundy **"Voltar e escolher"** (hierarquia invertida — caminho seguro destacado) + ghost **"Pular mesmo assim"**. Dismiss: tap fora, Esc, drag handle. `role="dialog"` + `aria-modal`.
 **Analytics (recomendado):** `intent_selected { intent }`; skip: `intent_skip_shown` / `intent_skip_confirmed` / `intent_skip_canceled`.
-> **⚠️ DIVERGÊNCIA — chip "Etapa 3 de 3":** as anteriores dizem só "1 de 3" / "2 de 3". **Recomendação:** padronizar para "3 de 3". Cosmético.
-> **⚠️ DIVERGÊNCIA — `learn` e `treino_paladar` pulam o `welcome-final`** (vão direto): essas features têm onboarding próprio (mascote/trilha) — empilhar tour seria redundante. ✅ Manter.
+> **✅ GABRIEL DECIDIU — todos os intents passam pelo GPS** (com narrativa adaptada — ver 02.4). `learn` e `treino_paladar` ainda pulam o `welcome-final` (têm onboarding próprio), mas **passam pelo GPS antes**.
 **Status:** ✅
 
 ---
 
 ## 02.4 `gps-primer` — Permission Primer (06.01, rotas D e E) ✅
 
-_Default (rota D, descobrir confrarias) · diálogo nativo simulado · variante rota E (criar confraria):_
+**🆕 GPS em TODAS as rotas, com narrativa por intent** (Gabriel). Default (discover_home) · diálogo nativo · narrativas de outros intents:
 
-<img src="shots/gps-primer-default.png" width="200"/> <img src="shots/gps-primer-dialog.png" width="200"/> <img src="shots/gps-primer-wizard-variant.png" width="200"/>
+<img src="shots/gps-primer-discover.png" width="160"/> <img src="shots/gps-primer-dialog.png" width="160"/> <img src="shots/gps-primer-diario.png" width="160"/> <img src="shots/gps-primer-treino.png" width="160"/> <img src="shots/gps-primer-confraria.png" width="160"/> <img src="shots/gps-primer-wizard.png" width="160"/> <img src="shots/gps-primer-aprender.png" width="160"/> <img src="shots/gps-primer-skip.png" width="160"/>
 
-**Propósito:** explicar **por que** o GPS é necessário **antes** de disparar o prompt do SO (Material 3 / HIG — nunca chamar o prompt frio). **US-011.**
-**Entradas:** `tela-intencao` com intent `gps_primer_then_confrarias` (D) ou `gps_primer_then_wizard` (E). Reusável fora do onboarding sempre que precisar de localização. **Saídas:**
-- **Ativar localização** → diálogo simulado → "Durante o uso"/"Somente desta vez" = granted → rota D: `welcome-final { intent, location_status: 'granted' }`; rota E: `wizard-confraria-1`.
-- **Não permitir** no diálogo → `gps-negado` (hard deny).
-- **Agora não** (soft deny) → mesmo destino que granted, com `location_status: 'denied_soft'`.
+**Propósito:** explicar **por que** o GPS importa **antes** de disparar o prompt do SO (Material 3 / HIG — nunca chamar o prompt frio). **US-011.**
+**Entradas:** `tela-intencao` → **qualquer intent** → `gps-primer { intent }`. **Saídas:**
+- **Ativar localização** → diálogo simulado → "Durante o uso"/"Somente desta vez" = **granted** → destino do intent (ver tabela).
+- **Não permitir** no diálogo → `gps-negado` (mantém o intent).
+- **Agora não** (soft deny) → mesmo destino do granted, com `location_status: 'denied_soft'`.
 
-**Layout (`GpsPrimerScreen`):** top bar back + chip "Etapa 7 de 7" *(legado — ver divergência)*; ilustração círculo 160×160 burgundy/50 + ícone `location_on` 80 p700; H2 Fraunces 24 + body Geist 14 centralizados. **Copy varia por rota:**
-- **Rota D (descobrir):** "Pra encontrar confrarias perto de você" + "Usamos sua localização só pra mostrar confrarias e eventos da sua região. Você pode desativar a qualquer momento nas Configurações."
-- **Rota E (criar):** "Pra cadastrar onde sua confraria se encontra" + "Você pode escolher cidade e UF manualmente também — mas usar GPS é mais rápido. Desativável depois."
+**Layout (`GpsPrimerScreen`):** top bar **só back (sem chip de etapa)**; ilustração círculo 160×160 burgundy/50 + ícone `location_on` 80 p700; H2 Fraunces 24 + body Geist 14. **Narrativa + destino por intent (`GPS_INTENT`):**
 
-CTAs: **primária** "Ativar localização" + ícone `my_location` com loading 350ms ("Ativando…") antes de abrir o diálogo; **ghost** "Agora não" (nunca em vermelho/destrutivo).
-**Diálogo nativo simulado** (overlay 45% + card branco 28dp, estilo Android): título **"Permitir que Tchin Tchin acesse a localização deste dispositivo?"** + 3 botões em coluna (todos p700 sobre branco) — **"Durante o uso do app"** · **"Somente desta vez"** · **"Não permitir"**. Granted: toast success "Tudo certo! Mostrando confrarias da sua região." + 220ms delay + navega. Deny: `gps-negado`.
-**Analytics:** `gps_primer_shown { rota: D|E }` no mount; `gps_primer_response { rota, response: 'granted'|'denied'|'soft' }`.
-> **⚠️ DIVERGÊNCIA — chip "Etapa 7 de 7":** legado da numeração antiga (com mais passos). Confunde quando a tela é usada **fora** do onboarding. **Recomendação:** trocar por "Quase lá" ou esconder fora do onboarding. Gabriel decide.
-> **⚠️ DIVERGÊNCIA — diálogo:** em produção é o prompt **real** do SO (não o simulado). Implementação real: `Geolocation.getCurrentPosition` **só depois** do tap da CTA; mapear `PERMISSION_DENIED` → `gps-negado`.
-**Status:** ✅ (UI/UX completos; integração com SO pendente no build real)
+| Intent | Título (narrativa) | Destino pós-permissão |
+|---|---|---|
+| `discover_home` | "Pra mostrar vinhos e lojas perto de você" | `welcome-final` |
+| `diary_empty` | "Pra lembrar onde você provou cada vinho" | `welcome-final` |
+| `learn` | "Pra trazer conteúdo e eventos da sua região" | `aprender` (direto) |
+| `treino_paladar` | "Pra te colocar na liga da sua região" | `treino-paladar` (direto) |
+| `gps_primer_then_confrarias` | "Pra encontrar confrarias perto de você" | `welcome-final` → confrarias |
+| `gps_primer_then_wizard` | "Pra cadastrar onde sua confraria se encontra" | `wizard-confraria-1` |
+| `skip_to_feed` | "Pra personalizar seu feed com gente da sua região" | `welcome-final` → comunidade |
+
+CTAs: **primária** "Ativar localização" + ícone `my_location` (loading 350ms antes do diálogo); **ghost** "Agora não" (nunca destrutivo).
+**Diálogo nativo simulado** (overlay 45% + card branco 28dp, estilo Android): título **"Permitir que Tchin Tchin acesse a localização deste dispositivo?"** + 3 botões — **"Durante o uso do app"** · **"Somente desta vez"** · **"Não permitir"**. Granted: toast success (texto adaptado ao intent) + navega. Deny: `gps-negado`.
+**Analytics:** `gps_primer_shown { intent }`; `gps_primer_response { intent, response }`.
+> **✅ GABRIEL DECIDIU:** GPS em todas as rotas com narrativa por intent; **chip "Etapa 7 de 7" removido**.
+> **⚠️ DIVERGÊNCIA — diálogo:** em produção é o prompt **real** do SO. Implementação: `Geolocation.getCurrentPosition` **só após** o tap da CTA; `PERMISSION_DENIED` → `gps-negado`.
+**Status:** ✅ (UI/UX completos; integração com SO pendente no build)
 
 ---
 
@@ -126,35 +128,43 @@ CTAs: **primária** "Ativar localização" + ícone `my_location` com loading 35
 <img src="shots/gps-negado-default.png" width="240"/>
 
 **Propósito:** o usuário **negou** no prompt do SO. Oferece caminho alternativo (escolher cidade/UF manualmente) + instrução para reativar via Configurações.
-**Entradas:** `gps-primer` → diálogo → "Não permitir". **Saídas:** "Escolher cidade manualmente" → segue intent original (D: `welcome-final { location_status: 'denied' }`; E: `wizard-confraria-1`); "Tentar de novo" → `gps-primer { next, intent }`; back → `tela-intencao` (via `BACK_SKIP`, evita loop).
+**Entradas:** `gps-primer { intent }` → diálogo → "Não permitir". **Saídas:** "Escolher cidade manualmente" → **destino do intent** (`location_status: 'denied'`, via `GPS_INTENT[intent].dest`); "Tentar de novo" → `gps-primer { intent }`; back → `tela-intencao` (via `BACK_SKIP`, evita loop). Sem chip de etapa.
 **Layout (`GpsNegadoScreen`):** ilustração círculo 160×160 n100 + ícone `location_off` 72 n600; H2 Fraunces 24 **"Sem problema, dá pra continuar"**; body Geist 14 **"Você pode escolher cidade e UF manualmente. Pra liberar GPS depois, é só ir em Configurações do app no celular."**. CTAs: primária "Escolher cidade manualmente"; ghost "Tentar de novo".
 > **⚠️ DIVERGÊNCIA — picker de cidade:** doc previa picker explícito UF→Cidade; tela hoje leva pra próxima rota contando com filtro lá dentro. **Recomendação:** implementar `picker-cidade-uf` como Bottom Sheet reutilizável (config, perfil, wizard). Backlog.
 **Status:** ✅
 
 ---
 
-## 02.6 `welcome-final` — Congrats + tour entry (07.01) ✅
+## 02.6 `welcome-final` — Congrats + tour (fluxo completo) ✅
 
-<img src="shots/welcome-final-default.png" width="240"/>
+_Welcome (copy por intent) → tour 4 passos (Comunidade → Confrarias → Descobrir → Adega) → celebração:_
 
-**Propósito:** parabenizar (reforço positivo, sunk-cost) e oferecer **tour opcional de 4 passos** que mostra as 4 abas principais antes do app começar. **US-008.**
-**Entradas:** qualquer intent que passa por aqui (`discover_home`, `diary_empty`, `gps_primer_then_confrarias`, `skip_to_feed`; **não** `learn` nem `treino_paladar`). Lê `window.__tcLastIntent` para escolher a **tab destino**: `discover_home`→descobrir · `diary_empty`→adega · `gps_primer_then_confrarias`→confrarias · `skip_to_feed`→comunidade (default).
-**Side-effects (`useEffect`):** se `intent === 'discover_home'` e o ctx tem paladar, **zera** o paladar (Descobrir renderiza `FirstTime` sem 5D radar); se `intent === 'diary_empty'` e ctx tem diary semeada, zera o diary (Adega abre Estante FirstTime vazia).
-**Layout (`WelcomeFinalScreen`):** background gradiente vertical n50→p50 8% (wash burgundy sutil); centro: `TchinLogo` 64 p700 + H1 Fraunces 32 **"Bem-vindo, {primeiroNome}!"** (nome em p700) + body Geist 14 **"Antes de te liberar, te mostro como o app funciona em 30 segundos."** + 4 dots de preview (todos n300 — não é progresso, só sinal de "tem 4 passos"). Bottom: CTA primária **"Começar tour"** (escreve `tc.tour = { destination, step: 0 }` em localStorage + nav `firstTime: true, fromTour: true`) e ghost **"Pular tour, ir direto"** (limpa `tc.tour` + nav `fromTour: false`).
-**Persistência do tour:** `tc.tour` no localStorage — refresh no meio retoma de onde parou. Limpo ao chegar no último passo ("Começar a usar") ou ao tocar "Pular".
+<img src="shots/welcome-final-default.png" width="150"/> <img src="shots/tour-passo-1-comunidade.png" width="150"/> <img src="shots/tour-passo-2-confrarias.png" width="150"/> <img src="shots/tour-passo-3-descobrir.png" width="150"/> <img src="shots/tour-passo-4-adega.png" width="150"/> <img src="shots/tour-celebracao.png" width="150"/>
 
-**Tour overlay (07.02–05) — `TutorialTooltip`** renderizado por `TchinApp` por cima da home: 4 passos fixos **Comunidade → Confrarias → Descobrir → Adega**. Cada passo: overlay 60% cobrindo a tela **exceto** a bottom nav (iluminada por contraste); card branco 312dp acima da nav, triângulo apontando para a tab; title + body curtos + footer com dots (passo atual em p500) + botões (steps 0–2: "Pular tour" ghost + "Próximo" primary; step 3: "Voltar" ghost + "Começar a usar" primary). `role="dialog"` + `aria-modal`; clique fora **não** fecha.
-**Copy do tour:**
-- **Comunidade** — "Seu feed de descobertas, dúvidas e conversas sobre vinho. Onde você acompanha as pessoas que segue e os experts."
-- **Confrarias** — "Grupos locais que se encontram pra degustar e aprender juntos. Crie a sua ou entre numa que já existe."
-- **Descobrir** — "Vinhos selecionados pro seu paladar, scanner de rótulos e harmonização com comida."
-- **Adega** — "Sua coleção pessoal. Wishlist, vinhos já provados, estatísticas e diário de degustação."
+_Variante de copy por intent (ex.: confraria):_
 
-**07.06 CelebrationToast** — toast top burgundy, 3s auto-dismiss, copy **"Você está pronto! 🍷 Bem-vindo ao Tchin Tchin."** Disparado ao "Começar a usar".
-**Analytics (recomendado):** `tour_started`, `tour_step { i }`, `tour_skipped { atStep }`, `tour_completed`.
-> **⚠️ DIVERGÊNCIA — copy fixa:** hoje a copy é única ("em 30 segundos"). **Recomendação:** parametrizar por intent (ex.: "te mostro a parte que importa pra você"). Backlog cosmético.
-> **⚠️ DIVERGÊNCIA — captura sem nome:** no shot, aparece "Bem-vindo, você!" porque `ctx.user.name` está vazio em dev-mode. Em produção virá com o primeiro nome. ✅ esperado.
-**Status:** ✅ (UI completa; analytics do tour pendentes)
+<img src="shots/welcome-final-confraria.png" width="200"/>
+
+**Propósito:** parabenizar (reforço positivo, sunk-cost) e oferecer **tour opcional de 4 passos** das abas principais. **US-008.**
+**Entradas:** intents que passam por aqui após o GPS (`discover_home`, `diary_empty`, `gps_primer_then_confrarias`, `skip_to_feed`; **não** `learn`/`treino_paladar`). Lê `window.__tcLastIntent` para a **tab destino**: `discover_home`→descobrir · `diary_empty`→adega · `gps_primer_then_confrarias`→confrarias · `skip_to_feed`→comunidade.
+**Side-effects (`useEffect`):** `discover_home` zera paladar (força FirstTime sem radar); `diary_empty` zera diary (Estante FirstTime vazia).
+**🆕 Copy personalizada por intent (`WELCOME_SUBTITLE_BY_INTENT`)** — Gabriel:
+- `discover_home`: "Bora achar a próxima garrafa pro seu paladar. Te mostro o app em 30 segundos."
+- `diary_empty`: "Sua adega começa agora. Te mostro o app em 30 segundos."
+- `gps_primer_then_confrarias`: "Confrarias perto de você te esperam. Te mostro o app em 30 segundos."
+- `gps_primer_then_wizard`: "Sua confraria vai sair do papel. Antes, te mostro o app em 30 segundos."
+- `skip_to_feed`: "Sem pressa pra escolher — te mostro o app em 30 segundos e você explora."
+
+**Layout:** gradiente n50→p50 8%; `TchinLogo` 64 p700 + H1 **"Bem-vindo, {primeiroNome}!"** + subtítulo (por intent) + 4 dots de preview. Bottom: **"Começar tour"** (escreve `tc.tour`, nav com `fromTour: true`) + ghost **"Pular tour, ir direto"**.
+
+**Tour overlay (07.02–05) — `TutorialTooltip`** por cima da home: 4 passos fixos **Comunidade → Confrarias → Descobrir → Adega**. Overlay 60% (exceto bottom nav, iluminada) + card 312dp com triângulo apontando a tab + dots (atual em p500) + botões (0–2: "Pular tour" + "Próximo"; passo 3: "Voltar" + "Começar a usar"). Clique fora **não** fecha.
+**Copy do tour:** Comunidade ("Seu feed de descobertas…") · Confrarias ("Grupos locais que se encontram…") · Descobrir ("Vinhos pro seu paladar, scanner, harmonização") · Adega ("Sua coleção: wishlist, provados, stats, diário").
+
+**07.06 CelebrationToast** — toast top burgundy, 3s auto-dismiss: **"Você está pronto! 🍷 Bem-vindo ao Tchin Tchin."** ✅ **Dispara SEMPRE no fim do tour** (tanto em "Começar a usar" quanto em "Pular tour") — Gabriel.
+**Analytics:** `tour_started`, `tour_step { i }`, `tour_skipped { atStep }`, `tour_completed`.
+> **✅ GABRIEL DECIDIU:** copy do welcome personalizada por intent + CelebrationToast sempre no fim do tour. Ambos implementados.
+> **⚠️ Nota — captura sem nome:** no shot aparece "Bem-vindo, você!" porque `ctx.user.name` está vazio em dev-mode; em produção virá o primeiro nome. ✅ esperado.
+**Status:** ✅
 
 ---
 
@@ -200,4 +210,9 @@ O onboarding **não termina** em `welcome-final`. Cada destino tem uma variaçã
 - **GPS:** integrar API nativa (Geolocation) substituindo o diálogo simulado.
 - **First-time:** completar Comunidade FirstTime + nudge cruzado para `learn`/`treino_paladar`.
 - **Reset:** botão "Refazer onboarding" em `config-conta`.
-- **Gabriel decide:** mínimo de interesses (3 vs 5), chip "Etapa 7 de 7" no GPS, copy adaptada por intent no `welcome-final`, `CelebrationToast` sempre no fim do tour.
+
+> **✅ GABRIEL DECIDIU (fechado, sem pendência):**
+> - **Mínimo de interesses = 3** (não sobe pra 5).
+> - **GPS sem chip "Etapa /7"** — o primer entra em todas as rotas com narrativa por intent, sem numeração de etapa.
+> - **`welcome-final` com copy adaptada por intent** (ver 02.6).
+> - **`CelebrationToast` sempre no fim do tour** (e ao pular o tour).
