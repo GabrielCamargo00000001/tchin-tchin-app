@@ -94,6 +94,71 @@ const SEQ = [
     { shot: 'tutoriais-hub' },
   ]},
 
+  // ── Módulo 08 — Treine seu Paladar (Duolingo do vinho) ──
+  // Onboarding do mascote TchinDuo (8 passos) — clearLs força aparecer
+  { url: '?screen=treino-paladar', clearLs: ['tc.treino.v3'], keepTutors: true, ops: [
+    { wait: 900 },
+    { shot: 'treino-onb-intro' },
+    { click: 'Continuar' }, { wait: 500 },
+    { shot: 'treino-onb-say1' },
+    { click: 'Continuar' }, { wait: 500 },
+    { shot: 'treino-onb-objetivo' },
+    { click: 'Escolher sem errar na loja' }, { wait: 500 },
+    { shot: 'treino-onb-goal' },
+    { click: 'Regular' }, { wait: 500 },
+    { shot: 'treino-onb-say2' },
+    { click: 'Continuar' }, { wait: 500 },
+    { shot: 'treino-onb-streakgoal' },
+    { click: '14 dias' }, { wait: 500 },
+    { shot: 'treino-onb-gems' },
+    { click: 'Quero!' }, { wait: 500 },
+    { shot: 'treino-onb-final' },
+  ]},
+
+  // Home / Trilha (estado com progresso, sem onboarding)
+  { url: '?screen=treino-paladar', keepTutors: true, ops: [
+    { setLs: ['tc.treino.v3', '{"onboarded":true,"xp":120,"streak":3,"hearts":5,"gems":40,"done":["licao-01-tanino"],"goal":"regular","weekXp":85,"badges":["primeira-gota"]}'] },
+    { wait: 700 },
+    { shot: 'treino-home' },
+  ]},
+
+  // Lição: conceito → exercício → feedback
+  { url: '?screen=treino-licao', keepTutors: true, ops: [
+    { setLs: ['tc.treino.v3', '{"onboarded":true,"hearts":5,"goal":"regular"}'] },
+    { wait: 600 },
+    { shot: 'treino-licao-conceito' },
+    { click: 'Continuar' }, { wait: 500 },
+    { shot: 'treino-licao-exercicio' },
+    { click: 'O tanino' }, { wait: 700 },
+    { shot: 'treino-licao-feedback' },
+  ]},
+
+  // Lição completa (fluxo inteiro → tela de conclusão)
+  { url: '?screen=treino-licao', keepTutors: true, ops: [
+    { setLs: ['tc.treino.v3', '{"onboarded":true,"hearts":5,"goal":"regular"}'] },
+    { wait: 600 },
+    { click: 'Continuar' }, { wait: 400 },     // conceito → ex1
+    { click: 'O tanino' }, { wait: 500 },       // mc correto
+    { click: 'Continuar' }, { wait: 400 },      // → ex2 (fill)
+    { click: 'amarra' }, { wait: 500 },         // fill correto
+    { click: 'Continuar' }, { wait: 400 },      // → aplicação
+    { click: 'Concluir lição' }, { wait: 900 }, // → conclusão
+    { shot: 'treino-licao-completa' },
+  ]},
+
+  // Liga (leaderboard semanal)
+  { url: '?screen=treino-liga', keepTutors: true, ops: [
+    { setLs: ['tc.treino.v3', '{"onboarded":true,"weekXp":85,"xp":120}'] },
+    { wait: 600 },
+    { shot: 'treino-liga-default' },
+  ]},
+
+  // Aprender (escolher tema / busca de tópico)
+  { url: '?screen=treino-aprender', keepTutors: true, ops: [
+    { wait: 500 },
+    { shot: 'treino-aprender-default' },
+  ]},
+
   // ── Módulo 07 — Adega, Diário & Estante ─────────────────
   // register-consumo (2 passos: escolher vinho → avaliar)
   { url: '?screen=register-consumo', ops: [
@@ -385,6 +450,14 @@ async function dismissAllTutors() {
   }, KNOWN_TUTORS);
 }
 for (const s of SEQ) {
+  // Remove chaves de localStorage ANTES de navegar (ex.: forçar onboarding de feature)
+  if (Array.isArray(s.clearLs) && s.clearLs.length) {
+    if (page.url() === 'about:blank') {
+      await page.goto(BASE + '/', { waitUntil: 'load', timeout: 15000 });
+      await page.waitForTimeout(300);
+    }
+    await page.evaluate((keys) => { keys.forEach(k => { try { window.localStorage.removeItem(k); } catch (e) {} }); }, s.clearLs);
+  }
   // Reseta tutoriais alvo no localStorage ANTES de navegar (se a sequência pediu)
   if (Array.isArray(s.resetTutors) && s.resetTutors.length) {
     // precisa estar em ALGUM origin pra ter acesso ao localStorage; navega no root primeiro

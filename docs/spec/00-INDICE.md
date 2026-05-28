@@ -54,7 +54,7 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 | 05 | **[Carrinho & Checkout](05-carrinho-checkout.md)** ⚠️ | carrinho, endereço, pagamento, pedido-confirmado | MVP1 Épico 6 + Sprint 11-13 |
 | 06 | **[Scanner & Aprenda Bebendo](06-scanner-aprenda-bebendo.md)** ✅ | scanner(+v2/result/fallback), modo-restaurante, carta-matches, porque-combina | MVP1 Épico 4, Sprint 11-13 Épico T3 |
 | 07 | **[Adega, Diário & Estante](07-adega-diario-estante.md)** ✅ 🆕 | home/adega (Estante/Diário/Indicadores/Paladar), register-consumo, registro rápido/completo/confirmação, relatório mensal, favoritos | MVP1 Épico 7, Sprint 11-13 Épico T2 |
-| 08 | **Treine seu Paladar (Duolingo do vinho)** 🆕 | treino-paladar, treino-licao, treino-liga, treino-aprender | Sprint 11-13 Épico T3, MVP2 Épico 8/9/10 |
+| 08 | **[Treine seu Paladar (Duolingo do vinho)](08-treine-seu-paladar.md)** ✅ 🆕 | treino-paladar, treino-licao, treino-liga, treino-aprender | Sprint 11-13 Épico T3, MVP2 Épico 8/9/10 |
 | 09 | **Aprenda (hub educacional)** | aprender, aprenda, aprenda-detalhe | MVP2 Épico 10 |
 | 10 | **Harmoniza** | harmoniza, harmoniza-resultados (+ reversa) | Sprint 11-13 Épico T4 |
 | 11 | **Confrarias** | home/confrarias, detalhe (4 abas), wizard 1-6, config/convidar/sair/transferir/regras, welcome/apresentar/tour | MVP2 Épicos 1-7, Filtros das Confrarias |
@@ -109,8 +109,10 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 **⚠️ Divergências-chave:** persistência da Estante só na sessão (window.__tcCellar); 4 conceitos de "guardar" sobrepostos (Estante/Diário/Favoritos/Wishlist); dimensões do paladar desalinhadas (Aromas vs Frutado); 2 fluxos de registro coexistem.
 **⛔ Faltam no app (épicos):** persistência real, sync offline, editar/excluir registro, filtros do diário, export, geração de imagem do Wrapped, insights NLG, quantidade por slot na estante.
 
-### Módulo 08 — Treine seu Paladar (Duolingo do vinho) 🆕
+### Módulo 08 — Treine seu Paladar (Duolingo do vinho) 🆕 [📄 doc completo](08-treine-seu-paladar.md)
 `treino-paladar` 🆕 · `treino-licao` 🆕 · `treino-liga` 🆕 · `treino-aprender` 🆕
+**Estados extra capturados:** `treino-onb-{intro,say1,objetivo,goal,say2,streakgoal,gems,final}` (8 passos do onboarding do mascote), `treino-home`, `treino-licao-{conceito,exercicio,feedback,completa}`, `treino-liga-default`, `treino-aprender-default`.
+**⛔ Faltam no app (épicos):** sync server-side (anti-fraude), CMS de lições (hoje hard-coded), matchmaking real de ligas, conteúdo de micro-vídeos, notificação de streak em risco, fim de vidas real, loja de cristais, expansão >3 unidades, busca livre no Aprender, link scanner→lição.
 
 ### Módulo 09 — Aprenda
 `aprender` ✅ · `aprenda` ✅ · `aprenda-detalhe` ✅
