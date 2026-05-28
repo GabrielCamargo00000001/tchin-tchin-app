@@ -54,83 +54,163 @@ const NOTIF_TYPES = {
     avatar:  { kind: 'user' },
     badge:   { icon: 'verified', bg: '#1565C0' },
   },
+  // ── Chat / DMs (M17) ──
+  chat_message: {
+    avatar:  { kind: 'user' },
+    badge:   { icon: 'chat', bg: '#1565C0' },
+  },
+  // ── Eventos (M12) ──
+  event_soon: {
+    avatar:  { kind: 'event' },
+    badge:   { icon: 'alarm', bg: '#B8894A' },
+  },
+  // ── Social (M13/M14) ──
+  like: {
+    avatar:  { kind: 'user' },
+    badge:   { icon: 'favorite', bg: '#722F37' },
+  },
+  comment: {
+    avatar:  { kind: 'user' },
+    badge:   { icon: 'mode_comment', bg: '#1565C0' },
+  },
+  follow: {
+    avatar:  { kind: 'user' },
+    badge:   { icon: 'person_add', bg: '#722F37' },
+  },
+  // ── Gamificação / Pontos (M19) ──
+  challenge_open: {
+    avatar:  { kind: 'system', icon: 'emoji_events', bg: '#B8894A' },
+    badge:   null,
+  },
+  ranking_up: {
+    avatar:  { kind: 'system', icon: 'leaderboard', bg: '#B8894A' },
+    badge:   null,
+  },
+  points_expiring: {
+    avatar:  { kind: 'system', icon: 'schedule', bg: '#B8894A' },
+    badge:   null,
+  },
+  // ── Marketplace / Compras (M04/M05) ──
+  wishlist_price_drop: {
+    avatar:  { kind: 'system', icon: 'sell', bg: '#2E7D32' },
+    badge:   null,
+  },
+  order_shipped: {
+    avatar:  { kind: 'system', icon: 'local_shipping', bg: '#722F37' },
+    badge:   null,
+  },
+  // ── Indicação (M16) ──
+  referral_reward: {
+    avatar:  { kind: 'system', icon: 'redeem', bg: '#2E7D32' },
+    badge:   null,
+  },
+  // ── Conta & segurança (M20) ──
+  security_login: {
+    avatar:  { kind: 'system', icon: 'shield', bg: '#1565C0' },
+    badge:   null,
+  },
 };
 
-// Default mock notifications — covers all 9 types in spec order.
+// Default mock notifications — amostra representativa do catálogo completo
+// (uma de cada grupo de canal: confrarias, eventos, chat, social, expert,
+//  gamificação/pontos, marketplace/compras, indicação, conta/segurança),
+//  incluindo um exemplo AGRUPADO ("X e +N curtiram").
 const DEFAULT_NOTIFICATIONS = [
   {
-    id: 'n01',
-    type: 'invite_brotherhood',
-    read: false,
-    ts: minutesAgo(8),
+    id: 'n01', type: 'invite_brotherhood', read: false, ts: minutesAgo(8),
     actor: { id: 'u_5', name: 'Carla Bittencourt' },
     payload: { brotherhoodId: 'b_1', brotherhoodName: 'Tchin do Cerrado' },
     text: ['Carla Bittencourt', ' te convidou pra ', 'Tchin do Cerrado'],
   },
   {
-    id: 'n02',
-    type: 'event_tomorrow',
-    read: false,
-    ts: hoursAgo(3),
-    payload: { eventId: 'e_1', eventName: 'Degustação de Malbecs', time: '19h30' },
-    text: ['Evento ', 'Degustação de Malbecs', ' é amanhã às ', '19h30'],
+    id: 'n02', type: 'chat_message', read: false, ts: minutesAgo(22),
+    actor: { id: 'u_2', name: 'Diego Almeida' },
+    payload: { chatId: 'dm-diego' },
+    text: ['Diego Almeida', ' te mandou uma mensagem'],
   },
   {
-    id: 'n03',
-    type: 'plus_one_joined',
-    read: false,
-    ts: hoursAgo(6),
+    id: 'n03', type: 'event_soon', read: false, ts: minutesAgo(40),
+    payload: { eventId: 'e_1', eventName: 'Degustação de Malbecs' },
+    text: ['Degustação de Malbecs', ' começa em ', '1 hora', ' ⏰'],
+  },
+  {
+    id: 'n04', type: 'like', read: false, ts: hoursAgo(2),
     actor: { id: 'u_9', name: 'Marina Souza' },
+    payload: { postId: 'p_1', count: 4 },
+    text: ['Marina Souza', ' e mais 4 curtiram seu post'],
+  },
+  {
+    id: 'n05', type: 'comment', read: false, ts: hoursAgo(3),
+    actor: { id: 'u_7', name: 'Helena Sotero' },
+    payload: { postId: 'p_1' },
+    text: ['Helena Sotero', ' comentou: ', '"Que garrafa!"'],
+  },
+  {
+    id: 'n06', type: 'expert_replied', read: false, ts: hoursAgo(5),
+    actor: { id: 'u_4', name: 'Patrícia Lima' },
+    text: ['Sommelier ', 'Patrícia Lima', ' respondeu sua pergunta'],
+  },
+  {
+    id: 'n07', type: 'challenge_open', read: true, ts: hoursAgo(9),
+    payload: { challenge: 'Prove um vinho espanhol' },
+    text: ['Desafio da semana abriu: ', 'Prove um vinho espanhol'],
+  },
+  {
+    id: 'n08', type: 'wishlist_price_drop', read: true, ts: hoursAgo(14),
+    payload: { wineId: 1, wineName: 'Catena Malbec', price: '169,90' },
+    text: ['Catena Malbec', ' da sua wishlist baixou pra ', 'R$ 169,90'],
+  },
+  {
+    id: 'n09', type: 'order_shipped', read: true, ts: hoursAgo(20),
+    payload: { orderId: 'o_1' },
+    text: ['Seu pedido saiu pra entrega ', '📦'],
+  },
+  {
+    id: 'n10', type: 'plus_one_joined', read: true, ts: daysAgo(1),
+    actor: { id: 'u_9', name: 'Marina Souza' },
+    payload: { eventId: 'e_1' },
     text: ['Seu convidado ', 'Marina Souza', ' se cadastrou! 🎉'],
   },
   {
-    id: 'n04',
-    type: 'spot_vip',
-    read: true,
-    ts: hoursAgo(20),
-    actor: { id: 'u_2', name: 'Diego Almeida' },
-    text: ['Diego Almeida', ' te presenteou com ', 'Spot VIP'],
+    id: 'n11', type: 'follow', read: true, ts: daysAgo(1),
+    actor: { id: 'u_3', name: 'Bruno Tavares' },
+    text: ['Bruno Tavares', ' começou a te seguir'],
   },
   {
-    id: 'n05',
-    type: 'challenge_done',
-    read: true,
-    ts: daysAgo(1),
-    payload: { points: 50 },
-    text: ['Desafio cumprido! ', '+50 pts'],
+    id: 'n12', type: 'referral_reward', read: true, ts: daysAgo(2),
+    payload: { friend: 'João' },
+    text: ['Você ganhou ', 'R$ 30', '! ', 'João', ' fez a 1ª compra'],
   },
   {
-    id: 'n06',
-    type: 'badge_unlocked',
-    read: true,
-    ts: daysAgo(2),
+    id: 'n13', type: 'badge_unlocked', read: true, ts: daysAgo(2),
     payload: { badgeName: 'Explorador do Cone Sul' },
     text: ['Você desbloqueou ', 'Explorador do Cone Sul', '!'],
   },
   {
-    id: 'n07',
-    type: 'monthly_summary',
-    read: true,
-    ts: daysAgo(3),
+    id: 'n14', type: 'ranking_up', read: true, ts: daysAgo(3),
+    payload: { pos: 3 },
+    text: ['Você subiu pro ', '3º lugar', ' no ranking da confraria'],
+  },
+  {
+    id: 'n15', type: 'points_expiring', read: true, ts: daysAgo(3),
+    payload: { points: 120 },
+    text: ['120 pontos', ' expiram em 30 dias — resgata?'],
+  },
+  {
+    id: 'n16', type: 'monthly_summary', read: true, ts: daysAgo(4),
     payload: { month: 'abril' },
     text: ['Seu ', 'abril', ' no vinho está pronto'],
   },
   {
-    id: 'n08',
-    type: 'brotherhood_activity',
-    read: true,
-    ts: daysAgo(4),
+    id: 'n17', type: 'brotherhood_activity', read: true, ts: daysAgo(5),
     actor: { id: 'u_7', name: 'Helena Sotero' },
     payload: { brotherhoodName: 'Tchin do Cerrado' },
     text: ['Helena Sotero', ' postou em ', 'Tchin do Cerrado'],
   },
   {
-    id: 'n09',
-    type: 'expert_replied',
-    read: true,
-    ts: daysAgo(6),
-    actor: { id: 'u_4', name: 'Patrícia Lima' },
-    text: ['Sommelier ', 'Patrícia Lima', ' respondeu sua pergunta'],
+    id: 'n18', type: 'security_login', read: true, ts: daysAgo(7),
+    payload: { device: 'Pixel 7 · Brasília' },
+    text: ['Novo acesso na sua conta: ', 'Pixel 7 · Brasília'],
   },
 ];
 
@@ -453,14 +533,26 @@ function NotifEmptyState({ tab }) {
 function routeForNotif(n) {
   switch (n.type) {
     case 'invite_brotherhood':    return { screen: 'confraria-detalhe', params: { id: n.payload && n.payload.brotherhoodId } };
+    case 'brotherhood_activity':  return { screen: 'confraria-detalhe', params: { name: n.payload && n.payload.brotherhoodName } };
     case 'event_tomorrow':        return { screen: 'event-detalhe',     params: { id: n.payload && n.payload.eventId } };
+    case 'event_soon':            return { screen: 'event-detalhe',     params: { id: n.payload && n.payload.eventId } };
     case 'plus_one_joined':       return { screen: 'event-detalhe',     params: { id: n.payload && n.payload.eventId } };
     case 'spot_vip':              return { screen: 'event-detalhe',     params: { id: n.payload && n.payload.eventId } };
-    case 'challenge_done':        return { screen: 'badges-galeria',    params: {} };
+    case 'chat_message':          return { screen: 'chat-conversa',     params: { chat: { id: (n.payload && n.payload.chatId) || 'dm', name: n.actor && n.actor.name, type: 'dm' } } };
+    case 'like':                  return { screen: 'post-detail',       params: { id: n.payload && n.payload.postId } };
+    case 'comment':               return { screen: 'comentarios',       params: { id: n.payload && n.payload.postId } };
+    case 'follow':                return { screen: 'perfil-outro',      params: { id: n.actor && n.actor.id } };
+    case 'expert_replied':        return { screen: 'expert-q-a',        params: { actorId: n.actor && n.actor.id } };
+    case 'challenge_open':        return { screen: 'desafio-detalhe',   params: {} };
+    case 'challenge_done':        return { screen: 'pontos',            params: {} };
     case 'badge_unlocked':        return { screen: 'badges-galeria',    params: {} };
+    case 'ranking_up':            return { screen: 'ranking',           params: {} };
+    case 'points_expiring':       return { screen: 'pontos',            params: {} };
+    case 'wishlist_price_drop':   return { screen: 'wine',              params: { id: n.payload && n.payload.wineId } };
+    case 'order_shipped':         return { screen: 'pedido-confirmado', params: { id: n.payload && n.payload.orderId } };
+    case 'referral_reward':       return { screen: 'indicacao-recompensas', params: {} };
     case 'monthly_summary':       return { screen: 'relatorio-mensal',  params: {} };
-    case 'brotherhood_activity':  return { screen: 'confraria-detalhe', params: { name: n.payload && n.payload.brotherhoodName } };
-    case 'expert_replied':        return { screen: 'comentarios',       params: { actorId: n.actor && n.actor.id } };
+    case 'security_login':        return { screen: 'config-conta',      params: {} };
     default:                      return null;
   }
 }

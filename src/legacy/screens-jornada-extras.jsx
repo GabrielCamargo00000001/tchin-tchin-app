@@ -414,30 +414,35 @@ function PushCanaisScreen({ go }) {
   const [state, setState] = React.useState({
     all: true,
     confraria: true, eventos: true, chat: true,
-    desafios: true, ranking: false,
+    desafios: true, ranking: false, pontos: true,
     nudges: true, marketing: false,
-    wishlist: true, social: true,
+    wishlist: true, pedidos: true, social: true,
   });
   const set = (k) => (v) => setState(s => ({ ...s, [k]: v }));
   const groups = [
     { title: 'Confrarias', items: [
       { k: 'confraria', icon: 'groups', l: 'Atividade da confraria', d: 'Novos posts no mural, membros entrando.' },
-      { k: 'eventos',   icon: 'event',  l: 'Eventos',                d: 'Confirmações, mudanças, lembretes (1d e 1h antes).' },
-      { k: 'chat',      icon: 'chat',   l: 'Chat',                    d: 'Quando te mencionarem ou responderem você.' },
+      { k: 'eventos',   icon: 'event',  l: 'Eventos',                d: 'Convites, confirmações, mudanças, lembretes (1d e 1h antes).' },
+      { k: 'chat',      icon: 'chat',   l: 'Chat e DMs',             d: 'Mensagens diretas, menções e respostas.' },
     ]},
-    { title: 'Gamificação', items: [
-      { k: 'desafios',  icon: 'emoji_events', l: 'Desafios da semana',    d: 'Aberto toda segunda.' },
+    { title: 'Gamificação e pontos', items: [
+      { k: 'desafios',  icon: 'emoji_events', l: 'Desafios da semana',    d: 'Aberto toda segunda; aviso quando cumprir.' },
       { k: 'ranking',   icon: 'leaderboard',  l: 'Mudanças no ranking',  d: 'Quando você subir ou descer no top.' },
+      { k: 'pontos',    icon: 'stars',        l: 'Pontos e conquistas',  d: 'Badges, marcos e pontos a expirar.' },
     ]},
-    { title: 'Marketplace', items: [
-      { k: 'wishlist',  icon: 'favorite',  l: 'Wishlist em promoção',   d: 'Vinhos da sua lista que caíram de preço.' },
+    { title: 'Marketplace e compras', items: [
+      { k: 'wishlist',  icon: 'favorite',       l: 'Wishlist em promoção', d: 'Vinhos da sua lista que caíram de preço.' },
+      { k: 'pedidos',   icon: 'local_shipping', l: 'Meus pedidos',         d: 'Confirmação, envio e entrega da sua compra.' },
     ]},
     { title: 'Social', items: [
-      { k: 'social',    icon: 'thumb_up',  l: 'Curtidas e comentários', d: 'Quando seu post receber reação.' },
+      { k: 'social',    icon: 'thumb_up',  l: 'Curtidas, comentários e seguidores', d: 'Quando seu post receber reação ou alguém te seguir.' },
     ]},
     { title: 'Editorial', items: [
-      { k: 'nudges',    icon: 'auto_awesome', l: 'Dicas e curadoria',  d: 'Curiosidade da semana, harmonização do dia.' },
+      { k: 'nudges',    icon: 'auto_awesome', l: 'Dicas e curadoria',  d: 'Curiosidade da semana, harmonização do dia, resumo mensal.' },
       { k: 'marketing', icon: 'campaign',     l: 'Promoções',          d: 'Eventos pagos, lançamentos.' },
+    ]},
+    { title: 'Conta e segurança', items: [
+      { k: 'seguranca', icon: 'shield', l: 'Acessos e segurança', d: 'Novo login, troca de senha. Sempre ativo.', always: true },
     ]},
   ];
   return (
@@ -469,12 +474,14 @@ function PushCanaisScreen({ go }) {
           <div style={{ background: T.c.n0 }}>
             {g.items.map((it, i) => (
               <div key={it.k} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 14, borderBottom: i < g.items.length - 1 ? `1px solid ${T.c.n100}` : 'none' }}>
-                <Icon name={it.icon} size={20} color={state.all && state[it.k] ? T.c.n800 : T.c.n400}/>
+                <Icon name={it.icon} size={20} color={it.always || (state.all && state[it.k]) ? T.c.n800 : T.c.n400}/>
                 <div style={{ flex: 1 }}>
-                  <div style={{ ...T.t.bodyB, color: state.all ? T.c.n950 : T.c.n400 }}>{it.l}</div>
+                  <div style={{ ...T.t.bodyB, color: (it.always || state.all) ? T.c.n950 : T.c.n400 }}>{it.l}</div>
                   <div style={{ ...T.t.caption, color: T.c.n600, marginTop: 2 }}>{it.d}</div>
                 </div>
-                <CfgToggle on={state.all && state[it.k]} onChange={set(it.k)}/>
+                {it.always
+                  ? <span style={{ ...T.t.caption, color: T.c.s700, fontWeight: 700, padding: '4px 8px', background: T.c.s100, borderRadius: T.r.full }}>Sempre ativo</span>
+                  : <CfgToggle on={state.all && state[it.k]} onChange={set(it.k)}/>}
               </div>
             ))}
           </div>

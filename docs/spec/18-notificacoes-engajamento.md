@@ -1,37 +1,160 @@
 # Módulo 18 — Notificações & Engajamento
 
-> Central de notificações + permissão de push (primer/negado/canais/preview) + **nudges de re-engajamento** temporais (D+1/3/7/14) + **plus-one** (trazer acompanhante). Motor de retenção: traz o usuário de volta com loss aversion + lembretes contextuais.
-> **Fonte de verdade:** `screens-notificacoes.jsx` (`Notificacoes`), `screens-jornada-extras.jsx` (`PushPrimerScreen` + push variants), `screens-nudges.jsx` (NudgeD1/D3/D7/D14), `screens-plus-one.jsx` (`PlusOneScreen`). Doc funcional: **MVP1 + Sprint 11-13**.
-> **Épicos/US:** US-NOTIF-01 (central de notificações), US-NOTIF-02 (push primer/permissão), US-NOTIF-03 (canais de push), US-NOTIF-04 (nudges temporais), US-NOTIF-05 (plus-one).
+> O **motor de retenção** do app: catálogo completo de notificações (push / in-app / e-mail), permissão (primer/negado/canais/preview), nudges de re-engajamento e plus-one. Define **o que** dispara, **quando**, **por qual canal**, **com qual texto** e **pra onde leva**.
+> **Fonte de verdade:** `screens-notificacoes.jsx` (`Notificacoes`, `NOTIF_TYPES`, `DEFAULT_NOTIFICATIONS`, `routeForNotif`), `screens-jornada-extras.jsx` (`PushPrimerScreen`/`PushNegadoScreen`/`PushCanaisScreen`/`PushPreviewScreen`), `screens-nudges.jsx` (NudgeD1/D3/D7/D14), `screens-plus-one.jsx` (`PlusOneScreen`). Doc funcional: **MVP1 + Sprint 11-13**.
+> **Épicos/US:** US-NOTIF-01 (central in-app), US-NOTIF-02 (push primer/permissão), US-NOTIF-03 (canais), US-NOTIF-04 (nudges temporais), US-NOTIF-05 (plus-one), 🆕 US-NOTIF-06 (catálogo + regras de entrega).
 
-**Regra de negócio canônica:** push pede permissão via **primer** (best practice — nunca prompt frio, igual GPS no Módulo 02). Nudges são **disparados por tempo + estado** (ex.: criou confraria mas não marcou evento → D+1, D+3, D+7, D+14 com urgência crescente). Cada nudge é uma deep-screen acionada por push.
+---
+
+## 🎯 Modelo & regras de negócio (como tudo funciona)
+
+> **✅ GABRIEL PEDIU — montar tudo:** lista, regras, templates, canais, timing e destino de **todas** as notificações. Esta seção é a regra canônica; o catálogo (mais abaixo) é a fonte da verdade dos textos.
+
+### Canais de entrega (onde aparece)
+- **🔔 Push (SO)** — bandeja/lockscreen. Só com permissão concedida + canal ligado + fora do quiet hours + dentro do cap.
+- **📥 In-app** — central de notificações (sino no header, com badge de não-lidas). **Toda** notificação relevante entra aqui, mesmo sem push.
+- **✉️ E-mail** — só transacional, crítico e resumos (nunca social/curtida).
+- **⚡ In-app realtime** — toast/banner quando o evento acontece com o app aberto (ex.: mensagem nova).
+
+### Prioridade (define quem fura quiet hours / cap)
+1. **Crítico** (sempre entrega, ignora quiet hours e cap): segurança, pagamento de evento, status de pedido, evento começando.
+2. **Transacional** (alta): convites, respostas, menções, DMs, +1.
+3. **Engajamento** (sujeito a cap + quiet hours): social, desafios, ranking, badges, wishlist.
+4. **Marketing/editorial** (opt-in, cap rígido): curadoria, promoções, reativação.
+
+### Regras de disparo
+- **Permissão:** sempre via **primer** antes do prompt nativo do SO (best practice — igual GPS no M02). Nunca prompt frio.
+- **Canais padrão (✅ Gabriel decidiu — opt-out pro relevante, opt-in pro marketing):** **ON** = confrarias, eventos, chat, social, gamificação/pontos, wishlist, pedidos, dicas/curadoria, conta&segurança. **OFF** (opt-in) = ranking, promoções/marketing.
+- **Quiet hours:** **22h–8h** sem push (exceto crítico). Configurável em `config-notif`.
+- **Frequency cap (anti-spam):** máx **~4 push/dia** não-críticos + **1 marketing/dia**. Crítico não conta. *(Calibrável.)*
+- **Agrupamento (batching):** curtidas/seguidores agrupam numa janela (~1h) → "{nome} e mais {n} curtiram"; atividade de confraria agrupa por confraria.
+- **Dedup/coalescing:** não repete a mesma notif; eventos do mesmo objeto se fundem.
+- **Estado:** lido/não-lido por item + "marcar todas como lidas". Deep link obrigatório (`routeForNotif`).
+
+---
+
+## 📋 Catálogo completo de notificações (todas)
+> Legenda de canal: 🔔 push · 📥 in-app · ✉️ e-mail. `{var}` = variável do template.
+
+### Confrarias · canal `confraria`
+| Evento (key) | Quando dispara | Canais | Texto (template) | Destino |
+|---|---|---|---|---|
+| `invite_brotherhood` | alguém te convida | 🔔📥✉️ | "{nome} te convidou pra {confraria}" | `confraria-detalhe` |
+| `join_request` *(admin)* | pedem pra entrar (confraria por aprovação) | 🔔📥 | "{nome} pediu pra entrar na {confraria}" | `confraria-config › membros` |
+| `request_approved` | seu pedido foi aceito | 🔔📥 | "Seu pedido pra entrar em {confraria} foi aceito 🎉" | `confraria-detalhe` |
+| `new_member` *(admin)* | novo membro entrou | 📥 | "{nome} entrou na {confraria}" | `confraria-detalhe` |
+| `brotherhood_activity` | novo post no mural | 📥 (🔔 se citado) | "{nome} postou em {confraria}" | `confraria-detalhe` |
+| `role_changed` | virou admin / transferência | 🔔📥 | "Você agora é admin da {confraria}" | `confraria-detalhe` |
+
+### Eventos · canal `eventos`
+| Evento | Quando | Canais | Texto | Destino |
+|---|---|---|---|---|
+| `event_invite` | convidado pro evento | 🔔📥✉️ | "{nome} te convidou pro {evento}" | `event-detalhe` |
+| `event_new_in_brotherhood` | novo evento na sua confraria | 🔔📥 | "Novo evento na {confraria}: {evento}" | `event-detalhe` |
+| `event_tomorrow` *(D-1)* | 1 dia antes | 🔔📥 | "{evento} é amanhã às {hora} 🍷" | `event-detalhe` |
+| `event_soon` *(1h)* | 1 hora antes | 🔔📥 ⚑crítico | "{evento} começa em 1 hora ⏰" | `event-detalhe` |
+| `event_changed` | mudou data/local/vinhos | 🔔📥✉️ | "O {evento} mudou: {campo}" | `event-detalhe` |
+| `event_canceled` | cancelado | 🔔📥✉️ | "O {evento} foi cancelado" | `event-detalhe` |
+| `plus_one_joined` | seu +1 se cadastrou | 🔔📥 | "Seu convidado {nome} se cadastrou! 🎉" | `event-detalhe` |
+| `event_payment_due` | evento pago, confirmar | 🔔📥✉️ ⚑crítico | "Confirme o pagamento do {evento} até {prazo}" | `evento-presenca › pagamentos` |
+| `event_post_rate` | pós-evento, avaliar vinhos | 🔔📥 | "Avalie os vinhos do {evento}" | `evento-pos-avaliar` |
+| `event_post_ata` | ata pronta | 📥 | "A ata do {evento} está pronta" | `evento-pos-ata` |
+
+### Chat & DMs (M17) · canal `chat`
+| Evento | Quando | Canais | Texto | Destino |
+|---|---|---|---|---|
+| `chat_message` | DM recebida | 🔔📥⚡ | "{nome} te mandou uma mensagem" | `chat-conversa` |
+| `chat_mention` | citado no chat coletivo | 🔔📥 | "{nome} te mencionou no chat da {confraria}" | `chat-conversa` |
+
+### Social (M13/M14) · canal `social`
+| Evento | Quando | Canais | Texto | Destino |
+|---|---|---|---|---|
+| `like` *(agrupada)* | curtiram seu post | 📥 (🔔 em lote) | "{nome} e mais {n} curtiram seu post" | `post-detail` |
+| `comment` | comentaram seu post | 🔔📥 | "{nome} comentou: \"{trecho}\"" | `comentarios` |
+| `comment_reply` | responderam seu comentário | 🔔📥 | "{nome} respondeu seu comentário" | `comentarios` |
+| `follow` | novo seguidor | 🔔📥 | "{nome} começou a te seguir" | `perfil-outro` |
+| `mention_post` | citado num post | 🔔📥 | "{nome} te mencionou num post" | `post-detail` |
+
+### Expert (M15) · canal `social`/`confraria`
+| Evento | Quando | Canais | Texto | Destino |
+|---|---|---|---|---|
+| `expert_replied` | expert respondeu sua pergunta | 🔔📥✉️ | "Sommelier {nome} respondeu sua pergunta" | `expert-q-a` |
+| `expert_question_new` *(p/ experts)* | nova pergunta pra responder | 🔔📥 | "Nova pergunta pra você responder" | `expert-responder` |
+| `expert_application` | resultado da candidatura | 🔔📥✉️ | "Sua candidatura a Expert foi {aprovada/recusada}" | `expert-pendente` |
+
+### Gamificação, Pontos & Desafios (M19/M08) · canais `desafios`/`ranking`/`pontos`
+| Evento | Quando | Canais | Texto | Destino |
+|---|---|---|---|---|
+| `challenge_open` | desafio abre (segunda) | 🔔📥 | "Desafio da semana abriu: {título}" | `desafio-detalhe` |
+| `challenge_ending` *(D-1)* | falta 1 dia | 🔔📥 | "Falta 1 dia pro desafio {título}" | `desafio-detalhe` |
+| `challenge_done` | cumpriu o desafio | 🔔📥 | "Desafio cumprido! +50 pts 🏆" | `pontos` / `jornada-celebrar` |
+| `badge_unlocked` | desbloqueou badge | 🔔📥 | "Você desbloqueou {badge}!" | `badges-galeria` |
+| `milestone_done` | completou marco da jornada | 📥 | "Marco completo: {marco} (+{pts})" | `jornada` |
+| `ranking_up`/`ranking_down` | mudou de posição | 🔔📥 | "Você subiu pro {n}º no ranking da {confraria}" | `ranking` |
+| `points_expiring` | pontos vão expirar | 🔔📥✉️ | "{n} pontos expiram em {data} — resgata?" | `pontos` |
+| `streak_risk` *(M08)* | sequência em risco hoje | 🔔📥 | "Sua sequência de {n} dias acaba hoje! 🔥" | `treino-paladar` |
+| `daily_goal` *(M08)* | meta diária do treino | 🔔 | "Bora treinar 2 minutinhos hoje?" | `treino-paladar` |
+| `levelup` *(M08)* | subiu de nível | 📥 | "Você subiu pro nível {n}!" | `jornada-celebrar` |
+
+### Marketplace & Compras (M04/M05) · canais `wishlist`/`pedidos`
+| Evento | Quando | Canais | Texto | Destino |
+|---|---|---|---|---|
+| `wishlist_price_drop` | vinho da wishlist baixou | 🔔📥✉️ | "{vinho} da sua wishlist baixou pra R$ {preço}" | `wine` |
+| `back_in_stock` | voltou ao estoque | 🔔📥 | "{vinho} voltou ao estoque" | `wine` |
+| `order_confirmed` | pedido confirmado | 🔔📥✉️ ⚑crítico | "Pedido confirmado! Chega até {data}" | `pedido-confirmado` |
+| `order_shipped` | saiu pra entrega | 🔔📥✉️ ⚑crítico | "Seu pedido saiu pra entrega 📦" | `pedido-confirmado` (tracking) |
+| `order_delivered` | entregue | 🔔📥 | "Seu pedido chegou — que tal avaliar?" | `wine` (avaliar) |
+| `cart_abandoned` *(nudge)* | carrinho parado | 🔔📥 | "Esqueceu algo no carrinho?" | `carrinho` |
+| `redeem_confirmed` | resgate de pontos OK | 📥 | "Resgate confirmado: {recompensa}" | `pontos` |
+
+### Indicação (M16) · canal `editorial`/`social`
+| Evento | Quando | Canais | Texto | Destino |
+|---|---|---|---|---|
+| `referral_joined` | amigo entrou pelo link | 📥 | "{nome} entrou pelo seu convite" | `indicacao-meus-convites` |
+| `referral_reward` | bônus liberado (1ª compra do amigo) | 🔔📥✉️ | "Você ganhou R$ 30! {nome} fez a 1ª compra" | `indicacao-recompensas` |
+| `referral_unlock` | desbloqueio escalonado | 🔔📥 | "Você desbloqueou {recompensa} ({n} amigos)" | `indicacao-recompensas` |
+
+### Editorial & Retenção · canais `nudges`/`marketing`
+| Evento | Quando | Canais | Texto | Destino |
+|---|---|---|---|---|
+| `nudge_create_event` D+1/3/7/14 | criou confraria sem evento | 🔔📥 | urgência crescente (ver 18.3) | `event-wizard-1` |
+| `monthly_summary` | resumo do mês pronto | 🔔📥✉️ | "Seu {mês} no vinho está pronto 📊" | `relatorio-mensal` |
+| `weekly_curation` | curadoria da semana | 🔔📥 | "Vinho da semana + harmonização pro fim de semana" | `aprenda` / `descobrir` |
+| `reactivation` | inativo 14d+ | 🔔✉️ | "Faz tempo… tem evento novo na sua região 👀" | `home` |
+| `diary_reminder` | não registra há X dias | 🔔 | "Provou algo bom? Registra no diário (+10 pts)" | `registro-rapido` |
+
+### Conta & Segurança (M20/M21) · canal `seguranca` *(sempre ativo)*
+| Evento | Quando | Canais | Texto | Destino |
+|---|---|---|---|---|
+| `security_login` | novo acesso | 🔔📥✉️ ⚑crítico | "Novo acesso na sua conta: {dispositivo}" | `config-conta` |
+| `password_changed` | senha alterada | 🔔✉️ ⚑crítico | "Sua senha foi alterada" | `config-conta` |
+| `account_reactivated` | reativou a conta | 📥 | "Bem-vindo de volta! Sua conta está ativa" | `home` |
+| `re_auth` *(raro)* | re-login (ver M21) | 🔔✉️ | (motivo no `erro-sessao`) | `login` |
+
+---
 
 ## Mapa do fluxo
 ```
-[sino/header] → notificacoes (lista: Todas / Não lidas) → tap → rota da notif
-
-[1º momento que precisa de push] → push-primer ─┬─ permitir → push-canais (granular)
-                                                 └─ negar → push-negado (fallback)
-                                                 push-preview = exemplo do que chega
-
-[push de re-engajamento] → nudge-d1 / d3 / d7 / d14 → event-wizard-1 (criar evento) | comunidade (depois)
-[convite c/ acompanhante] → plus-one
+[sino/header] → notificacoes (Todas / Não lidas) → tap → routeForNotif(tipo) → rota destino
+[1º momento que precisa push] → push-primer ─┬─ permitir → push-canais (toggles por canal)
+                                              └─ negar  → push-negado (fallback + reativar)
+                                              push-preview = exemplo do que chega
+[criou confraria sem evento] → nudge-d1 → d3 → d7 → d14 (cron por estado) → event-wizard-1 | comunidade
+[evento] → plus-one (convite por link)
 ```
 
 ---
 
-## 18.1 `notificacoes` — Central (`Notificacoes`) ✅
+## 18.1 `notificacoes` — Central in-app (`Notificacoes`) ✅
 
 <img src="shots/notificacoes.png" width="240"/>
 
-**Propósito:** inbox de notificações in-app — curtidas, comentários, eventos, convites, conquistas. **US-NOTIF-01.**
-**Entradas:** ícone sino no header. **Saídas:** tap notif → rota correspondente (`routeForNotif`); back → home.
-**Layout:** SubHeader "Notificações" + menu ⋯ (marcar todas como lidas) + tabs **Todas / Não lidas** (com contador) + lista de notificações (ícone por tipo + texto + tempo + estado lido/não-lido).
-
+**Propósito:** inbox de **todas** as notificações in-app (amostra representativa do catálogo acima, incl. exemplo **agrupado** "{nome} e mais N curtiram"). **US-NOTIF-01.**
+**Entradas:** sino no header. **Saídas:** tap → `routeForNotif` (deep link por tipo); ⋯ → "marcar todas como lidas"; back → home.
+**Layout:** SubHeader + ⋯ + tabs **Todas / Não lidas** (com contador) + linha por notif (avatar/ícone por tipo + badge-overlay de categoria + texto com ênfase + tempo relativo + bolinha de não-lida). `NOTIF_TYPES` mapeia cada tipo → avatar/ícone/cor/destino.
 **Analytics:** `notifications_view { unread }`, `notification_tap { type }`, `notifications_mark_all_read`.
 
-> **⚠️ DIVERGÊNCIA — notificações mock** (`DEFAULT_NOTIFICATIONS`). Backend: feed de notificações real + realtime + paginação.
-> **⛔ FALTA NO APP (épico pede):** **agrupamento** ("Carla e +3 curtiram") + configurar tipos. Backlog **NOTIF-GROUPING**.
+> **⚠️ DIVERGÊNCIA — feed mock** (`DEFAULT_NOTIFICATIONS`). Backend: feed real + realtime + paginação + **agrupamento** server-side.
 
 **Status:** ✅
 
@@ -39,20 +162,17 @@
 
 ## 18.2 Push — primer / negado / canais / preview ✅
 
-_Primer · Negado · Canais · Preview:_
+<img src="shots/push-primer.png" width="170"/> <img src="shots/push-negado.png" width="170"/> <img src="shots/push-canais.png" width="170"/> <img src="shots/push-preview.png" width="170"/>
 
-<img src="shots/push-primer.png" width="180"/> <img src="shots/push-negado.png" width="180"/> <img src="shots/push-canais.png" width="180"/> <img src="shots/push-preview.png" width="180"/>
-
-**Propósito:** pedir permissão de push do jeito certo (primer antes do prompt nativo) + gestão granular de canais. **US-NOTIF-02/03.**
-
-- **`push-primer`** — explica o valor ANTES do prompt nativo ("Ative pra saber quando rolar evento na sua confraria…") + CTA "Ativar" / "Agora não". *(Mesmo padrão do GPS primer, Módulo 02.)*
-- **`push-negado`** — fallback gentil quando nega ("Sem problema — você pode ativar depois em Configurações") + como reativar.
-- **`push-canais`** — toggles granulares por canal (eventos / confrarias / curtidas / comentários / nudges / marketing).
-- **`push-preview`** — exemplo visual de como a notificação chega (mockup da notificação no sistema).
+**Propósito:** pedir permissão do jeito certo + gestão **granular por canal**. **US-NOTIF-02/03.**
+- **`push-primer`** — vende o valor ANTES do prompt nativo ("eventos da sua confraria · mensagens · desafio da semana · wishlist baixou") + "Permitir" / "Mais tarde".
+- **`push-negado`** — fallback gentil ("Sem problema — dá pra ativar depois em Configurações") + 3 passos pra reativar no SO.
+- **`push-canais`** — toggles por canal alinhados ao catálogo: **Confrarias** (atividade/eventos/chat) · **Gamificação e pontos** (desafios/ranking/pontos) · **Marketplace e compras** (wishlist/pedidos) · **Social** · **Editorial** (dicas/promoções) · **Conta e segurança** (*"Sempre ativo"*, não desligável). Master switch no topo.
+- **`push-preview`** — mockup de como a notif chega no SO (dispara um teste).
 
 **Analytics:** `push_primer_shown`, `push_primer_response { granted }`, `push_channel_toggle { channel, on }`.
 
-> **⚠️ DIVERGÊNCIA — push simulado.** Backend: integração FCM/APNs real + permission flow nativo.
+> **⚠️ DIVERGÊNCIA — push simulado.** Backend: FCM/APNs real + permission nativo + persistência dos canais.
 
 **Status:** ✅
 
@@ -60,25 +180,22 @@ _Primer · Negado · Canais · Preview:_
 
 ## 18.3 Nudges de re-engajamento (D+1/3/7/14) ✅
 
-_D+1 · D+3 · D+7 · D+14:_
+<img src="shots/nudge-d1.png" width="170"/> <img src="shots/nudge-d3.png" width="170"/> <img src="shots/nudge-d7.png" width="170"/> <img src="shots/nudge-d14.png" width="170"/>
 
-<img src="shots/nudge-d1.png" width="180"/> <img src="shots/nudge-d3.png" width="180"/> <img src="shots/nudge-d7.png" width="180"/> <img src="shots/nudge-d14.png" width="180"/>
+**Propósito:** trazer de volta o admin que **criou confraria mas não marcou evento** — urgência crescente. **US-NOTIF-04.**
+**Gatilho:** cron por estado (confraria criada há N dias **sem evento**). Cada nudge passa `fromNudge: 'dN'` pro wizard (atribuição). Gate: se já criou evento, **não dispara**.
 
-**Propósito:** trazer de volta o admin que criou confraria mas **não marcou evento** — urgência crescente ao longo dos dias. **US-NOTIF-04.**
-**Entradas:** push temporal (D+1, D+3, D+7, D+14 após criar confraria sem evento). **Saídas:** "Criar evento" → `event-wizard-1 { fromNudge }`; "Depois" → `comunidade`.
+| Nudge | Quando | Tom | Texto (push) |
+|---|---|---|---|
+| **D+1** | 1 dia | leve | "Bora marcar o 1º encontro da {confraria}? 🍷" |
+| **D+3** | 3 dias | concreto | "Que tal esses vinhos pro 1º evento da {confraria}?" |
+| **D+7** | 7 dias | social proof | "Confrarias sem evento esfriam. Marca o 1º?" |
+| **D+14** | 14 dias | última chamada | "A {confraria} tá quietinha… reacende com um encontro?" |
 
-| Nudge | Tom | Conteúdo |
-|---|---|---|
-| **D+1** | leve | "Bora marcar o primeiro encontro da {confraria}?" + template sugerido |
-| **D+3** | + concreto | + vinhos sugeridos pro evento |
-| **D+7** | social proof / urgência | "Confrarias sem evento esvaziam" + dados |
-| **D+14** | última chamada | risco de a confraria "esfriar" |
+**Saídas:** "Criar evento" → `event-wizard-1 { fromNudge }`; "Depois" → `comunidade`.
 
-**Estado:** lê `window.__tcCurrentBrotherhood` (nome/template). Cada nudge passa `fromNudge: 'dN'` pro wizard (atribuição).
-**Analytics:** `nudge_shown { day }`, `nudge_create_event { day }`, `nudge_later { day }`.
-
-> **⚠️ DIVERGÊNCIA — nudges são telas (deep screens), disparo é mock.** Backend: agendador de push server-side (cron por estado do usuário) + a notificação que abre a tela.
-> **⛔ FALTA NO APP (épico pede):** outros gatilhos de nudge (streak do Treino em risco — Módulo 08; carrinho abandonado — Módulo 05; vinho da wishlist baixou — Módulo 04). Backlog **NUDGE-TRIGGERS**.
+> **✅ GABRIEL DECIDIU — cadência D+1/3/7/14** definitiva, com **cap de 1 nudge/dia** e parada ao criar evento (anti-spam). *(Janela calibrável.)*
+> **⛔ FALTA NO APP (já no catálogo, falta o cron):** `streak_risk` (M08), `cart_abandoned` (M05), `wishlist_price_drop`/`back_in_stock` (M04), `reactivation`, `diary_reminder`. Backlog **NUDGE-TRIGGERS**.
 
 **Status:** ✅
 
@@ -86,16 +203,12 @@ _D+1 · D+3 · D+7 · D+14:_
 
 ## 18.4 `plus-one` — Trazer acompanhante (`PlusOneScreen`) ✅
 
-<img src="shots/plus-one-default.png" width="220"/> <img src="shots/plus-one-link.png" width="220"/>
+<img src="shots/plus-one-default.png" width="200"/> <img src="shots/plus-one-link.png" width="200"/>
 
-**Propósito:** convidar acompanhante para um evento (+1). **US-NOTIF-05.**
-**Entradas:** evento/convite → "Levar acompanhante". **Saídas:** gerar link → compartilhar → "Concluir" volta ao evento.
+**Propósito:** convidar acompanhante (+1) por **link compartilhável** — sem coletar telefone. **US-NOTIF-05.**
+**Fluxo:** nome do convidado (+ foto opcional) → "Gerar link de convite" → link (`tchin.app/e/<id>/<token>`) com Copiar + Compartilhar → convidado abre e cai no evento.
 
-> **✅ GABRIEL DECIDIU — convite por LINK, sem telefone.** O app **não coleta o número** de ninguém (nem do convidado). O host digita só o **nome** (+ foto opcional), toca **"Gerar link de convite"** e recebe um **link compartilhável** (`tchin.app/e/<id>/<token>`) com **Copiar** + **Compartilhar** (share nativo). O convidado abre o link e cai direto no evento.
-**Layout (`PlusOneScreen`):** nome do convidado + foto opcional + prévia do convite ("Como vai aparecer pra ele", sem mais o frame de WhatsApp) → estado inicial com CTA **"Gerar link de convite"**; após gerar, mostra o **link** (Copiar) + CTAs **"Compartilhar convite"** / **"Concluir"**.
-
-> **⚠️ DIVERGÊNCIA — plus-one mock.** Backend: link único por convite (token + atribuição), contar +1 na capacidade do evento; cobrança do +1 se evento pago (Módulo 12).
-> **⛔ FALTA NO APP:** integração com capacidade/pagamento do evento.
+> **✅ GABRIEL DECIDIU — convite por LINK, sem telefone** (ver M20/M12). Gera o `plus_one_joined` quando o convidado se cadastra.
 
 **Status:** ✅
 
@@ -103,24 +216,39 @@ _D+1 · D+3 · D+7 · D+14:_
 
 ## Edge cases & navegação reversa
 - **`BACK_SKIP`** inclui `nudge-d1/d3/d7/d14` — voltar não cai no nudge.
-- **Push negado no SO** → push-negado + instrução de Configurações.
-- **Nudge depois de já ter criado evento** → não deveria disparar (gate de estado).
+- **Push negado no SO** → `push-negado` + instrução de Configurações.
+- **Nudge após já criar evento** → gate de estado impede o disparo.
+- **Quiet hours / cap atingido** → push segura; in-app continua entrando no feed.
+- **Crítico** (segurança/pagamento/pedido/evento começando) → fura quiet hours e cap.
 
 ## Pendências de backend / decisões do Gabriel
 ### Críticas (bloqueadores GA)
-- **FCM/APNs real** + permission flow nativo.
-- **Agendador de nudges** server-side (cron por estado do usuário).
-- **Feed de notificações** real + realtime.
+- **FCM/APNs real** + permission nativo + token por dispositivo.
+- **Motor de entrega:** roteador por prioridade + quiet hours + frequency cap + agrupamento/dedup.
+- **Agendador (cron por estado)** dos nudges e disparos temporais (D-1 evento, desafio segunda, pontos expirando).
+- **Feed real** + realtime + paginação.
 ### Importantes
-- Agrupamento de notificações + canais configuráveis.
-- Outros gatilhos de nudge (streak/carrinho/wishlist).
-- Plus-one integrado a capacidade/pagamento do evento.
-### Decisões do Gabriel
-- Cadência dos nudges (D+1/3/7/14 definitiva?) + cap de frequência (anti-spam).
-- Quais canais on por padrão (opt-in vs opt-out)?
+- Persistência dos canais (`config-notif` + `push-canais` unificados).
+- E-mail transacional (templates de order/resumo/segurança).
+### ✅ Decisões do Gabriel (fechadas)
+- **Catálogo completo** acima é a fonte da verdade (textos/canais/destinos).
+- **Canais padrão:** opt-out pro relevante, opt-in pro marketing/ranking.
+- **Cadência nudges:** D+1/3/7/14 + cap 1/dia + para ao criar evento.
+- **Quiet hours 22h–8h** + cap ~4 push/dia (calibrável).
 
-## Conexões com outros módulos
-- **Módulo 02 (Onboarding)** — push-primer espelha GPS primer; nudges no BACK_SKIP.
-- **Módulo 11/12 (Confrarias/Eventos)** — nudges levam ao event-wizard; plus-one no evento.
-- **Módulo 04/05/08** — gatilhos futuros de nudge (wishlist/carrinho/streak).
-- **Módulo 13/17 (Comunidade/Chat)** — notificações de curtida/comentário/mensagem.
+## Conexões com outros módulos (origem das notificações)
+| Módulo | Notificações que origina |
+|---|---|
+| **M02 Onboarding** | push-primer (espelha GPS primer); nudges no BACK_SKIP |
+| **M04 Marketplace** | `wishlist_price_drop`, `back_in_stock` |
+| **M05 Carrinho/Checkout** | `order_confirmed/shipped/delivered`, `cart_abandoned` |
+| **M08 Treino** | `streak_risk`, `daily_goal`, `levelup` |
+| **M11 Confrarias** | `invite_brotherhood`, `join_request`, `new_member`, `brotherhood_activity`, `role_changed` |
+| **M12 Eventos** | `event_*`, `plus_one_joined`, `event_payment_due`, pós-evento; nudges levam ao wizard |
+| **M13 Comunidade** | `like`, `comment`, `comment_reply`, `mention_post` |
+| **M14 Perfil** | `follow` |
+| **M15 Expert** | `expert_replied`, `expert_question_new`, `expert_application` |
+| **M16 Indicação** | `referral_joined/reward/unlock` |
+| **M17 Chat** | `chat_message`, `chat_mention` |
+| **M19 Jornada/Pontos** | `challenge_*`, `badge_unlocked`, `milestone_done`, `ranking_*`, `points_expiring`, `redeem_confirmed` |
+| **M20/M21 Conta** | `security_login`, `password_changed`, `account_reactivated`, `re_auth` |
