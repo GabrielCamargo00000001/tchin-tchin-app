@@ -94,6 +94,28 @@ const SEQ = [
     { shot: 'tutoriais-hub' },
   ]},
 
+  // ── Módulo 12 — Eventos ─────────────────────────────────
+  // Wizard de criar evento (5 passos)
+  { url: '?screen=event-wizard-1', ops: [ { wait: 500 }, { shot: 'event-wizard-1' } ]},
+  { url: '?screen=event-wizard-2', ops: [ { wait: 500 }, { shot: 'event-wizard-2' } ]},
+  { url: '?screen=event-wizard-3', ops: [ { wait: 500 }, { shot: 'event-wizard-3' } ]},
+  { url: '?screen=event-wizard-4', ops: [ { wait: 500 }, { shot: 'event-wizard-4' } ]},
+  { url: '?screen=event-wizard-5', ops: [ { wait: 500 }, { shot: 'event-wizard-5' } ]},
+
+  // Detalhe do evento
+  { url: '?screen=event-detalhe', ops: [ { wait: 700 }, { shot: 'event-detalhe' } ]},
+  // Editar evento
+  { url: '?screen=evento-editar', ops: [ { wait: 500 }, { shot: 'evento-editar' } ]},
+  // Presença (Presença | Pagamentos com LACI)
+  { url: '?screen=evento-presenca', ops: [
+    { wait: 600 }, { shot: 'evento-presenca-presenca' },
+    { click: 'Pagamentos' }, { wait: 400 }, { shot: 'evento-presenca-pagamentos' },
+  ]},
+  // Pós-evento: avaliar vinhos
+  { url: '?screen=evento-pos-avaliar', ops: [ { wait: 500 }, { shot: 'evento-pos-avaliar' } ]},
+  // Pós-evento: ata do encontro
+  { url: '?screen=evento-pos-ata', ops: [ { wait: 500 }, { shot: 'evento-pos-ata' } ]},
+
   // ── Módulo 11 — Confrarias ──────────────────────────────
   // Detalhe (4 abas: Eventos/Publicações/Membros/Adega)
   { url: '?screen=confraria-detalhe', ops: [

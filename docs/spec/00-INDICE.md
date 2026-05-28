@@ -58,7 +58,7 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 | 09 | **[Aprenda (hub educacional)](09-aprenda.md)** ✅ | aprender, aprenda, aprenda-detalhe | MVP2 Épico 10 |
 | 10 | **[Harmoniza](10-harmoniza.md)** ✅ | harmoniza, harmoniza-resultados (+ reversa) | Sprint 11-13 Épico T4 |
 | 11 | **[Confrarias](11-confrarias.md)** ✅ | home/confrarias, detalhe (4 abas), wizard 1-6, config/convidar/sair/transferir/regras, welcome/apresentar/tour | MVP2 Épicos 1-7, Filtros das Confrarias |
-| 12 | **Eventos** | wizard 1-5, detalhe, editar, presença/RSVP/QR, pós-evento (avaliar/ata) | MVP2 Épico 2 |
+| 12 | **[Eventos](12-eventos.md)** ✅ | wizard 1-5, detalhe, editar, presença/RSVP/pagamentos, pós-evento (avaliar/ata) | MVP2 Épico 2 + 3 (Financeiro) |
 | 13 | **Comunidade & Feed** | home/comunidade, criar-post, criar-momento, post-detail, comentários | MVP1 Épico 2, MVP2 Épico 15 |
 | 14 | **Perfil & Social** | perfil-outro, editar-perfil (+foto/paladar/privacidade), seguidores/seguindo/atividade/vinhos/sugestões/comparar, badges-galeria | MVP1, MVP2 |
 | 15 | **Expert** | virar/aplicar/pendente, Q&A, responder, perguntar | MVP1 Épico 2 (badge expert) |
@@ -133,8 +133,11 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 **⚠️ Divergências:** 2 onboardings sobrepostos (welcome→apresentar→tour vs tutorial confraria-usar); tudo mock.
 **⛔ Faltam no app (épicos):** CRUD real, feed/RSVP/membros reais, fila de aprovação, moderação, upload de capa, contatos do device, filtros avançados.
 
-### Módulo 12 — Eventos
-`event-wizard-1…5` ✅ · `event-detalhe` ✅ · `evento-editar` ✅ · `evento-presenca` ✅ · `evento-pos-avaliar` ✅ · `evento-pos-ata` ✅
+### Módulo 12 — Eventos [📄 doc completo](12-eventos.md)
+`event-wizard-1…5` ✅ · `event-detalhe` ✅ · `evento-editar` ✅ · `evento-presenca` (Presença | Pagamentos/LACI) ⚠️ · `evento-pos-avaliar` ✅ · `evento-pos-ata` ✅
+**Estados extra capturados:** `event-wizard-1…5`, `event-detalhe`, `evento-editar`, `evento-presenca-{presenca,pagamentos}`, `evento-pos-avaliar`, `evento-pos-ata`.
+**💰 Financeiro/Rachão:** existe na aba Pagamentos (LACI auto + conta + manual, arrecadado/meta, cobrar pendentes, exportar CSV) — valor fixo por pessoa (não split dinâmico).
+**⛔ Faltam no app (épicos):** CRUD real, LACI/Celcoin real (webhook Pix), gate endereço 24h, split dinâmico, QR check-in, reembolso, avaliação→diário, consenso da confraria, upload capa/fotos.
 
 ### Módulo 13 — Comunidade & Feed
 `home/comunidade` ✅ · `criar-post` ✅ · `criar-momento` ✅ · `post-detail` ✅ · `comentarios` ✅
