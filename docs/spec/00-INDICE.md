@@ -57,7 +57,7 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 | 08 | **[Treine seu Paladar (Duolingo do vinho)](08-treine-seu-paladar.md)** ✅ 🆕 | treino-paladar, treino-licao, treino-liga, treino-aprender | Sprint 11-13 Épico T3, MVP2 Épico 8/9/10 |
 | 09 | **[Aprenda (hub educacional)](09-aprenda.md)** ✅ | aprender, aprenda, aprenda-detalhe | MVP2 Épico 10 |
 | 10 | **[Harmoniza](10-harmoniza.md)** ✅ | harmoniza, harmoniza-resultados (+ reversa) | Sprint 11-13 Épico T4 |
-| 11 | **Confrarias** | home/confrarias, detalhe (4 abas), wizard 1-6, config/convidar/sair/transferir/regras, welcome/apresentar/tour | MVP2 Épicos 1-7, Filtros das Confrarias |
+| 11 | **[Confrarias](11-confrarias.md)** ✅ | home/confrarias, detalhe (4 abas), wizard 1-6, config/convidar/sair/transferir/regras, welcome/apresentar/tour | MVP2 Épicos 1-7, Filtros das Confrarias |
 | 12 | **Eventos** | wizard 1-5, detalhe, editar, presença/RSVP/QR, pós-evento (avaliar/ata) | MVP2 Épico 2 |
 | 13 | **Comunidade & Feed** | home/comunidade, criar-post, criar-momento, post-detail, comentários | MVP1 Épico 2, MVP2 Épico 15 |
 | 14 | **Perfil & Social** | perfil-outro, editar-perfil (+foto/paladar/privacidade), seguidores/seguindo/atividade/vinhos/sugestões/comparar, badges-galeria | MVP1, MVP2 |
@@ -126,8 +126,12 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 **🐛 Bug corrigido:** `shotParams` passava `prato` como objeto (quebrava a tela em capture-mode) → corrigido p/ string.
 **⛔ Faltam no app (épicos):** motor de matching real (prato→perfil→ranking), base de pratos, NLG da razão, harmonização reversa (vinho→pratos), foto do prato, ranking ciente do paladar.
 
-### Módulo 11 — Confrarias
-`home/confrarias` (abas Confrarias|Eventos) ✅ · `confraria-detalhe` ✅ · `wizard-confraria-1…6` ✅ · `confraria-config` ✅ · `confraria-convidar` ✅ · `confraria-sair` ✅ · `confraria-transferir` ✅ · `confraria-regras` ✅ · `confraria-welcome` ✅ · `confraria-apresentar` ✅ · `confraria-tour-rapido` ✅
+### Módulo 11 — Confrarias [📄 doc completo](11-confrarias.md)
+`home/confrarias` (abas Confrarias|Eventos) ✅ · `confraria-detalhe` (4 abas) ✅ · `wizard-confraria-1…6` ✅ · `confraria-config` ⚠️ · `confraria-convidar` 🐛 · `confraria-sair` ✅ · `confraria-transferir` ✅ · `confraria-regras` ✅ · `confraria-welcome` ✅ · `confraria-apresentar` ✅ · `confraria-tour-rapido` ✅
+**Estados extra capturados:** `confraria-detalhe-{eventos,publicacoes,membros,adega}`, `wizard-confraria-1…6`, `confraria-{config,convidar,sair,transferir,regras}`, `confraria-{welcome,apresentar}`, `confraria-tour-{1,2,3}`, `tutor-confraria-{intro,step-1,step-2,step-3}`.
+**🐛 Bug:** badge "no app" invertido em convidar (mostra em quem JÁ tem app).
+**⚠️ Divergências:** 2 onboardings sobrepostos (welcome→apresentar→tour vs tutorial confraria-usar); tudo mock.
+**⛔ Faltam no app (épicos):** CRUD real, feed/RSVP/membros reais, fila de aprovação, moderação, upload de capa, contatos do device, filtros avançados.
 
 ### Módulo 12 — Eventos
 `event-wizard-1…5` ✅ · `event-detalhe` ✅ · `evento-editar` ✅ · `evento-presenca` ✅ · `evento-pos-avaliar` ✅ · `evento-pos-ata` ✅

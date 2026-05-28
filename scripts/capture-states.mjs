@@ -94,6 +94,49 @@ const SEQ = [
     { shot: 'tutoriais-hub' },
   ]},
 
+  // ── Módulo 11 — Confrarias ──────────────────────────────
+  // Detalhe (4 abas: Eventos/Publicações/Membros/Adega)
+  { url: '?screen=confraria-detalhe', ops: [
+    { wait: 700 },
+    { shot: 'confraria-detalhe-eventos' },
+    { click: 'Publicações' }, { wait: 400 }, { shot: 'confraria-detalhe-publicacoes' },
+    { click: 'Membros' }, { wait: 400 }, { shot: 'confraria-detalhe-membros' },
+    { click: 'Adega' }, { wait: 400 }, { shot: 'confraria-detalhe-adega' },
+  ]},
+
+  // Wizard de criação (6 passos)
+  { url: '?screen=wizard-confraria-1', ops: [ { wait: 500 }, { shot: 'wizard-confraria-1' } ]},
+  { url: '?screen=wizard-confraria-2', ops: [ { wait: 500 }, { shot: 'wizard-confraria-2' } ]},
+  { url: '?screen=wizard-confraria-3', ops: [ { wait: 500 }, { shot: 'wizard-confraria-3' } ]},
+  { url: '?screen=wizard-confraria-4', ops: [ { wait: 500 }, { shot: 'wizard-confraria-4' } ]},
+  { url: '?screen=wizard-confraria-5', ops: [ { wait: 500 }, { shot: 'wizard-confraria-5' } ]},
+  { url: '?screen=wizard-confraria-6', ops: [ { wait: 700 }, { shot: 'wizard-confraria-6' } ]},
+
+  // Gestão (admin)
+  { url: '?screen=confraria-config',     ops: [ { wait: 500 }, { shot: 'confraria-config' } ]},
+  { url: '?screen=confraria-convidar',   ops: [ { wait: 500 }, { shot: 'confraria-convidar' } ]},
+  { url: '?screen=confraria-sair',       ops: [ { wait: 500 }, { shot: 'confraria-sair' } ]},
+  { url: '?screen=confraria-transferir', ops: [ { wait: 500 }, { shot: 'confraria-transferir' } ]},
+  { url: '?screen=confraria-regras',     ops: [ { wait: 500 }, { shot: 'confraria-regras' } ]},
+
+  // Tutorial conversacional 'confraria-usar' (auto-trigger no detalhe) — 3 steps
+  { url: '?screen=confraria-detalhe', keepTutors: true, resetTutors: ['confraria-usar'], ops: [
+    { wait: 1200 },
+    { shot: 'tutor-confraria-intro' },
+    { click: 'Vamos começar' }, { wait: 600 }, { shot: 'tutor-confraria-step-1' },
+    { click: 'Próximo' }, { wait: 600 }, { shot: 'tutor-confraria-step-2' },
+    { click: 'Próximo' }, { wait: 600 }, { shot: 'tutor-confraria-step-3' },
+  ]},
+
+  // Onboarding pós-entrada (welcome → apresentar → tour 3 slides)
+  { url: '?screen=confraria-welcome',    ops: [ { wait: 700 }, { shot: 'confraria-welcome' } ]},
+  { url: '?screen=confraria-apresentar', ops: [ { wait: 500 }, { shot: 'confraria-apresentar' } ]},
+  { url: '?screen=confraria-tour-rapido', ops: [
+    { wait: 600 }, { shot: 'confraria-tour-1' },
+    { click: 'Continuar' }, { wait: 400 }, { shot: 'confraria-tour-2' },
+    { click: 'Continuar' }, { wait: 400 }, { shot: 'confraria-tour-3' },
+  ]},
+
   // ── Módulo 10 — Harmoniza ───────────────────────────────
   // harmoniza (digitar prato) — default + com prato digitado (autocomplete)
   { url: '?screen=harmoniza', ops: [
@@ -472,7 +515,7 @@ const page = await ctx.newPage();
 // Pre-marca tutoriais conhecidos como done — chamado nas sequências que
 // historicamente dependiam de não ver o overlay "primeira visita".
 // Sequências de TUTORIAL (que QUEREM mostrar o overlay) pulam esta etapa.
-const KNOWN_TUTORS = ['marketplace','wine_detail','adega','diario','confraria','wizard_confraria','event_wizard','scanner','scanner_v2','carta_matches','harmoniza','radar_paladar','feed','comunidade','registro_consumo','ata_evento','treino_paladar','jornada','modo-restaurante'];
+const KNOWN_TUTORS = ['marketplace','wine_detail','adega','diario','confraria','confraria-usar','confraria-criar','wizard_confraria','event_wizard','evento-usar','evento-criar','scanner','scanner_v2','carta_matches','harmoniza','radar_paladar','feed','comunidade','registro_consumo','ata_evento','treino_paladar','jornada','indicacao','badges'];
 async function dismissAllTutors() {
   await page.evaluate((known) => {
     try {
