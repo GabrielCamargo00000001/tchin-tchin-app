@@ -186,8 +186,8 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 
 ### Módulo 21 — Estados de sistema [📄 doc completo](21-estados-sistema.md)
 `erro-404` ✅ · `erro-permissao` ✅ · `erro-sessao` ✅ · `erro-servidor` ✅ · `vinho-indisponivel` ✅ · `toast` (overlay) ✅
-**Estados extra capturados:** `erro-404`, `erro-permissao`, `erro-sessao`, `erro-servidor`, `vinho-indisponivel` (toast visível embutido em outras capturas).
-**⛔ Faltam no app (épicos):** roteamento real de erros (404/403/500 do backend), retry+telemetria, refresh token real, tela/banner de offline global.
+**Estados extra capturados:** `erro-404`, `erro-permissao`, `erro-sessao-{atualizacao|seguranca|inatividade}` (re-auth RARO por motivo — nunca logout de rotina), `erro-servidor`, `vinho-indisponivel` (toast visível embutido em outras capturas).
+**⛔ Faltam no app (épicos):** roteamento real de erros (404/403/500 do backend), retry+telemetria, **sessão persistente real (sem expiração de rotina — usuário fica sempre logado)**, tela/banner de offline global.
 
 ---
 

@@ -12,7 +12,7 @@ import { BottlePlaceholder, Icon, T } from './tokens.jsx';
 //
 //   37.01 erro-404           → conteúdo não encontrado
 //   37.02 erro-permissao     → sem permissão pra ver
-//   37.03 erro-sessao        → sessão expirada (re-auth)
+//   37.03 erro-sessao        → re-auth RARO (atualização/segurança/inatividade) — nunca logout de rotina
 //   37.04 vinho-indisponivel → vinho fora do ar
 //   37.05 erro-servidor      → 500 (algo deu errado do nosso lado)
 // ─────────────────────────────────────────────────────────────
@@ -102,13 +102,40 @@ function ErroPermissaoScreen({ go }) {
 }
 
 // 37.03 ─────────────────────────────────────────────────
-function ErroSessaoScreen({ go }) {
+// Re-autenticação é EXCEÇÃO, não rotina. Somos uma rede social: o usuário fica
+// sempre conectado e NUNCA é deslogado por "30 dias sem login". Só pedimos login
+// de novo em casos raros, sempre com motivo claro. Gabriel decidiu.
+//   reason: 'atualizacao' (default) | 'seguranca' | 'inatividade'
+const SESSAO_REASON = {
+  // Atualização grande que mexeu na autenticação — re-login único pós-update.
+  atualizacao: {
+    icon: 'system_update_alt', color: T.c.p700, bg: T.c.p50,
+    title: 'Atualizamos o app',
+    body: 'Fizemos uma atualização grande e, só desta vez, precisamos que você entre de novo. No dia a dia você fica sempre conectado.',
+  },
+  // Evento de segurança (atividade suspeita / troca de senha em outro aparelho).
+  seguranca: {
+    icon: 'verified_user', color: T.c.a700, bg: T.c.a100,
+    title: 'Confirme que é você',
+    body: 'Por precaução de segurança, encerramos a sessão neste aparelho. Entre de novo pra continuar protegido — isso é raro.',
+  },
+  // Inatividade extrema (meses sem abrir). Tom de boas-vindas, não de punição.
+  inatividade: {
+    icon: 'schedule', color: T.c.i700, bg: T.c.i100,
+    title: 'Bom te ver de novo',
+    body: 'Fazia bastante tempo sem acesso, então pedimos um login pra proteger sua conta. Normalmente você nunca é desconectado.',
+  },
+};
+
+function ErroSessaoScreen({ go, params }) {
+  const reason = (params && params.reason) || 'atualizacao';
+  const cfg = SESSAO_REASON[reason] || SESSAO_REASON.atualizacao;
   return (
     <EdgeShell>
-      <EdgeIcon name="schedule" color={T.c.a700} bg={T.c.a100}/>
-      <div style={{ ...T.t.h1, color: T.c.n950, marginBottom: 8, fontFamily: '"Fraunces", Georgia, serif' }}>Sua sessão expirou</div>
+      <EdgeIcon name={cfg.icon} color={cfg.color} bg={cfg.bg}/>
+      <div style={{ ...T.t.h1, color: T.c.n950, marginBottom: 8, fontFamily: '"Fraunces", Georgia, serif' }}>{cfg.title}</div>
       <div style={{ ...T.t.bodyLg, color: T.c.n600, marginBottom: 24, maxWidth: 320, lineHeight: 1.5 }}>
-        Por segurança, desconectamos depois de 30 dias sem login. Entra de novo pra continuar.
+        {cfg.body}
       </div>
       <div style={{
         padding: 14, background: T.c.i100, borderRadius: T.r.md, marginBottom: 24, maxWidth: 320,

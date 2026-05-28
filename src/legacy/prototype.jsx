@@ -117,9 +117,10 @@ function shotParams(screen) {
 }
 function TchinApp({ initialScreen = 'onboarding' }) {
   const __q = (typeof window !== 'undefined') ? new URLSearchParams(window.location.search) : new URLSearchParams();
-  const __ss = __q.get('screen'); const __st = __q.get('tab'); const __si = __q.get('intent');
+  const __ss = __q.get('screen'); const __st = __q.get('tab'); const __si = __q.get('intent'); const __sr = __q.get('reason');
   const __params = __ss ? shotParams(__ss) : {};
   if (__si) { __params.intent = __si; try { window.__tcLastIntent = __si; } catch (e) {} } // capture-mode: ?intent= injeta o intent (gps-primer narrativas + welcome-final copy)
+  if (__sr) { __params.reason = __sr; } // capture-mode: ?reason= injeta o motivo (erro-sessao, vinho-indisponivel, etc.)
   const [stack, setStack] = React.useState([{ screen: __ss || initialScreen, params: __params }]);
   const [tab, setTab] = React.useState(__st || 'descobrir');
   const [toast, setToast] = React.useState(null);
@@ -465,7 +466,7 @@ function TchinApp({ initialScreen = 'onboarding' }) {
       // ── Edge cases (37.x) ───────────────────────────────
       case 'erro-404':            return <Erro404Screen go={go}/>;
       case 'erro-permissao':      return <ErroPermissaoScreen go={go}/>;
-      case 'erro-sessao':         return <ErroSessaoScreen go={go}/>;
+      case 'erro-sessao':         return <ErroSessaoScreen go={go} params={current.params}/>;
       case 'vinho-indisponivel':  return <VinhoIndisponivelScreen go={go} params={current.params}/>;
       case 'erro-servidor':       return <ErroServidorScreen go={go}/>;
       // ── Tutoriais hub (35.x) ──────────────────────────────────

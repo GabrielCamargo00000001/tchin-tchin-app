@@ -134,7 +134,10 @@ const SEQ = [
   // ── Módulo 21 — Estados de sistema ──────────────────────
   { url: '?screen=erro-404',           ops: [ { wait: 500 }, { shot: 'erro-404' } ]},
   { url: '?screen=erro-permissao',     ops: [ { wait: 500 }, { shot: 'erro-permissao' } ]},
-  { url: '?screen=erro-sessao',        ops: [ { wait: 500 }, { shot: 'erro-sessao' } ]},
+  // erro-sessao: re-auth RARO, por motivo (nunca logout de rotina de 30 dias).
+  { url: '?screen=erro-sessao&reason=atualizacao', ops: [ { wait: 500 }, { shot: 'erro-sessao-atualizacao' } ]},
+  { url: '?screen=erro-sessao&reason=seguranca',   ops: [ { wait: 500 }, { shot: 'erro-sessao-seguranca' } ]},
+  { url: '?screen=erro-sessao&reason=inatividade', ops: [ { wait: 500 }, { shot: 'erro-sessao-inatividade' } ]},
   { url: '?screen=erro-servidor',      ops: [ { wait: 500 }, { shot: 'erro-servidor' } ]},
   { url: '?screen=vinho-indisponivel', ops: [ { wait: 500 }, { shot: 'vinho-indisponivel' } ]},
 

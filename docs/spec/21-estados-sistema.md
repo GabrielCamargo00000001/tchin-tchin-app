@@ -10,7 +10,8 @@
 ```
 [rota inválida] → erro-404 → home | busca
 [confraria fechada] → erro-permissao → pedir entrar | mensagem admin | outras confrarias
-[30d sem login] → erro-sessao → login | recuperar senha
+[evento raro: atualização grande / segurança / inatividade extrema] → erro-sessao → login | recuperar senha
+   (NUNCA por rotina — rede social: o usuário fica sempre conectado)
 [vinho fora] → vinho-indisponivel → similares | voltar
 [500] → erro-servidor → tentar de novo | home
 [qualquer ação] → toast (success/info/warning/error, 3s)
@@ -42,14 +43,25 @@
 
 ---
 
-## 21.3 `erro-sessao` — Sessão expirada (`ErroSessaoScreen`) ✅
+## 21.3 `erro-sessao` — Re-autenticação RARA (`ErroSessaoScreen`) ✅
 
-<img src="shots/erro-sessao.png" width="240"/>
+<img src="shots/erro-sessao-atualizacao.png" width="220"/> <img src="shots/erro-sessao-seguranca.png" width="220"/> <img src="shots/erro-sessao-inatividade.png" width="220"/>
 
-**Propósito:** re-autenticação após 30 dias sem login. **US-SYS-03.**
-**Layout:** ícone relógio + **"Sua sessão expirou"** + "Por segurança, desconectamos depois de 30 dias..." + box tranquilizador ("Seus rascunhos, registros offline e configurações continuam salvos. Nada se perde.") + CTAs "Entrar de novo" / "Esqueci a senha".
+> **✅ GABRIEL DECIDIU — não existe logout de rotina.** Somos uma **rede social**: o usuário **fica sempre conectado** e **nunca** é deslogado por "30 dias sem login". Esta tela só aparece em **eventos raros e excepcionais**, sempre com **motivo claro**. Não é um estado que o usuário comum vai ver.
 
-**Status:** ✅
+**Propósito:** pedir login de novo **apenas** em hipóteses excepcionais (geralmente de dev/infra), nunca como expiração automática de sessão. **US-SYS-03.**
+
+**Lógica — a tela recebe `params.reason` e adapta ícone + título + texto** (`SESSAO_REASON` em `screens-edge-cases.jsx`). Default = `atualizacao`:
+
+| `reason` | Quando dispara | Ícone | Título | Mensagem |
+|---|---|---|---|---|
+| `atualizacao` (default) | Atualização grande que mexeu na autenticação (re-login único pós-update) | `system_update_alt` (primary) | "Atualizamos o app" | "Fizemos uma atualização grande e, só desta vez, precisamos que você entre de novo. No dia a dia você fica sempre conectado." |
+| `seguranca` | Evento de segurança (atividade suspeita, troca de senha em outro aparelho) | `verified_user` (amber) | "Confirme que é você" | "Por precaução de segurança, encerramos a sessão neste aparelho. Entre de novo pra continuar protegido — isso é raro." |
+| `inatividade` | Inatividade extrema (meses sem abrir) — tom de boas-vindas, não de punição | `schedule` (info) | "Bom te ver de novo" | "Fazia bastante tempo sem acesso, então pedimos um login pra proteger sua conta. Normalmente você nunca é desconectado." |
+
+**Layout (comum às 3 variantes):** `EdgeIcon` 120×120 (ícone/cor por `reason`) + H1 Fraunces + body + **box tranquilizador** ("Seus rascunhos, registros offline e configurações continuam salvos. Nada se perde.") + CTAs **"Entrar de novo"** (→ `login`) / **"Esqueci a senha"** (→ `recuperar-email`). Sem tela de back (re-auth é terminal).
+
+**Status:** ✅ (UI/UX completos; gatilhos reais — versionamento de token, flags de segurança — são responsabilidade do backend/infra)
 
 ---
 
@@ -94,14 +106,15 @@
 2. **Nunca culpar o usuário** (servidor assume: "do nosso lado").
 3. **Sempre oferecer saída** (≥1 CTA de navegação).
 4. **Transformar em conversão quando possível** (permissão → pedir entrar; vinho fora → similares).
-5. **Tranquilizar sobre dados** (sessão expirada → "nada se perde").
+5. **Tranquilizar sobre dados** (re-auth raro → "nada se perde"; jamais sugerir que algo foi apagado).
 6. **Ilustração consistente** (`EdgeIcon` 120px círculo colorido por tom).
+7. **Nunca deslogar por rotina** — re-autenticação é exceção (atualização/segurança/inatividade), sempre com motivo claro.
 
 ## Pendências de backend / decisões do Gabriel
 ### Importantes
 - **Roteamento real de erros** (404/403/500 do backend → estas telas).
 - **Retry com backoff** no erro-servidor + telemetria de erro.
-- **Refresh token** real (sessão) em vez de só 30d hard-coded.
+- **Sessão persistente real** (refresh token de longa duração / renovação silenciosa). **Sem expiração de rotina** — `erro-sessao` só dispara por: versionamento de token quebrado em atualização grande (`reason=atualizacao`), flag de segurança (`reason=seguranca`) ou inatividade extrema de meses (`reason=inatividade`).
 - **Offline global** (sem internet) — falta uma tela/banner dedicado de "sem conexão". Backlog **SYS-OFFLINE**.
 ### Decisões do Gabriel
 - Página de status/incidentes pública?
