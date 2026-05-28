@@ -3,7 +3,8 @@
 > **Documento único, ultra-detalhado, para o time de Dev.** Reúne **todos os fluxos e telas** do app com suas histórias de usuário, regras de negócio, estados e comportamentos.
 > Gerado a partir de: (a) **as telas implementadas** no protótipo `tchin-tchin-app` e (b) os **11 documentos de épicos/MVPs/specs** em `…/duolingo do vinho/epicos`.
 >
-> **Última atualização:** 2026-05-25 · **Status:** em construção (módulo a módulo).
+> **Última atualização:** 2026-05-28 · **Status:** ✅ **COMPLETO — 21/21 módulos documentados** (texto ultra-detalhado + ~200 prints reais embutidos + divergências e pendências sinalizadas).
+> **Protótipo navegável (fonte de verdade comportamental):** https://tchin-tchin-app.vercel.app
 
 ---
 
@@ -67,7 +68,7 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 | 18 | **[Notificações & Engajamento](18-notificacoes-engajamento.md)** ✅ | notificações, push (primer/negado/canais/preview), nudges D1/D3/D7/D14, plus-one | MVP1, Sprint 11-13 |
 | 19 | **[Jornada & Desafios](19-jornada-desafios.md)** ✅ | jornada, jornada-celebrar, desafio-detalhe, badges (=badges-galeria, M14) | MVP2 Épico 7/9 |
 | 20 | **[Config & Suporte](20-config-suporte.md)** ✅ | config (notif/privacidade/conta/bloqueados), suporte (FAQ/contato) | MVP1 |
-| 21 | **Estados de sistema** | erro-404/permissão/sessão/servidor, vinho-indisponível, toast | transversal |
+| 21 | **[Estados de sistema](21-estados-sistema.md)** ✅ | erro-404/permissão/sessão/servidor, vinho-indisponível, toast | transversal |
 
 > **Financeiro / Rachão (LACI/Celcoin)** é transversal — documentado dentro de **Eventos** (12) e referenciado em **Confrarias** (11). Specs: MVP2 Épico 3, Sprint 11-13 Épico T5.
 
@@ -182,8 +183,10 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 **Estados extra capturados:** os 6 (`config-{notif,privacidade,conta,bloqueados}`, `suporte-{faq,contato}`).
 **⛔ Faltam no app (épicos):** persistência de preferências + enforcement, conta real (trocar email/senha/2FA, soft-delete 30d), bloqueio enforced, exportar dados (LGPD), FAQ via CMS + tickets reais, chat de suporte ao vivo.
 
-### Módulo 21 — Estados de sistema
+### Módulo 21 — Estados de sistema [📄 doc completo](21-estados-sistema.md)
 `erro-404` ✅ · `erro-permissao` ✅ · `erro-sessao` ✅ · `erro-servidor` ✅ · `vinho-indisponivel` ✅ · `toast` (overlay) ✅
+**Estados extra capturados:** `erro-404`, `erro-permissao`, `erro-sessao`, `erro-servidor`, `vinho-indisponivel` (toast visível embutido em outras capturas).
+**⛔ Faltam no app (épicos):** roteamento real de erros (404/403/500 do backend), retry+telemetria, refresh token real, tela/banner de offline global.
 
 ---
 

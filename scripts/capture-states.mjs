@@ -94,6 +94,13 @@ const SEQ = [
     { shot: 'tutoriais-hub' },
   ]},
 
+  // ── Módulo 21 — Estados de sistema ──────────────────────
+  { url: '?screen=erro-404',           ops: [ { wait: 500 }, { shot: 'erro-404' } ]},
+  { url: '?screen=erro-permissao',     ops: [ { wait: 500 }, { shot: 'erro-permissao' } ]},
+  { url: '?screen=erro-sessao',        ops: [ { wait: 500 }, { shot: 'erro-sessao' } ]},
+  { url: '?screen=erro-servidor',      ops: [ { wait: 500 }, { shot: 'erro-servidor' } ]},
+  { url: '?screen=vinho-indisponivel', ops: [ { wait: 500 }, { shot: 'vinho-indisponivel' } ]},
+
   // ── Módulo 20 — Config & Suporte ────────────────────────
   { url: '?screen=config-notif',       ops: [ { wait: 500 }, { shot: 'config-notif' } ]},
   { url: '?screen=config-privacidade', ops: [ { wait: 500 }, { shot: 'config-privacidade' } ]},
