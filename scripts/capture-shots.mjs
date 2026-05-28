@@ -45,7 +45,11 @@ async function shot(name, url) {
     ok++; console.log('ok   ' + name);
   } catch (e) { fail++; console.log('FAIL ' + name + ' :: ' + String(e.message).split('\n')[0]); }
 }
-for (const t of homeTabs) await shot('home-' + t, `${BASE}/?screen=home&tab=${t}`);
-for (const r of routes) await shot(r, `${BASE}/?screen=${encodeURIComponent(r)}`);
+// Filtro opcional: SHOT_ONLY="config-conta,login-social" captura só rotas
+// cujo nome contenha algum termo (acelera re-capturas pontuais).
+const ONLY = process.env.SHOT_ONLY ? process.env.SHOT_ONLY.split(',').map(s => s.trim()).filter(Boolean) : null;
+const want = (name) => !ONLY || ONLY.some(t => name.includes(t));
+for (const t of homeTabs) if (want('home-' + t)) await shot('home-' + t, `${BASE}/?screen=home&tab=${t}`);
+for (const r of routes) if (want(r)) await shot(r, `${BASE}/?screen=${encodeURIComponent(r)}`);
 await browser.close();
 console.log(`\nTOTAL: ${ok} ok, ${fail} fail (${OUT})`);

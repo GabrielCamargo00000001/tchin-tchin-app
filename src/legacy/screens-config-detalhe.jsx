@@ -170,9 +170,7 @@ function ConfigContaScreen({ go }) {
     <CfgShell title="Conta" onBack={() => go('back')}>
       <CfgGroup title="Informações da conta">
         <CfgRow icon="mail"     label="E-mail"   value="raphaela@email.com" onClick={() => go('config-trocar-email')}/>
-        <CfgRow icon="phone"    label="Telefone" value="(61) 9****-**12"     onClick={() => go('config-trocar-telefone')}/>
-        <CfgRow icon="lock"     label="Senha"    sub="Trocada há 12 dias"    onClick={() => go('recuperar-redefinir')}/>
-        <CfgRow icon="verified_user" label="Verificação em duas etapas" value="Ativa" onClick={() => {}} last/>
+        <CfgRow icon="lock"     label="Senha"    sub="Trocada há 12 dias"    onClick={() => go('recuperar-redefinir')} last/>
       </CfgGroup>
       <CfgGroup title="Assinatura">
         <CfgRow icon="workspace_premium" label="Tchin Tchin Plus" sub="Plano gratuito · sem assinatura ativa" onClick={() => go('toast', { kind: 'info', message: 'Em breve: assinatura Plus.' })} last/>
@@ -274,7 +272,7 @@ function PoliticaPrivacidadeScreen({ go }) {
           A gente coleta o mínimo necessário pra fazer o app funcionar, e você é dono dos seus dados.
         </div>
         {[
-          ['Quais dados coletamos', 'Cadastro (nome, e-mail, telefone); diário de vinhos; paladar; interações (likes, comentários); localização aproximada quando você dá permissão; dispositivo e versão do app.'],
+          ['Quais dados coletamos', 'Cadastro (nome, e-mail); diário de vinhos; paladar; interações (likes, comentários); localização aproximada quando você dá permissão; dispositivo e versão do app.'],
           ['Pra que usamos', 'Pra rodar o app, recomendar vinhos pelo seu paladar, conectar você a confrarias e melhorar produto. Não vendemos seus dados.'],
           ['Com quem compartilhamos', 'Comerciantes parceiros (só ao concluir compra), processadores de pagamento, infra de nuvem. Listamos parceiros na seção "Subprocessadores".'],
           ['Seus direitos LGPD', 'Acesso, correção, portabilidade, exclusão, revogação de consentimento. Tudo disponível em Configurações → Privacidade.'],

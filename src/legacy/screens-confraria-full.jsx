@@ -131,7 +131,7 @@ function ConfrariaConfigScreen({ go, params }) {
         <div style={{ background: T.c.n0 }}>
           <CfgRow icon="swap_horiz" label="Transferir admin" sub="Outro membro vira admin no seu lugar" onClick={() => go('confraria-transferir', { confraria })}/>
           <CfgRow icon="archive"    label="Arquivar confraria" sub="Some pros membros, mas histórico fica" onClick={() => go('toast', { kind: 'warning', message: 'Confraria arquivada.' })}/>
-          <CfgRow icon="delete_forever" label="Excluir confraria" danger onClick={() => go('toast', { kind: 'warning', message: 'Em breve: exclusão definitiva (requer 2FA).' })} last/>
+          <CfgRow icon="delete_forever" label="Excluir confraria" danger onClick={() => go('toast', { kind: 'warning', message: 'Em breve: exclusão definitiva.' })} last/>
         </div>
       </div>
     </CfShell>

@@ -114,7 +114,7 @@ _Config · Convidar · Sair · Transferir · Regras:_
 
 **Propósito:** telas de gestão acessadas pelo menu ⋯ do detalhe. **US-CONF-04/06/07/08.**
 
-- **`confraria-config`** (admin) — editar capa/nome/descrição/cidade + **privacidade** (Aberta/Por aprovação/Fechada) + recursos (aprovar posts antes / chat coletivo) + **Zona Admin** (transferir / arquivar / excluir com 2FA). "Salvar" disabled se não-dirty.
+- **`confraria-config`** (admin) — editar capa/nome/descrição/cidade + **privacidade** (Aberta/Por aprovação/Fechada) + recursos (aprovar posts antes / chat coletivo) + **Zona Admin** (transferir / arquivar / excluir). "Salvar" disabled se não-dirty.
 - **`confraria-convidar`** — link de convite (copiar) + 4 share buttons (WhatsApp/Telegram/E-mail/Mais) + **sugestões da agenda** (6 contatos com checkbox) + "Enviar N convites".
 - **`confraria-sair`** — 2 passos: confirmação (com aviso especial se admin → "Transfira admin antes") → motivo (5 opções) → "Sair definitivamente" → `confrarias`.
 - **`confraria-transferir`** — lista de membros ativos (radio) → "Transferir admin pra {nome}".
@@ -125,7 +125,7 @@ _Config · Convidar · Sair · Transferir · Regras:_
 > **🐛 BUG — badge "no app" invertido** em `confraria-convidar`: contatos que "Já estão no Tchin Tchin" mostram badge **"no app"** (deveria ser o contrário — quem NÃO tem app). Lógica do badge invertida. **Corrigir.**
 > **⚠️ DIVERGÊNCIA — sugestões da agenda mock.** Real: integrar com contatos do device (permissão) + cruzar com base de usuários.
 > **⛔ FALTA NO APP (épico pede):** **fila de aprovação** (privacidade "Por aprovação" precisa de tela pra admin aceitar/recusar pedidos). Backlog **CONF-APPROVAL-QUEUE**.
-> **⛔ FALTA NO APP (épico pede):** **arquivar/excluir reais** + 2FA. Hoje UI sem backend. Backlog **CONF-ARCHIVE-DELETE**.
+> **⛔ FALTA NO APP (épico pede):** **arquivar/excluir reais**. Hoje UI sem backend. Backlog **CONF-ARCHIVE-DELETE**.
 
 **Status:** ⚠️ (UI completa; bug do badge + backend de gestão pendentes)
 

@@ -4,13 +4,15 @@
 > **Fonte de verdade:** `screens-config-detalhe.jsx` (`ConfigNotifScreen`, `ConfigPrivacidadeScreen`, `ConfigContaScreen`, `BloqueadosScreen`), `screens-suporte.jsx` (`SuporteFaqScreen`, `SuporteContatoScreen`). Doc funcional: **MVP1**.
 > **Épicos/US:** US-CFG-01 (config notificações), US-CFG-02 (privacidade), US-CFG-03 (conta + zona de perigo), US-CFG-04 (bloqueados), US-SUP-01 (FAQ), US-SUP-02 (contato).
 
-**Regra de negócio canônica:** excluir conta tem **fluxo de 2 passos** + janela de 30 dias pra reverter; oferece desativação temporária como alternativa (preserva dados). Privacidade granular (diário/confrarias/paladar). 2FA exibido como ativo.
+**Regra de negócio canônica:** excluir conta tem **fluxo de 2 passos** + janela de 30 dias pra reverter; oferece desativação temporária como alternativa (preserva dados). Privacidade granular (diário/confrarias/paladar).
+
+> **✅ GABRIEL DECIDIU — sem telefone, sem 2FA.** O app **não coleta número de telefone** (cadastro é só nome + e-mail; auth é SSO Apple/Google + e-mail/senha) e **não tem verificação em duas etapas (2FA)**. Removidos de `config-conta`, do texto de privacidade e de qualquer outro fluxo.
 
 ## Mapa do fluxo
 ```
 [perfil/editar → "Configurações"] → config (hub) ─┬─ config-notif (canais push/email)
                                                    ├─ config-privacidade (quem vê o quê)
-                                                   ├─ config-conta (email/senha/2FA/assinatura/zona de perigo)
+                                                   ├─ config-conta (email/senha/assinatura/zona de perigo)
                                                    │     └─ excluir → modal 2 passos → welcome (30d pra reverter)
                                                    ├─ config-bloqueados (lista de bloqueados)
                                                    └─ suporte → suporte-faq | suporte-contato
@@ -49,15 +51,15 @@
 <img src="shots/config-conta.png" width="240"/>
 
 **Propósito:** dados da conta + assinatura + desativar/excluir. **US-CFG-03.**
-**Entradas:** editar-perfil → "Configurações de conta". **Saídas:** trocar email/telefone/senha; excluir → modal → `welcome`.
+**Entradas:** editar-perfil → "Configurações de conta". **Saídas:** trocar email/senha; excluir → modal → `welcome`.
 **Layout (`ConfigContaScreen`):**
-- **Informações da conta:** E-mail · Telefone (mascarado) · Senha ("trocada há 12 dias") · **2FA** ("Ativa").
+- **Informações da conta:** E-mail · Senha ("trocada há 12 dias"). **Sem Telefone e sem 2FA** (não fazem parte do produto — Gabriel decidiu).
 - **Assinatura:** Tchin Tchin Plus ("Plano gratuito · sem assinatura ativa").
 - **Zona de perigo:** Desativar temporariamente (preserva dados) · **Excluir permanentemente** (danger) → `ConfirmDeleteModal` (2 passos: aviso + confirmação digitada) → `welcome` + "30 dias pra reverter".
 
-**Analytics:** `account_view`, `account_change_email/phone/password`, `account_deactivate`, `account_delete_confirm`.
+**Analytics:** `account_view`, `account_change_email/password`, `account_deactivate`, `account_delete_confirm`.
 
-> **⚠️ DIVERGÊNCIA — ações mock** (desativar/excluir são toast/nav). Backend: fluxo real + soft-delete 30 dias + 2FA real.
+> **⚠️ DIVERGÊNCIA — ações mock** (desativar/excluir são toast/nav). Backend: fluxo real + soft-delete 30 dias.
 > **⛔ FALTA NO APP (épico pede):** **exportar meus dados** (LGPD — direito de portabilidade). Backlog **CFG-DATA-EXPORT**.
 
 **Status:** ✅
@@ -97,12 +99,12 @@ _FAQ · Contato:_
 ## Edge cases & navegação reversa
 - **Excluir conta** → modal 2 passos + 30 dias pra reverter (bom — anti-arrependimento).
 - **Privacidade/bloqueio** não-enforced no protótipo.
-- **Trocar email/telefone/senha** → telas separadas (`config-trocar-*`, `recuperar-redefinir`).
+- **Trocar email/senha** → telas separadas (`config-trocar-email`, `recuperar-redefinir`). Sem troca de telefone (não coletamos).
 
 ## Pendências de backend / decisões do Gabriel
 ### Críticas (bloqueadores GA)
 - **Persistência de preferências** (notif/privacidade) + enforcement.
-- **Conta real** (trocar email/telefone/senha, 2FA, soft-delete 30 dias).
+- **Conta real** (trocar email/senha, soft-delete 30 dias). **Sem telefone e sem 2FA.**
 - **Bloqueio enforced** (corta interações).
 ### Importantes
 - Exportar dados (LGPD).

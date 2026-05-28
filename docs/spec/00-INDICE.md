@@ -182,7 +182,7 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 ### Módulo 20 — Config & Suporte [📄 doc completo](20-config-suporte.md)
 `config-notif` ✅ · `config-privacidade` ✅ · `config-conta` ✅ · `config-bloqueados` ✅ · `suporte-faq` ✅ · `suporte-contato` ✅
 **Estados extra capturados:** os 6 (`config-{notif,privacidade,conta,bloqueados}`, `suporte-{faq,contato}`).
-**⛔ Faltam no app (épicos):** persistência de preferências + enforcement, conta real (trocar email/senha/2FA, soft-delete 30d), bloqueio enforced, exportar dados (LGPD), FAQ via CMS + tickets reais, chat de suporte ao vivo.
+**⛔ Faltam no app (épicos):** persistência de preferências + enforcement, conta real (trocar email/senha, soft-delete 30d — **sem telefone, sem 2FA**), bloqueio enforced, exportar dados (LGPD), FAQ via CMS + tickets reais, chat de suporte ao vivo.
 
 ### Módulo 21 — Estados de sistema [📄 doc completo](21-estados-sistema.md)
 `erro-404` ✅ · `erro-permissao` ✅ · `erro-sessao` ✅ · `erro-servidor` ✅ · `vinho-indisponivel` ✅ · `toast` (overlay) ✅

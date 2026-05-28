@@ -14,7 +14,7 @@ const BASE = process.argv[2] || process.env.BASE || 'http://localhost:5173';
 
 const homeTabs = ['descobrir', 'adega', 'comunidade', 'confrarias'];
 const modules = [
-  { num: '01', name: 'Auth & Acesso', routes: ['onboarding','welcome','login','cadastro','login-social','magic-link-enviado','verif-telefone-otp','verif-concluida','recuperar','recuperar-email','recuperar-enviado','recuperar-otp','recuperar-redefinir','recuperar-sucesso','termos','politica-privacidade'] },
+  { num: '01', name: 'Auth & Acesso', routes: ['onboarding','welcome','login','cadastro','login-social','recuperar','recuperar-email','recuperar-enviado','recuperar-otp','recuperar-redefinir','recuperar-sucesso','termos','politica-privacidade'] },
   { num: '02', name: 'Onboarding educacional & Roteamento', routes: ['quiz-nivel','quiz-interesses','tela-intencao','gps-primer','gps-negado','welcome-final','tutoriais'] },
   { num: '03', name: 'Meu Paladar', routes: ['quiz','quiz-result'] },
   { num: '04', name: 'Descobrir & Marketplace', routes: ['marketplace','wine','busca','filtros-avancados','lista-desejos','comparar-vinhos'] },
