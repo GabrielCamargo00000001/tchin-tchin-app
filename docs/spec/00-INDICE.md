@@ -59,7 +59,7 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 | 10 | **[Harmoniza](10-harmoniza.md)** ✅ | harmoniza, harmoniza-resultados (+ reversa) | Sprint 11-13 Épico T4 |
 | 11 | **[Confrarias](11-confrarias.md)** ✅ | home/confrarias, detalhe (4 abas), wizard 1-6, config/convidar/sair/transferir/regras, welcome/apresentar/tour | MVP2 Épicos 1-7, Filtros das Confrarias |
 | 12 | **[Eventos](12-eventos.md)** ✅ | wizard 1-5, detalhe, editar, presença/RSVP/pagamentos, pós-evento (avaliar/ata) | MVP2 Épico 2 + 3 (Financeiro) |
-| 13 | **Comunidade & Feed** | home/comunidade, criar-post, criar-momento, post-detail, comentários | MVP1 Épico 2, MVP2 Épico 15 |
+| 13 | **[Comunidade & Feed](13-comunidade-feed.md)** ✅ | home/comunidade, criar-post, criar-momento, post-detail, comentários | MVP1 Épico 2, MVP2 Épico 15 |
 | 14 | **Perfil & Social** | perfil-outro, editar-perfil (+foto/paladar/privacidade), seguidores/seguindo/atividade/vinhos/sugestões/comparar, badges-galeria | MVP1, MVP2 |
 | 15 | **Expert** | virar/aplicar/pendente, Q&A, responder, perguntar | MVP1 Épico 2 (badge expert) |
 | 16 | **Indicação & Convites** | indicação (landing/compartilhar/meus-convites/recompensas), convite-recebido | Filtros das Confrarias (Convites US-C) |
@@ -139,8 +139,11 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 **💰 Financeiro/Rachão:** existe na aba Pagamentos (LACI auto + conta + manual, arrecadado/meta, cobrar pendentes, exportar CSV) — valor fixo por pessoa (não split dinâmico).
 **⛔ Faltam no app (épicos):** CRUD real, LACI/Celcoin real (webhook Pix), gate endereço 24h, split dinâmico, QR check-in, reembolso, avaliação→diário, consenso da confraria, upload capa/fotos.
 
-### Módulo 13 — Comunidade & Feed
-`home/comunidade` ✅ · `criar-post` ✅ · `criar-momento` ✅ · `post-detail` ✅ · `comentarios` ✅
+### Módulo 13 — Comunidade & Feed [📄 doc completo](13-comunidade-feed.md)
+`home/comunidade` ✅ · `criar-post` ✅ · `criar-momento` ⚠️ · `post-detail` ✅ · `comentarios` ✅
+**Estados extra capturados:** `criar-post-default|texto`, `criar-momento-default`, `post-detail-default`, `comentarios-default` (+ home-comunidade do capture-shots).
+**⚠️ Divergências:** Momentos/Stories desconectados do feed (sem régua); `comentarios` duplica comentários inline do post-detail.
+**⛔ Faltam no app (épicos):** feed real (ranking/paginação), upload de foto, moderação, régua de stories, filtros do feed, menções @/hashtag autocomplete, respostas aninhadas.
 
 ### Módulo 14 — Perfil & Social
 `perfil-outro` ✅ · `editar-perfil` ✅ · `editar-perfil-foto` ✅ · `editar-perfil-paladar` ✅ · `editar-perfil-privacidade` ✅ · `perfil-seguidores` ✅ · `perfil-seguindo` ✅ · `perfil-atividade-publica` ✅ · `perfil-vinhos-provados` ✅ · `perfil-sugestoes` ✅ · `perfil-comparar-paladar` ✅ · `badges-galeria` ✅

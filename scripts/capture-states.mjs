@@ -94,6 +94,17 @@ const SEQ = [
     { shot: 'tutoriais-hub' },
   ]},
 
+  // ── Módulo 13 — Comunidade & Feed ───────────────────────
+  // home/comunidade já capturada como home-comunidade.png (capture-shots)
+  { url: '?screen=criar-post', ops: [
+    { wait: 500 }, { shot: 'criar-post-default' },
+    { fill: ['No que está pensando? Conta a história, marca o vinho...', 'Abri um Malbec sensacional ontem 🍷'] },
+    { wait: 300 }, { shot: 'criar-post-texto' },
+  ]},
+  { url: '?screen=criar-momento', ops: [ { wait: 500 }, { shot: 'criar-momento-default' } ]},
+  { url: '?screen=post-detail', ops: [ { wait: 600 }, { shot: 'post-detail-default' } ]},
+  { url: '?screen=comentarios', ops: [ { wait: 500 }, { shot: 'comentarios-default' } ]},
+
   // ── Módulo 12 — Eventos ─────────────────────────────────
   // Wizard de criar evento (5 passos)
   { url: '?screen=event-wizard-1', ops: [ { wait: 500 }, { shot: 'event-wizard-1' } ]},
