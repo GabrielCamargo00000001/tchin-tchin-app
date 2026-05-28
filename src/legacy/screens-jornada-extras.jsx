@@ -3,6 +3,7 @@
 // Auto-converted from the Tchin Tchin design prototype. See scripts/convert-legacy.mjs
 import React from 'react';
 import { Button } from './components.jsx';
+import { MOCK_WINES } from './data.jsx';
 import { Avatar } from './f13_01_Avatar.jsx';
 import { CfgToggle } from './screens-config-detalhe.jsx';
 import { Icon, T, TchinLogo } from './tokens.jsx';
@@ -583,8 +584,17 @@ function JornadaScreen({ go, ctx }) {
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', ...T.t.caption, color: 'rgba(255,255,255,0.85)' }}>
             <span>{pct}% completo</span>
-            <span>{totalPts} pontos ganhos</span>
+            <span>{totalPts} pts em marcos</span>
           </div>
+          <button onClick={() => go('pontos')} style={{
+            marginTop: 14, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+            padding: '11px 0', borderRadius: T.r.full, cursor: 'pointer',
+            background: 'rgba(255,255,255,0.18)', border: '1.5px solid rgba(255,255,255,0.4)',
+            color: T.c.n0, fontFamily: T.font, fontSize: 14, fontWeight: 700,
+          }}>
+            <Icon name="redeem" size={18} color={T.c.n0}/>
+            Resgatar meus pontos
+          </button>
         </div>
       </div>
 
@@ -639,9 +649,55 @@ function JornadaScreen({ go, ctx }) {
   );
 }
 
-// ═══ 42.02 JornadaCelebrar ═════════════════════════════
+// ═══ 42.02 JornadaCelebrar — celebração POLIMÓRFICA ═════════════
+// Uma só tela cobre TODAS as conquistas, via params.kind. data = params.data
+// (ou params.milestone p/ retrocompat). Cada variante define copy/ícone/reward/CTAs.
+const CELEBRATION = {
+  milestone: {
+    eyebrow: 'ETAPA COMPLETA!', icon: (d) => d.icon || 'wine_bar',
+    title: (d) => d.label || 'Marco concluído',
+    reward: (d) => `+${d.pts || 0} pontos`, rewardIcon: 'workspace_premium',
+    body: 'Tá indo bem. Você já está construindo sua biografia em vinho.',
+    primary: { label: 'Ver minha jornada', to: 'jornada' },
+    secondary: { label: 'Continuar', to: 'home' },
+  },
+  challenge: {
+    eyebrow: 'DESAFIO CUMPRIDO!', icon: () => 'emoji_events',
+    title: (d) => d.title || 'Desafio da semana',
+    reward: (d) => `+${d.pts || 50} pontos + badge`, rewardIcon: 'emoji_events',
+    body: 'Você cumpriu o desafio da semana. O badge já está no seu perfil e os pontos na sua carteira.',
+    primary: { label: 'Resgatar pontos', to: 'pontos' },
+    secondary: { label: 'Continuar', to: 'home' },
+  },
+  levelup: {
+    eyebrow: 'SUBIU DE NÍVEL!', icon: () => 'trending_up',
+    title: (d) => d.title || (d.level ? `Nível ${d.level}` : 'Novo nível'),
+    reward: (d) => `+${d.pts || 50} pontos`, rewardIcon: 'military_tech',
+    body: 'Seu paladar evoluiu. Continue treinando pra subir na liga.',
+    primary: { label: 'Voltar ao Treino', to: 'treino-paladar' },
+    secondary: { label: 'Continuar', to: 'home' },
+  },
+  streak: {
+    eyebrow: 'SEQUÊNCIA EM CHAMAS!', icon: () => 'local_fire_department',
+    title: (d) => `${d.days || 7} dias seguidos`,
+    reward: (d) => `+${d.pts || 30} pontos`, rewardIcon: 'local_fire_department',
+    body: 'Constância é o segredo. Não quebre a corrente.',
+    primary: { label: 'Continuar treinando', to: 'treino-paladar' },
+    secondary: { label: 'Agora não', to: 'home' },
+  },
+  redeem: {
+    eyebrow: 'RESGATE CONFIRMADO!', icon: () => 'redeem',
+    title: (d) => d.title || 'Pontos resgatados',
+    reward: (d) => d.reward || 'Crédito na sua conta', rewardIcon: 'check_circle',
+    body: 'Seu resgate foi aplicado com sucesso. Aproveite!',
+    primary: { label: 'Ver meus pontos', to: 'pontos' },
+    secondary: { label: 'Continuar', to: 'home' },
+  },
+};
 function JornadaCelebrarScreen({ go, params }) {
-  const milestone = (params && params.milestone) || { label: 'Primeiro vinho no diário', pts: 30, icon: 'wine_bar' };
+  const kind = (params && params.kind) || 'milestone';
+  const cfg = CELEBRATION[kind] || CELEBRATION.milestone;
+  const data = (params && (params.data || params.milestone)) || { label: 'Primeiro vinho no diário', pts: 30, icon: 'wine_bar' };
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: `radial-gradient(circle at center, ${T.c.p50}, ${T.c.n0})`, padding: '40px 24px', alignItems: 'center', justifyContent: 'center', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
       {/* Confetti */}
@@ -664,11 +720,11 @@ function JornadaCelebrarScreen({ go, params }) {
           margin: '0 auto 24px', boxShadow: `0 16px 40px rgba(74,31,36,0.4)`,
           animation: 'tcDrawIn 500ms cubic-bezier(0.2, 0.8, 0.2, 1)',
         }}>
-          <Icon name={milestone.icon} size={64} color={T.c.n0}/>
+          <Icon name={cfg.icon(data)} size={64} color={T.c.n0}/>
         </div>
-        <div style={{ ...T.t.overline, color: T.c.p700, marginBottom: 6, letterSpacing: 1.4 }}>ETAPA COMPLETA!</div>
+        <div style={{ ...T.t.overline, color: T.c.p700, marginBottom: 6, letterSpacing: 1.4 }}>{cfg.eyebrow}</div>
         <div style={{ ...T.t.h1, color: T.c.n950, marginBottom: 12, fontFamily: '"Fraunces", Georgia, serif', textWrap: 'balance' }}>
-          {milestone.label}
+          {cfg.title(data)}
         </div>
         <div style={{
           display: 'inline-flex', alignItems: 'center', gap: 8,
@@ -677,28 +733,233 @@ function JornadaCelebrarScreen({ go, params }) {
           ...T.t.h3, fontFamily: T.font, fontWeight: 800,
           animation: 'tcPopIn 600ms cubic-bezier(0.2, 0.8, 0.2, 1) 200ms backwards',
         }}>
-          <Icon name="workspace_premium" size={20} color={T.c.a500} fill={1}/>
-          +{milestone.pts} pontos
+          <Icon name={cfg.rewardIcon} size={20} color={T.c.a500} fill={1}/>
+          {cfg.reward(data)}
         </div>
         <div style={{ ...T.t.bodyLg, color: T.c.n600, lineHeight: 1.5, marginBottom: 32, maxWidth: 320 }}>
-          Tá indo bem. Você já está construindo sua biografia em vinho.
+          {cfg.body}
         </div>
 
         <div style={{ width: '100%', maxWidth: 320, display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <Button variant="primary" size="lg" fullWidth onClick={() => go('jornada')}>Ver minha jornada</Button>
-          <Button variant="ghost" size="lg" fullWidth onClick={() => go('home')}>Continuar</Button>
+          <Button variant="primary" size="lg" fullWidth onClick={() => go(cfg.primary.to)}>{cfg.primary.label}</Button>
+          <Button variant="ghost" size="lg" fullWidth onClick={() => go(cfg.secondary.to)}>{cfg.secondary.label}</Button>
         </div>
       </div>
     </div>
   );
 }
 
+// ═══ Economia de Pontos (moeda ÚNICA do app) ═══════════════════
+// FONTE DA VERDADE da regra de negócio dos "Pontos Tchin".
+// • Pontos = moeda única, ganha em todo o app e RESGATÁVEL.
+// • Resgate: crédito no marketplace, vinhos do catálogo resgatável (a Tchin
+//   absorve o custo), e experiências futuras (degustação/enoturismo).
+// • O XP do Treino (M08) NÃO é moeda — é só o placar da Liga; mas cada
+//   conquista no Treino credita Pontos (ver tabela earn).
+// Taxa e limites são CALIBRÁVEIS pelo Gabriel com dados reais.
+const POINTS_ECONOMY = {
+  brlPerPoint: 0.10,          // 10 pontos = R$1 de crédito
+  minRedeemPoints: 300,       // resgate mínimo de crédito (= R$30)
+  maxOrderCreditPct: 30,      // crédito cobre no máx 30% do valor do pedido
+  creditValidityMonths: 6,    // crédito resgatado expira em 6 meses
+  pointsExpiryMonths: 12,     // pontos expiram após 12 meses de inatividade
+  freeWineCostPoints: 800,    // 1 vinho de entrada do catálogo resgatável
+  freeWineMaxPriceBRL: 70,    // catálogo resgatável = vinhos de entrada (≤ R$70)
+  freeWinePerDays: 30,        // limite: 1 vinho grátis a cada 30 dias
+  dailyRegisterCap: 3,        // registro rende pontos até 3×/dia (anti-farming)
+  // Tabela de GANHO (earn) — único lugar onde se ganha Pontos
+  earn: [
+    { id: 'register',  icon: 'wine_bar',              label: 'Registrar vinho no diário',     pts: 10, note: 'até 3×/dia' },
+    { id: 'lesson',    icon: 'school',                label: 'Concluir lição no Treino',      pts: 15 },
+    { id: 'goal',      icon: 'local_fire_department', label: 'Bater a meta diária do Treino', pts: 20 },
+    { id: 'challenge', icon: 'emoji_events',          label: 'Cumprir o desafio da semana',   pts: 50 },
+    { id: 'review',    icon: 'rate_review',           label: 'Avaliar um vinho que registrou', pts: 5 },
+    { id: 'invite',    icon: 'share',                 label: 'Amigo convidado vira ativo',    pts: 50, note: '+30 por extra · até 5/mês' },
+    { id: 'levelup',   icon: 'trending_up',           label: 'Subir de nível no Treino',      pts: 50 },
+  ],
+};
+function pontosToBRL(p) {
+  return (p * POINTS_ECONOMY.brlPerPoint).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
+// ═══ 42.03 Pontos — carteira + loja de resgate ═════════════════
+function PontosScreen({ go, ctx, params }) {
+  const saldo = (params && params.saldo != null) ? params.saldo
+    : (ctx && ctx.user && ctx.user.points != null) ? ctx.user.points : 340;
+  const [tab, setTab] = React.useState('resgatar'); // 'resgatar' | 'ganhar' | 'extrato'
+  const E = POINTS_ECONOMY;
+
+  // Faixas de crédito no marketplace
+  const creditTiers = [300, 600, 1000].map(p => ({ pts: p, brl: pontosToBRL(p) }));
+  // Catálogo resgatável: vinhos de entrada (≤ teto), a Tchin absorve o custo
+  const resgataveis = (MOCK_WINES || []).filter(w => w.price && w.price <= E.freeWineMaxPriceBRL).slice(0, 4);
+
+  // Extrato mock
+  const extrato = [
+    { icon: 'emoji_events', label: 'Desafio da semana cumprido', pts: +50, when: 'ontem' },
+    { icon: 'wine_bar',     label: 'Registrou Catena Malbec',    pts: +10, when: 'ontem' },
+    { icon: 'redeem',       label: 'Resgatou R$30 de crédito',   pts: -300, when: '3 dias' },
+    { icon: 'school',       label: 'Lição "Taninos" concluída',  pts: +15, when: '4 dias' },
+    { icon: 'person_add',   label: 'Marco: criou a conta',       pts: +50, when: '2 semanas' },
+  ];
+
+  return (
+    <WlShell title="Meus Pontos" onBack={() => go('back')}>
+      {/* Hero / carteira */}
+      <div style={{
+        background: `linear-gradient(135deg, ${T.c.p900} 0%, ${T.c.p700} 55%, ${T.c.a700} 100%)`,
+        padding: '24px 20px', color: T.c.n0, position: 'relative', overflow: 'hidden',
+      }}>
+        <div style={{ position: 'absolute', inset: 0, opacity: 0.12, backgroundImage: `repeating-linear-gradient(135deg, rgba(255,255,255,0.4) 0 1px, transparent 1px 14px)` }}/>
+        <div style={{ position: 'relative' }}>
+          <div style={{ ...T.t.overline, color: 'rgba(255,255,255,0.85)', marginBottom: 6 }}>SALDO DE PONTOS</div>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
+            <div style={{ fontSize: 44, fontWeight: 800, fontFamily: T.font, lineHeight: 1 }}>{saldo.toLocaleString('pt-BR')}</div>
+            <Icon name="stars" size={26} color={T.c.a500} fill={1}/>
+          </div>
+          <div style={{ ...T.t.body, color: 'rgba(255,255,255,0.92)', marginTop: 6 }}>
+            ≈ {pontosToBRL(saldo)} em crédito · vale por vinhos e experiências
+          </div>
+          <div style={{ marginTop: 12, display: 'inline-flex', alignItems: 'center', gap: 6, padding: '5px 10px', background: 'rgba(255,255,255,0.16)', borderRadius: T.r.full, ...T.t.caption, color: T.c.n0 }}>
+            <Icon name="schedule" size={13} color={T.c.n0}/> 120 pts expiram em jan/2027
+          </div>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div style={{ display: 'flex', background: T.c.n0, borderBottom: `1px solid ${T.c.n200}`, position: 'sticky', top: 0, zIndex: 2 }}>
+        {[['resgatar', 'Resgatar'], ['ganhar', 'Como ganhar'], ['extrato', 'Extrato']].map(([k, l]) => (
+          <button key={k} onClick={() => setTab(k)} style={{
+            flex: 1, padding: '12px 0', background: 'none', border: 'none', cursor: 'pointer',
+            fontFamily: T.font, fontSize: 14, fontWeight: tab === k ? 700 : 500,
+            color: tab === k ? T.c.p700 : T.c.n600,
+            borderBottom: `2px solid ${tab === k ? T.c.p700 : 'transparent'}`,
+          }}>{l}</button>
+        ))}
+      </div>
+
+      {tab === 'resgatar' && (
+        <div style={{ padding: '8px 16px 24px' }}>
+          {/* Crédito no marketplace */}
+          <div style={{ ...T.t.overline, color: T.c.n600, padding: '12px 4px 8px' }}>── CRÉDITO NO MARKETPLACE ──</div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            {creditTiers.map(t => {
+              const ok = saldo >= t.pts;
+              return (
+                <button key={t.pts} disabled={!ok}
+                  onClick={() => go('toast', { kind: ok ? 'success' : 'warning', message: ok ? `Resgatado! ${t.brl} de crédito na sua conta.` : 'Pontos insuficientes.' })}
+                  style={{
+                    flex: 1, padding: '14px 8px', borderRadius: T.r.lg, cursor: ok ? 'pointer' : 'not-allowed',
+                    background: T.c.n0, border: `1.5px solid ${ok ? T.c.p700 : T.c.n200}`, opacity: ok ? 1 : 0.5,
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+                  }}>
+                  <div style={{ ...T.t.h3, color: T.c.n950, fontFamily: '"Fraunces", Georgia, serif' }}>{t.brl}</div>
+                  <div style={{ ...T.t.caption, color: T.c.p700, fontFamily: T.mono, fontWeight: 700 }}>{t.pts} pts</div>
+                </button>
+              );
+            })}
+          </div>
+          <div style={{ ...T.t.caption, color: T.c.n600, marginTop: 8, lineHeight: 1.5 }}>
+            {E.minRedeemPoints} pts mínimo. Crédito cobre até {E.maxOrderCreditPct}% do valor do pedido e vale por {E.creditValidityMonths} meses.
+          </div>
+
+          {/* Vinhos resgatáveis */}
+          <div style={{ ...T.t.overline, color: T.c.n600, padding: '20px 4px 8px' }}>── VINHOS RESGATÁVEIS ──</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {resgataveis.map(w => {
+              const ok = saldo >= E.freeWineCostPoints;
+              return (
+                <div key={w.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 12, background: T.c.n0, border: `1px solid ${T.c.n200}`, borderRadius: T.r.md }}>
+                  <div style={{ width: 40, height: 56, borderRadius: T.r.sm, background: `linear-gradient(135deg, ${T.c.p700}, ${T.c.p900})`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Icon name="wine_bar" size={20} color={T.c.n0}/>
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ ...T.t.bodyB, color: T.c.n950, fontSize: 14, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{w.name}</div>
+                    <div style={{ ...T.t.caption, color: T.c.n600 }}>{w.country} · valor R$ {w.price.toFixed(2)}</div>
+                  </div>
+                  <button disabled={!ok}
+                    onClick={() => go('toast', { kind: ok ? 'success' : 'warning', message: ok ? 'Vinho resgatado! Confirme o endereço no carrinho.' : 'Pontos insuficientes.' })}
+                    style={{
+                      flexShrink: 0, padding: '8px 12px', borderRadius: T.r.full, cursor: ok ? 'pointer' : 'not-allowed',
+                      background: ok ? T.c.p700 : T.c.n200, color: ok ? T.c.n0 : T.c.n600, border: 'none',
+                      fontFamily: T.font, fontSize: 12, fontWeight: 700,
+                    }}>{E.freeWineCostPoints} pts</button>
+                </div>
+              );
+            })}
+          </div>
+          <div style={{ ...T.t.caption, color: T.c.n600, marginTop: 8, lineHeight: 1.5 }}>
+            Vinhos de entrada (até R$ {E.freeWineMaxPriceBRL}). Limite de 1 vinho grátis a cada {E.freeWinePerDays} dias. Frete por conta de quem resgata.
+          </div>
+
+          {/* Experiências */}
+          <div style={{ ...T.t.overline, color: T.c.n600, padding: '20px 4px 8px' }}>── EXPERIÊNCIAS ──</div>
+          {[
+            { icon: 'liquor', l: 'Degustação em loja parceira', pts: 1500 },
+            { icon: 'travel_explore', l: 'Visita a vinícola / enoturismo', pts: 5000 },
+          ].map((x, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 12, background: T.c.n50, border: `1px dashed ${T.c.n300}`, borderRadius: T.r.md, marginBottom: 8 }}>
+              <Icon name={x.icon} size={22} color={T.c.n600}/>
+              <div style={{ flex: 1 }}>
+                <div style={{ ...T.t.bodyB, color: T.c.n800, fontSize: 14 }}>{x.l}</div>
+                <div style={{ ...T.t.caption, color: T.c.n600, fontFamily: T.mono }}>{x.pts.toLocaleString('pt-BR')} pts</div>
+              </div>
+              <span style={{ ...T.t.caption, color: T.c.a700, background: T.c.a100, padding: '3px 8px', borderRadius: T.r.full, fontWeight: 700 }}>Em breve</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {tab === 'ganhar' && (
+        <div style={{ padding: '8px 16px 24px' }}>
+          <div style={{ ...T.t.overline, color: T.c.n600, padding: '12px 4px 8px' }}>── COMO GANHAR PONTOS ──</div>
+          <div style={{ background: T.c.n0, borderRadius: T.r.md, border: `1px solid ${T.c.n200}`, overflow: 'hidden' }}>
+            {E.earn.map((e, i) => (
+              <div key={e.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 14, borderBottom: i < E.earn.length - 1 ? `1px solid ${T.c.n100}` : 'none' }}>
+                <div style={{ width: 36, height: 36, borderRadius: T.r.sm, background: T.c.p50, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Icon name={e.icon} size={20} color={T.c.p700}/>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ ...T.t.bodyB, color: T.c.n950, fontSize: 14 }}>{e.label}</div>
+                  {e.note && <div style={{ ...T.t.caption, color: T.c.n600, marginTop: 1 }}>{e.note}</div>}
+                </div>
+                <div style={{ ...T.t.bodyB, color: T.c.s700, fontFamily: T.mono, fontWeight: 800 }}>+{e.pts}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ marginTop: 12 }}>
+            <Button variant="secondary" size="md" fullWidth leading={<Icon name="rocket_launch" size={18}/>} onClick={() => go('jornada')}>Ver minha jornada de marcos</Button>
+          </div>
+        </div>
+      )}
+
+      {tab === 'extrato' && (
+        <div style={{ padding: '8px 16px 24px' }}>
+          <div style={{ ...T.t.overline, color: T.c.n600, padding: '12px 4px 8px' }}>── ÚLTIMAS MOVIMENTAÇÕES ──</div>
+          <div style={{ background: T.c.n0, borderRadius: T.r.md, border: `1px solid ${T.c.n200}`, overflow: 'hidden' }}>
+            {extrato.map((m, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 14, borderBottom: i < extrato.length - 1 ? `1px solid ${T.c.n100}` : 'none' }}>
+                <Icon name={m.icon} size={20} color={m.pts > 0 ? T.c.s700 : T.c.n600}/>
+                <div style={{ flex: 1 }}>
+                  <div style={{ ...T.t.body, color: T.c.n950, fontSize: 14 }}>{m.label}</div>
+                  <div style={{ ...T.t.caption, color: T.c.n600 }}>há {m.when}</div>
+                </div>
+                <div style={{ ...T.t.bodyB, color: m.pts > 0 ? T.c.s700 : T.c.e700, fontFamily: T.mono, fontWeight: 800 }}>{m.pts > 0 ? '+' : ''}{m.pts}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </WlShell>
+  );
+}
+
 Object.assign(window, {
-  WlShell,
+  WlShell, POINTS_ECONOMY,
   ConfrariaWelcomeScreen, ConfrariaApresentarScreen, ConfrariaTourRapidoScreen,
   PushPrimerScreen, PushNegadoScreen, PushCanaisScreen, PushPreviewScreen,
-  JornadaScreen, JornadaCelebrarScreen,
+  JornadaScreen, JornadaCelebrarScreen, PontosScreen,
 });
 
 
-export { ConfrariaApresentarScreen, ConfrariaTourRapidoScreen, ConfrariaWelcomeScreen, JornadaCelebrarScreen, JornadaScreen, PushCanaisScreen, PushNegadoScreen, PushPreviewScreen, PushPrimerScreen, WlShell, cwInput };
+export { ConfrariaApresentarScreen, ConfrariaTourRapidoScreen, ConfrariaWelcomeScreen, JornadaCelebrarScreen, JornadaScreen, POINTS_ECONOMY, PontosScreen, PushCanaisScreen, PushNegadoScreen, PushPreviewScreen, PushPrimerScreen, WlShell, cwInput, pontosToBRL };

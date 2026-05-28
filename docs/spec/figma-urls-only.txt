@@ -122,6 +122,7 @@ https://tchin-tchin-app.vercel.app/?screen=nudge-d7
 https://tchin-tchin-app.vercel.app/?screen=nudge-d14
 https://tchin-tchin-app.vercel.app/?screen=plus-one
 https://tchin-tchin-app.vercel.app/?screen=jornada
+https://tchin-tchin-app.vercel.app/?screen=pontos
 https://tchin-tchin-app.vercel.app/?screen=jornada-celebrar
 https://tchin-tchin-app.vercel.app/?screen=desafio-detalhe
 https://tchin-tchin-app.vercel.app/?screen=badges

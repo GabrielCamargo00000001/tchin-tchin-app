@@ -24,16 +24,40 @@ import { BottlePlaceholder, Icon, T } from './tokens.jsx';
 //   />
 // ─────────────────────────────────────────────────────────────
 
+// ─── Catálogo de TEMPLATES de desafio semanal ────────────────
+// O sistema gera 1 desafio por semana a partir de um destes templates
+// (rotação automática). Cada template define ícone, padrão de título e o
+// critério de validação automática (campo do vinho registrado que precisa bater).
+const CHALLENGE_TEMPLATES = [
+  { id: 'pais',         icon: '🌍', title: 'Prove um vinho da {valor}',        criteria: 'Registre no Diário um vinho de {valor} antes do prazo.',        match: 'country',  exemplos: ['Espanha', 'Itália', 'Portugal', 'Chile', 'França'] },
+  { id: 'uva',          icon: '🍇', title: 'Descubra a uva {valor}',           criteria: 'Registre um vinho da uva {valor} (consta no rótulo ou ficha).',  match: 'grape',    exemplos: ['Tempranillo', 'Syrah', 'Riesling', 'Tannat', 'Nebbiolo'] },
+  { id: 'tipo',         icon: '🥂', title: 'Semana do {valor}',                criteria: 'Registre um vinho do tipo {valor} antes do prazo.',             match: 'type',     exemplos: ['Espumante', 'Branco', 'Rosé', 'Laranja'] },
+  { id: 'preco',        icon: '💸', title: 'Achado da semana: até R$ {valor}', criteria: 'Registre um vinho de até R$ {valor} — bom e em conta.',          match: 'maxPrice', exemplos: ['50', '70', '90'] },
+  { id: 'regiao',       icon: '📍', title: 'Explore {valor}',                  criteria: 'Registre um vinho da região {valor}.',                          match: 'region',   exemplos: ['Douro', 'Mendoza', 'Toscana', 'Vale dos Vinhedos'] },
+  { id: 'harmonizacao', icon: '🍽️', title: 'Harmonize com {valor}',            criteria: 'Registre um vinho que você harmonizou com {valor}.',            match: 'pairing',  exemplos: ['queijos', 'massa', 'churrasco', 'chocolate'] },
+  { id: 'cegas',        icon: '🙈', title: 'Degustação às cegas',              criteria: 'Registre um vinho provado SEM ver o rótulo e tente adivinhar.', match: 'blind',    exemplos: ['—'] },
+  { id: 'nacional',     icon: '🇧🇷', title: 'Orgulho nacional',                 criteria: 'Registre um vinho brasileiro de pequeno produtor.',             match: 'country=Brasil', exemplos: ['Brasil'] },
+];
+
+// Estados de um desafio: 'active' (em andamento) · 'done' (cumprido) · 'expired' (encerrado)
+const CHALLENGE_STATE = {
+  active:  { tone: '#B8894A', chip: 'Em andamento', icon: 'schedule' },
+  done:    { tone: '#2E7D32', chip: 'Cumprido',     icon: 'check_circle' },
+  expired: { tone: '#9E9E9E', chip: 'Encerrado',    icon: 'lock_clock' },
+};
+
 function DetalheDesafio({
   challenge = {},
   wines = (typeof MOCK_WINES !== 'undefined' ? MOCK_WINES : []),
   registered = [],
   inConfraria = false,
+  state = 'active',
   onBack = () => {},
   onTapWine = () => {},
   onRegisterFromHere = () => {},
 }) {
-  const grad = ['#D4A574', '#B8894A'];
+  const st = CHALLENGE_STATE[state] || CHALLENGE_STATE.active;
+  const grad = state === 'done' ? ['#4CAF50', '#2E7D32'] : state === 'expired' ? ['#BDBDBD', '#9E9E9E'] : ['#D4A574', '#B8894A'];
   const weekN = challenge.weekNumber || 21;
   const criteria = challenge.criteria || 'Registre um vinho que se encaixe no desafio antes do prazo.';
   const dateLine = formatDesafioDate(challenge.endsAt);
@@ -134,12 +158,15 @@ function DetalheDesafio({
           <div style={{
             position: 'relative',
             marginTop: 12,
-            fontSize: 13, fontWeight: 500,
-            color: 'rgba(255,255,255,0.92)',
+            fontSize: 13, fontWeight: 600,
+            color: T.c.n0,
             display: 'inline-flex', alignItems: 'center', gap: 6,
+            padding: '4px 10px', background: 'rgba(255,255,255,0.20)', borderRadius: 999,
           }}>
-            <Icon name="schedule" size={14} color={T.c.n0}/>
-            Termina {dateLine}
+            <Icon name={st.icon} size={14} color={T.c.n0}/>
+            {state === 'done' ? 'Você cumpriu este desafio ✓'
+              : state === 'expired' ? `Encerrado · ${dateLine}`
+              : `Termina ${dateLine}`}
           </div>
         </section>
 
@@ -469,7 +496,7 @@ function formatDesafioDate(iso) {
   return `${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]}, às ${String(d.getHours()).padStart(2,'0')}h${String(d.getMinutes()).padStart(2,'0')}`;
 }
 
-Object.assign(window, { DetalheDesafio });
+Object.assign(window, { DetalheDesafio, CHALLENGE_TEMPLATES, CHALLENGE_STATE });
 
 
-export { DesafioWineCard, DetalheDesafio, EmptyTried, RegisteredEntry, RewardItem, SectionTitle, formatDesafioDate, matchToneColor22 };
+export { CHALLENGE_STATE, CHALLENGE_TEMPLATES, DesafioWineCard, DetalheDesafio, EmptyTried, RegisteredEntry, RewardItem, SectionTitle, formatDesafioDate, matchToneColor22 };

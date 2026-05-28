@@ -47,7 +47,7 @@ import { WizardCriarEventoP5Screen } from './screens-event-wizard-p5.jsx';
 import { ExpertAplicarScreen, ExpertPendenteScreen, ExpertQAScreen, ExpertResponderScreen, ExpertVirarScreen, PerguntarExpertScreen } from './screens-expert.jsx';
 import { FeedFirstTime, readFeedFirstState } from './screens-feed-first.jsx';
 import { ConviteRecebidoScreen, IndicacaoCompartilharScreen, IndicacaoLandingScreen, IndicacaoMeusConvitesScreen, IndicacaoRecompensasScreen } from './screens-indicacao.jsx';
-import { ConfrariaApresentarScreen, ConfrariaTourRapidoScreen, ConfrariaWelcomeScreen, JornadaCelebrarScreen, JornadaScreen, PushCanaisScreen, PushNegadoScreen, PushPreviewScreen, PushPrimerScreen } from './screens-jornada-extras.jsx';
+import { ConfrariaApresentarScreen, ConfrariaTourRapidoScreen, ConfrariaWelcomeScreen, JornadaCelebrarScreen, JornadaScreen, PontosScreen, PushCanaisScreen, PushNegadoScreen, PushPreviewScreen, PushPrimerScreen } from './screens-jornada-extras.jsx';
 import { CompararVinhosScreen, FiltrosAvancadosScreen, ListaDesejosScreen } from './screens-marketplace-pro.jsx';
 import { Notificacoes } from './screens-notificacoes.jsx';
 import { NudgeD14Screen, NudgeD1Screen, NudgeD3Screen, NudgeD7Screen } from './screens-nudges.jsx';
@@ -117,10 +117,12 @@ function shotParams(screen) {
 }
 function TchinApp({ initialScreen = 'onboarding' }) {
   const __q = (typeof window !== 'undefined') ? new URLSearchParams(window.location.search) : new URLSearchParams();
-  const __ss = __q.get('screen'); const __st = __q.get('tab'); const __si = __q.get('intent'); const __sr = __q.get('reason');
+  const __ss = __q.get('screen'); const __st = __q.get('tab'); const __si = __q.get('intent'); const __sr = __q.get('reason'); const __sk = __q.get('kind'); const __sstate = __q.get('state');
   const __params = __ss ? shotParams(__ss) : {};
   if (__si) { __params.intent = __si; try { window.__tcLastIntent = __si; } catch (e) {} } // capture-mode: ?intent= injeta o intent (gps-primer narrativas + welcome-final copy)
   if (__sr) { __params.reason = __sr; } // capture-mode: ?reason= injeta o motivo (erro-sessao, vinho-indisponivel, etc.)
+  if (__sk) { __params.kind = __sk; } // capture-mode: ?kind= injeta o tipo de celebração (jornada-celebrar)
+  if (__sstate) { __params.state = __sstate; } // capture-mode: ?state= injeta o estado (desafio-detalhe: active/done/expired)
   const [stack, setStack] = React.useState([{ screen: __ss || initialScreen, params: __params }]);
   const [tab, setTab] = React.useState(__st || 'descobrir');
   const [toast, setToast] = React.useState(null);
@@ -339,7 +341,7 @@ function TchinApp({ initialScreen = 'onboarding' }) {
     // Push setup (41.x)
     'push-primer', 'push-negado', 'push-canais', 'push-preview',
     // Jornada (42.x)
-    'jornada', 'jornada-celebrar',
+    'jornada', 'jornada-celebrar', 'pontos',
     // Treine seu Paladar (feature)
     'treino-paladar', 'treino-licao', 'treino-liga', 'treino-aprender',
   ].includes(current.screen);
@@ -393,7 +395,7 @@ function TchinApp({ initialScreen = 'onboarding' }) {
       case 'scanner-v2':    return <Scanner onClose={() => go('back')} onCapture={() => go('scanner-result-v2')} onPickFromGallery={() => go('scanner-result-v2')} onChangeMode={(m) => { if (m === 'menu') go('modo-restaurante'); }}/>;
       case 'scanner-result-v2': return <ResultadoScan wine={{ ...MOCK_WINES[0], year: '2021', type: 'Tinto', profile: { acidez: 65, tanino: 75, corpo: 70, frutado: 60, docura: 18 } }} userProfile={{ acidez: 3, tanino: 4, corpo: 4, frutado: 4, docura: 2 }} userHasPaladar={!!ctx.user.paladar} matchScore={87} explanation="Acidez e taninos firmes combinam com seu paladar." onClose={() => go('back')} onRegister={() => go('registro-rapido')} onBuy={() => go('marketplace')} onAsk={() => go('comunidade')} onTakeQuiz={() => go('quiz')}/>;
       case 'scanner-fallback': return <FallbackScanner onClose={() => go('back')} onRetry={() => go('scanner-v2')} onSearchManual={() => go('busca')} onAddWine={() => go('registro-completo')}/>;
-      case 'desafio-detalhe': return <DetalheDesafio challenge={(current.params && current.params.challenge) || { title: 'Prove um vinho espanhol', weekNumber: 21, endsAt: new Date(Date.now() + 1000*60*60*24*3).toISOString(), criteria: 'Registre um vinho da Espanha antes do prazo.', country: 'Espanha' }} inConfraria={true} registered={[]} onBack={() => go('back')} onTapWine={(w) => go('wine', { wine: w })} onRegisterFromHere={() => go('registro-rapido')}/>;
+      case 'desafio-detalhe': return <DetalheDesafio challenge={(current.params && current.params.challenge) || { title: 'Prove um vinho espanhol', weekNumber: 21, endsAt: new Date(Date.now() + 1000*60*60*24*3).toISOString(), criteria: 'Registre um vinho da Espanha antes do prazo.', country: 'Espanha' }} state={(current.params && current.params.state) || 'active'} inConfraria={true} registered={(current.params && current.params.registered) || []} onBack={() => go('back')} onTapWine={(w) => go('wine', { wine: w })} onRegisterFromHere={() => go('registro-rapido')}/>;
       case 'ranking':       return <RankingConfraria confraria={(current.params && current.params.confraria) || { name: 'Brindar em Brasília' }} challenge={{ title: 'Desafio espanhol', flag: '🇪🇸', weekNumber: 21, qualifier: 'espanhóis', unitSingular: 'vinho', unitPlural: 'vinhos' }} entries={[{ userId: 'u1', name: 'Carla Mendes', count: 4, points: 200 }, { userId: 'u2', name: 'Diego Reis', count: 3, points: 150 }, { userId: 'u3', name: 'Fernando Medrado', count: 3, points: 150 }, { userId: 'u4', name: 'Helena Britto', count: 2, points: 100 }, { userId: 'u5', name: 'João Bernardes', count: 2, points: 100 }, { userId: 'me', name: ctx.user.name, count: 1, points: 50 }]} currentUser={{ userId: 'me', name: ctx.user.name, position: 6, count: 1, points: 50 }} onBack={() => go('back')} onRegisterNow={() => go('registro-rapido')}/>;
       case 'calibracao':    return <CalibracaoCincoVinhos selections={[{ wine: MOCK_WINES[0], style: 'Tinto encorpado', styleKey: 'tinto-encorpado', priceRange: 'R$ 150–200', status: 'pending' }, { wine: MOCK_WINES[5], style: 'Tinto médio', styleKey: 'tinto-medio', priceRange: 'R$ 60–100', status: 'pending' }, { wine: MOCK_WINES[2], style: 'Branco seco', styleKey: 'branco-seco', priceRange: 'R$ 200–300', status: 'pending' }, { wine: MOCK_WINES[7], style: 'Branco encorpado', styleKey: 'branco-encorpado', priceRange: 'R$ 120–180', status: 'pending' }, { wine: MOCK_WINES[4], style: 'Espumante', styleKey: 'espumante', priceRange: 'R$ 80–130', status: 'pending' }]} onBack={() => go('back')} onTapWine={(s) => go('wine', { wine: s.wine })} onMarkTasted={() => go('registro-rapido')}/>;
       case 'event-detalhe': return <EventDetalheScreen event={current.params && current.params.event} brotherhood={current.params && current.params.brotherhood} go={go}/>;
@@ -496,6 +498,7 @@ function TchinApp({ initialScreen = 'onboarding' }) {
       // ── Jornada (42.x) ──────────────────────────────────────
       case 'jornada':             return <JornadaScreen go={go} ctx={ctx}/>;
       case 'jornada-celebrar':    return <JornadaCelebrarScreen go={go} params={current.params}/>;
+      case 'pontos':              return <PontosScreen go={go} ctx={ctx} params={current.params}/>;
 
       // ── Treine seu Paladar (feature) ──────────────────────
       case 'treino-paladar':      return <TreinoPaladarHome go={go}/>;
@@ -704,6 +707,7 @@ function ProfileDrawer({ ctx, onClose, go, onToggleOnline }) {
       { icon: 'favorite',     label: 'Favoritos',             onClick: () => go('favoritos') },
       { icon: 'group',        label: 'Seguindo / Seguidores', onClick: () => go('perfil-seguindo') },
       { icon: 'rocket_launch',label: 'Minha jornada',         onClick: () => go('jornada') },
+      { icon: 'redeem',       label: 'Meus pontos',           onClick: () => go('pontos') },
       { icon: 'emoji_events', label: 'Desafios da semana',    onClick: () => go('desafio-detalhe') },
       { icon: 'workspace_premium', label: 'Minhas conquistas', onClick: () => go('badges-galeria') },
       { icon: 'leaderboard',  label: 'Ranking da confraria',  onClick: () => go('ranking') },

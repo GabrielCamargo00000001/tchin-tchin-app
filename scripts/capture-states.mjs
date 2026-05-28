@@ -151,8 +151,22 @@ const SEQ = [
 
   // ── Módulo 19 — Jornada & Desafios ──────────────────────
   { url: '?screen=jornada',          ops: [ { wait: 500 }, { shot: 'jornada' } ]},
-  { url: '?screen=jornada-celebrar', ops: [ { wait: 600 }, { shot: 'jornada-celebrar' } ]},
-  { url: '?screen=desafio-detalhe',  ops: [ { wait: 500 }, { shot: 'desafio-detalhe' } ]},
+  // Pontos — carteira + loja de resgate (3 abas)
+  { url: '?screen=pontos', ops: [
+    { wait: 500 }, { shot: 'pontos-resgatar' },
+    { click: 'Como ganhar' }, { wait: 300 }, { shot: 'pontos-ganhar' },
+    { click: 'Extrato' }, { wait: 300 }, { shot: 'pontos-extrato' },
+  ]},
+  // Celebração — todas as variações (kind)
+  { url: '?screen=jornada-celebrar&kind=milestone', ops: [ { wait: 600 }, { shot: 'jornada-celebrar-marco' } ]},
+  { url: '?screen=jornada-celebrar&kind=challenge', ops: [ { wait: 600 }, { shot: 'jornada-celebrar-desafio' } ]},
+  { url: '?screen=jornada-celebrar&kind=levelup',   ops: [ { wait: 600 }, { shot: 'jornada-celebrar-nivel' } ]},
+  { url: '?screen=jornada-celebrar&kind=streak',    ops: [ { wait: 600 }, { shot: 'jornada-celebrar-streak' } ]},
+  { url: '?screen=jornada-celebrar&kind=redeem',    ops: [ { wait: 600 }, { shot: 'jornada-celebrar-resgate' } ]},
+  // Desafio — estados (active/done/expired)
+  { url: '?screen=desafio-detalhe&state=active',  ops: [ { wait: 500 }, { shot: 'desafio-detalhe-ativo' } ]},
+  { url: '?screen=desafio-detalhe&state=done',    ops: [ { wait: 500 }, { shot: 'desafio-detalhe-cumprido' } ]},
+  { url: '?screen=desafio-detalhe&state=expired', ops: [ { wait: 500 }, { shot: 'desafio-detalhe-encerrado' } ]},
 
   // ── Módulo 18 — Notificações & Engajamento ──────────────
   { url: '?screen=notificacoes', ops: [ { wait: 500 }, { shot: 'notificacoes' } ]},

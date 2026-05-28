@@ -166,6 +166,7 @@ https://tchin-tchin-app.vercel.app/?screen=plus-one
 
 ## Modulo 19 — Jornada & Desafios
 https://tchin-tchin-app.vercel.app/?screen=jornada
+https://tchin-tchin-app.vercel.app/?screen=pontos
 https://tchin-tchin-app.vercel.app/?screen=jornada-celebrar
 https://tchin-tchin-app.vercel.app/?screen=desafio-detalhe
 https://tchin-tchin-app.vercel.app/?screen=badges
