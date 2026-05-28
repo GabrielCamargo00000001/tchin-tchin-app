@@ -94,6 +94,18 @@ const SEQ = [
     { shot: 'tutoriais-hub' },
   ]},
 
+  // ── Módulo 18 — Notificações & Engajamento ──────────────
+  { url: '?screen=notificacoes', ops: [ { wait: 500 }, { shot: 'notificacoes' } ]},
+  { url: '?screen=push-primer',  ops: [ { wait: 500 }, { shot: 'push-primer' } ]},
+  { url: '?screen=push-negado',  ops: [ { wait: 500 }, { shot: 'push-negado' } ]},
+  { url: '?screen=push-canais',  ops: [ { wait: 500 }, { shot: 'push-canais' } ]},
+  { url: '?screen=push-preview', ops: [ { wait: 500 }, { shot: 'push-preview' } ]},
+  { url: '?screen=nudge-d1',  ops: [ { wait: 500 }, { shot: 'nudge-d1' } ]},
+  { url: '?screen=nudge-d3',  ops: [ { wait: 500 }, { shot: 'nudge-d3' } ]},
+  { url: '?screen=nudge-d7',  ops: [ { wait: 500 }, { shot: 'nudge-d7' } ]},
+  { url: '?screen=nudge-d14', ops: [ { wait: 500 }, { shot: 'nudge-d14' } ]},
+  { url: '?screen=plus-one',  ops: [ { wait: 500 }, { shot: 'plus-one' } ]},
+
   // ── Módulo 17 — Chat / DMs ──────────────────────────────
   { url: '?screen=chat-lista',    ops: [ { wait: 500 }, { shot: 'chat-lista' } ]},
   { url: '?screen=chat-conversa', ops: [ { wait: 500 }, { shot: 'chat-conversa' } ]},
