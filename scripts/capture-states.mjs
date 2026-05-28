@@ -94,6 +94,11 @@ const SEQ = [
     { shot: 'tutoriais-hub' },
   ]},
 
+  // ── Módulo 19 — Jornada & Desafios ──────────────────────
+  { url: '?screen=jornada',          ops: [ { wait: 500 }, { shot: 'jornada' } ]},
+  { url: '?screen=jornada-celebrar', ops: [ { wait: 600 }, { shot: 'jornada-celebrar' } ]},
+  { url: '?screen=desafio-detalhe',  ops: [ { wait: 500 }, { shot: 'desafio-detalhe' } ]},
+
   // ── Módulo 18 — Notificações & Engajamento ──────────────
   { url: '?screen=notificacoes', ops: [ { wait: 500 }, { shot: 'notificacoes' } ]},
   { url: '?screen=push-primer',  ops: [ { wait: 500 }, { shot: 'push-primer' } ]},

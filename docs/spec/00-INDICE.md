@@ -65,7 +65,7 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 | 16 | **[Indicação & Convites](16-indicacao-convites.md)** ✅ | indicação (landing/compartilhar/meus-convites/recompensas), convite-recebido | Filtros das Confrarias (Convites US-C) |
 | 17 | **[Chat / DMs](17-chat-dms.md)** ✅ | chat-lista, chat-conversa | MVP2 Épico 13 |
 | 18 | **[Notificações & Engajamento](18-notificacoes-engajamento.md)** ✅ | notificações, push (primer/negado/canais/preview), nudges D1/D3/D7/D14, plus-one | MVP1, Sprint 11-13 |
-| 19 | **Jornada & Desafios** | jornada, jornada-celebrar, desafio-detalhe, badges | MVP2 Épico 7/9 |
+| 19 | **[Jornada & Desafios](19-jornada-desafios.md)** ✅ | jornada, jornada-celebrar, desafio-detalhe, badges (=badges-galeria, M14) | MVP2 Épico 7/9 |
 | 20 | **Config & Suporte** | config (notif/privacidade/conta/bloqueados), suporte (FAQ/contato) | MVP1 |
 | 21 | **Estados de sistema** | erro-404/permissão/sessão/servidor, vinho-indisponível, toast | transversal |
 
@@ -171,8 +171,11 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 **Estados extra capturados:** os 10 (`notificacoes`, `push-{primer,negado,canais,preview}`, `nudge-d1/d3/d7/d14`, `plus-one`).
 **⛔ Faltam no app (épicos):** FCM/APNs real + permission nativo, agendador de nudges server-side (cron por estado), feed de notificações real, agrupamento, outros gatilhos (streak/carrinho/wishlist), plus-one integrado a capacidade/pagamento.
 
-### Módulo 19 — Jornada & Desafios
-`jornada` ✅ · `jornada-celebrar` ✅ · `desafio-detalhe` ✅ · `badges` ✅
+### Módulo 19 — Jornada & Desafios [📄 doc completo](19-jornada-desafios.md)
+`jornada` ✅ · `jornada-celebrar` ✅ · `desafio-detalhe` ✅ · `badges` (= `badges-galeria`, M14) ✅
+**Estados extra capturados:** `jornada`, `jornada-celebrar`, `desafio-detalhe`.
+**⚠️ Pontos fragmentados:** jornada (pontos) + Treino (XP M08) + indicação (pontos M16) — recomendo moeda unificada.
+**⛔ Faltam no app (épicos):** estado real dos marcos + disparo da celebração, desafios reais (validação automática + ranking + recompensa), pontuação unificada, badges unificados.
 
 ### Módulo 20 — Config & Suporte
 `config-notif` ✅ · `config-privacidade` ✅ · `config-conta` ✅ · `config-bloqueados` ✅ · `suporte-faq` ✅ · `suporte-contato` ✅
