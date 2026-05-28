@@ -33,7 +33,7 @@ const modules = [
   { num: '17', name: 'Chat / DMs', routes: ['chat-lista','chat-conversa'] },
   { num: '18', name: 'Notificacoes & Engajamento', routes: ['notificacoes','push-primer','push-negado','push-canais','push-preview','nudge-d1','nudge-d3','nudge-d7','nudge-d14','plus-one'] },
   { num: '19', name: 'Jornada & Desafios', routes: ['jornada','pontos','jornada-celebrar','desafio-detalhe','badges'] },
-  { num: '20', name: 'Config & Suporte', routes: ['config-notif','config-privacidade','config-conta','config-bloqueados','suporte-faq','suporte-contato'] },
+  { num: '20', name: 'Config & Suporte', routes: ['config-notif','config-privacidade','config-conta','config-bloqueados','conta-desativada','conta-excluida','suporte-faq','suporte-contato'] },
   { num: '21', name: 'Estados de sistema', routes: ['erro-404','erro-permissao','erro-sessao','erro-servidor','vinho-indisponivel'] },
 ];
 

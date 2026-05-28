@@ -176,6 +176,8 @@ https://tchin-tchin-app.vercel.app/?screen=config-notif
 https://tchin-tchin-app.vercel.app/?screen=config-privacidade
 https://tchin-tchin-app.vercel.app/?screen=config-conta
 https://tchin-tchin-app.vercel.app/?screen=config-bloqueados
+https://tchin-tchin-app.vercel.app/?screen=conta-desativada
+https://tchin-tchin-app.vercel.app/?screen=conta-excluida
 https://tchin-tchin-app.vercel.app/?screen=suporte-faq
 https://tchin-tchin-app.vercel.app/?screen=suporte-contato
 

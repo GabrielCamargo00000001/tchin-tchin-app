@@ -172,15 +172,12 @@ function ConfigContaScreen({ go }) {
         <CfgRow icon="mail"     label="E-mail"   value="raphaela@email.com" onClick={() => go('config-trocar-email')}/>
         <CfgRow icon="lock"     label="Senha"    sub="Trocada há 12 dias"    onClick={() => go('recuperar-redefinir')} last/>
       </CfgGroup>
-      <CfgGroup title="Assinatura">
-        <CfgRow icon="workspace_premium" label="Tchin Tchin Plus" sub="Plano gratuito · sem assinatura ativa" onClick={() => go('toast', { kind: 'info', message: 'Em breve: assinatura Plus.' })} last/>
-      </CfgGroup>
-      <CfgGroup title="Zona de perigo" hint="Excluir a conta apaga seu diário, suas confrarias e seu paladar. Ação irreversível.">
-        <CfgRow icon="pause_circle" label="Desativar conta temporariamente" sub="Some do app, mas dados ficam preservados" onClick={() => go('toast', { kind: 'warning', message: 'Sua conta foi desativada.' })}/>
+      <CfgGroup title="Zona de perigo" hint="Desativar é reversível e preserva tudo. Excluir apaga seu diário, confrarias e paladar — irreversível depois de 30 dias.">
+        <CfgRow icon="pause_circle" label="Desativar conta temporariamente" sub="Some do app, mas nada é apagado — volta quando quiser" onClick={() => go('conta-desativada')}/>
         <CfgRow icon="delete_forever" label="Excluir conta permanentemente" danger onClick={() => setShowDelete(true)} last/>
       </CfgGroup>
       <div style={{ height: 40 }}/>
-      {showDelete && <ConfirmDeleteModal onCancel={() => setShowDelete(false)} onConfirm={() => { setShowDelete(false); go('welcome'); setTimeout(() => go('toast', { kind: 'warning', message: 'Sua conta foi marcada pra exclusão. Você tem 30 dias pra reverter.' }), 200); }}/>}
+      {showDelete && <ConfirmDeleteModal onCancel={() => setShowDelete(false)} onConfirm={() => { setShowDelete(false); go('conta-excluida'); }}/>}
     </CfgShell>
   );
 }
@@ -327,11 +324,81 @@ function BloqueadosScreen({ go }) {
   );
 }
 
+// 27.04 ─── Conta DESATIVADA — visão do usuário ──────────────
+// Estado reversível: a conta some do app mas NADA é apagado. É o que o usuário
+// vê logo após desativar e ao tentar voltar (login de conta desativada).
+function ContaDesativadaScreen({ go }) {
+  return (
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: T.c.n0, padding: '36px 24px', alignItems: 'center', justifyContent: 'center', textAlign: 'center', overflow: 'auto' }}>
+      <div style={{ width: 116, height: 116, borderRadius: '50%', background: T.c.w100, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 22 }}>
+        <Icon name="pause_circle" size={58} color={T.c.w700} fill={1}/>
+      </div>
+      <div style={{ ...T.t.h1, color: T.c.n950, marginBottom: 8, fontFamily: '"Fraunces", Georgia, serif' }}>Sua conta está desativada</div>
+      <div style={{ ...T.t.bodyLg, color: T.c.n600, lineHeight: 1.5, marginBottom: 20, maxWidth: 340 }}>
+        Você sumiu do app por enquanto. <strong style={{ color: T.c.n800 }}>Nada foi apagado</strong> — é só uma pausa. Volte quando quiser.
+      </div>
+      <div style={{ width: '100%', maxWidth: 360, background: T.c.n50, borderRadius: T.r.md, padding: 16, marginBottom: 24, textAlign: 'left' }}>
+        <div style={{ ...T.t.overline, color: T.c.n600, marginBottom: 10 }}>ENQUANTO DESATIVADA</div>
+        {[
+          ['visibility_off',     'Seu perfil e seus posts ficam ocultos pra todo mundo.'],
+          ['groups',             'Você sai das confrarias temporariamente — volta ao reativar.'],
+          ['notifications_off',  'Você não recebe notificações.'],
+          ['lock',               'Diário, paladar, pontos e conexões ficam 100% guardados.'],
+        ].map(([ic, tx], i, arr) => (
+          <div key={i} style={{ display: 'flex', gap: 10, marginBottom: i < arr.length - 1 ? 10 : 0 }}>
+            <Icon name={ic} size={18} color={T.c.n600} style={{ flexShrink: 0, marginTop: 1 }}/>
+            <div style={{ ...T.t.body, color: T.c.n800, lineHeight: 1.4 }}>{tx}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{ width: '100%', maxWidth: 340, display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <Button variant="primary" size="lg" fullWidth leading={<Icon name="restart_alt" size={20}/>} onClick={() => { go('home'); setTimeout(() => go('toast', { kind: 'success', message: 'Conta reativada. Bom te ver de volta!' }), 150); }}>
+          Reativar minha conta
+        </Button>
+        <Button variant="ghost" size="lg" fullWidth onClick={() => go('welcome')}>Sair do app</Button>
+      </div>
+    </div>
+  );
+}
+
+// 27.05 ─── Conta MARCADA PRA EXCLUSÃO — visão do usuário ─────
+// Soft-delete de 30 dias: a conta fica desativada e some de vez no prazo.
+// Dá pra cancelar e reativar dentro da janela. Depois, é irreversível.
+function ContaExcluidaScreen({ go }) {
+  const target = new Date(Date.now() + 30 * 864e5);
+  const dataLimite = target.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+  return (
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: T.c.n0, padding: '36px 24px', alignItems: 'center', justifyContent: 'center', textAlign: 'center', overflow: 'auto' }}>
+      <div style={{ width: 116, height: 116, borderRadius: '50%', background: T.c.e100, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18 }}>
+        <Icon name="hourglass_top" size={56} color={T.c.e700} fill={1}/>
+      </div>
+      <div style={{ ...T.t.overline, color: T.c.e700, marginBottom: 6, letterSpacing: 1.2 }}>EXCLUSÃO AGENDADA</div>
+      <div style={{ ...T.t.h1, color: T.c.n950, marginBottom: 8, fontFamily: '"Fraunces", Georgia, serif' }}>Faltam 30 dias</div>
+      <div style={{ ...T.t.bodyLg, color: T.c.n600, lineHeight: 1.5, marginBottom: 18, maxWidth: 340 }}>
+        Sua conta está desativada e será <strong style={{ color: T.c.e700 }}>apagada pra sempre em {dataLimite}</strong>. Até lá, dá pra voltar atrás.
+      </div>
+      <div style={{ width: '100%', maxWidth: 360, background: T.c.e100, borderRadius: T.r.md, padding: 14, marginBottom: 24, display: 'flex', gap: 10, textAlign: 'left' }}>
+        <Icon name="warning" size={20} color={T.c.e700} style={{ flexShrink: 0 }}/>
+        <div style={{ ...T.t.caption, color: T.c.n800, lineHeight: 1.5 }}>
+          Depois do prazo apagamos pra sempre: diário (47 entradas), confrarias (3), paladar 5D, pontos e conexões. <strong>Não dá pra desfazer.</strong>
+        </div>
+      </div>
+      <div style={{ width: '100%', maxWidth: 340, display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <Button variant="primary" size="lg" fullWidth leading={<Icon name="restart_alt" size={20}/>} onClick={() => { go('home'); setTimeout(() => go('toast', { kind: 'success', message: 'Exclusão cancelada. Sua conta está de volta!' }), 150); }}>
+          Cancelar exclusão e reativar
+        </Button>
+        <Button variant="ghost" size="lg" fullWidth onClick={() => go('welcome')}>Entendi, sair</Button>
+      </div>
+    </div>
+  );
+}
+
 Object.assign(window, {
   CfgShell, CfgRow, CfgToggle, CfgGroup,
   ConfigNotifScreen, ConfigPrivacidadeScreen, ConfigContaScreen,
   TermosScreen, PoliticaPrivacidadeScreen, BloqueadosScreen,
+  ContaDesativadaScreen, ContaExcluidaScreen,
 });
 
 
-export { BloqueadosScreen, CfgGroup, CfgRow, CfgShell, CfgToggle, ConfigContaScreen, ConfigNotifScreen, ConfigPrivacidadeScreen, ConfirmDeleteModal, PoliticaPrivacidadeScreen, TermosScreen };
+export { BloqueadosScreen, CfgGroup, CfgRow, CfgShell, CfgToggle, ConfigContaScreen, ConfigNotifScreen, ConfigPrivacidadeScreen, ConfirmDeleteModal, ContaDesativadaScreen, ContaExcluidaScreen, PoliticaPrivacidadeScreen, TermosScreen };

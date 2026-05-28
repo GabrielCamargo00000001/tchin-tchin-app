@@ -1,10 +1,10 @@
 # Módulo 16 — Indicação & Convites
 
-> Programa de **referral de mão dupla**: cada amigo que entra rende R$ 30 no marketplace pros dois + desbloqueios escalonados (selo, Plus, kit). Motor de crescimento orgânico. Inclui a tela do **convidado** (quem chega via link).
+> Programa de **referral de mão dupla**: cada amigo que entra rende R$ 30 no marketplace pros dois + desbloqueios escalonados (selo, pontos bônus, kit). Motor de crescimento orgânico. Inclui a tela do **convidado** (quem chega via link).
 > **Fonte de verdade:** `screens-indicacao.jsx` (todas as 5: `IndicacaoLandingScreen`, `IndicacaoCompartilharScreen`, `IndicacaoMeusConvitesScreen`, `IndicacaoRecompensasScreen`, `ConviteRecebidoScreen`). Doc funcional: **Filtros das Confrarias (Convites US-C)**.
 > **Épicos/US:** US-IND-01 (landing/hub), US-IND-02 (compartilhar link/canais), US-IND-03 (meus convites + status), US-IND-04 (recompensas/desbloqueios), US-IND-05 (convite recebido — onboarding do convidado).
 
-**Regra de negócio canônica:** referral **bilateral** — R$ 30 pra quem indica + R$ 30 pra quem entra, **na primeira compra do convidado**. Janela: convidado usa o link nos **primeiros 7 dias**. Desbloqueios escalonados por nº de amigos: 1 (R$ 30) · 3 (selo Embaixador) · 5 (1 mês Plus) · 10 (kit Tchin) · 25 (R$ 250).
+**Regra de negócio canônica:** referral **bilateral** — R$ 30 pra quem indica + R$ 30 pra quem entra, **na primeira compra do convidado**. Janela: convidado usa o link nos **primeiros 7 dias**. Desbloqueios escalonados por nº de amigos: 1 (R$ 30) · 3 (selo Embaixador) · 5 (500 pontos bônus) · 10 (kit Tchin) · 25 (R$ 250). *(Não existe "Plus"/assinatura — Gabriel decidiu.)*
 
 ## Mapa do fluxo
 ```
@@ -25,7 +25,7 @@
 **Propósito:** hub do programa — stats + como funciona + desbloqueios + CTA compartilhar. **US-IND-01.**
 **Entradas:** banner de referral no feed (Módulo 13); perfil/menu. **Saídas:** "Compartilhar meu link" → `indicacao-compartilhar`.
 
-**Layout:** hero gradiente "Cada amigo que entra, vocês dois ganham" + "R$ 30 pra você, R$ 30 pra quem entrou. Plus de 1 mês quando 5 amigos aceitam." + **stats** (Convidados / Entraram / Pontos) + **Como funciona** (3 passos: compartilha → amigo entra → vocês dois ganham) + **Desbloqueios** escalonados (1/3/5/10/25 amigos, done vs locked) + sticky CTA "Compartilhar meu link".
+**Layout:** hero gradiente "Cada amigo que entra, vocês dois ganham" + "R$ 30 pra você, R$ 30 pra quem entrou. 500 pontos bônus quando 5 amigos aceitam." + **stats** (Convidados / Entraram / Pontos) + **Como funciona** (3 passos: compartilha → amigo entra → vocês dois ganham) + **Desbloqueios** escalonados (1/3/5/10/25 amigos, done vs locked) + sticky CTA "Compartilhar meu link".
 
 **Analytics:** `referral_hub_view { invited, completed }`, `referral_share_start`.
 
@@ -70,7 +70,7 @@
 
 **Propósito:** ver bônus já ganhos e o que falta desbloquear. **US-IND-04.**
 **Entradas:** landing → "Recompensas". **Saídas:** usar crédito → `marketplace`; back.
-**Layout:** créditos acumulados + histórico de bônus + barra de progresso pros próximos desbloqueios (selo/Plus/kit).
+**Layout:** créditos acumulados + histórico de bônus + barra de progresso pros próximos desbloqueios (selo/pontos/kit).
 
 > **⚠️ DIVERGÊNCIA — recompensas mock.** Backend: carteira de créditos real + aplicar no checkout (Módulo 05).
 > **⛔ FALTA NO APP (épico pede):** **aplicar crédito no checkout** (Módulo 05 não consome esses créditos). Backlog **IND-CREDIT-CHECKOUT**.

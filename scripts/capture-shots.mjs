@@ -29,7 +29,7 @@ const routes = [
   'chat-lista','chat-conversa',
   'notificacoes','push-primer','push-negado','push-canais','push-preview','nudge-d1','nudge-d3','nudge-d7','nudge-d14','plus-one',
   'jornada','pontos','badges',
-  'config-notif','config-privacidade','config-conta','config-bloqueados','suporte-faq','suporte-contato',
+  'config-notif','config-privacidade','config-conta','config-bloqueados','conta-desativada','conta-excluida','suporte-faq','suporte-contato',
   'erro-404','erro-permissao','erro-sessao','erro-servidor','vinho-indisponivel',
 ];
 

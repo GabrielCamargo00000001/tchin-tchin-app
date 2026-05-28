@@ -180,8 +180,9 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 **⛔ Faltam no app (épicos):** estado real dos marcos + disparo da celebração, desafios reais (validação automática + ranking + recompensa), pontuação unificada, badges unificados.
 
 ### Módulo 20 — Config & Suporte [📄 doc completo](20-config-suporte.md)
-`config-notif` ✅ · `config-privacidade` ✅ · `config-conta` ✅ · `config-bloqueados` ✅ · `suporte-faq` ✅ · `suporte-contato` ✅
-**Estados extra capturados:** os 6 (`config-{notif,privacidade,conta,bloqueados}`, `suporte-{faq,contato}`).
+`config-notif` ✅ · `config-privacidade` ✅ · `config-conta` ✅ · `conta-desativada` 🆕 ✅ · `conta-excluida` 🆕 ✅ · `config-bloqueados` ✅ · `suporte-faq` ✅ · `suporte-contato` ✅
+**Estados extra capturados:** `config-{notif,privacidade,conta,bloqueados}`, **`conta-desativada` · `conta-excluida`** (fluxos desativar/excluir na visão do usuário), `suporte-{faq,contato}`.
+**✅ Gabriel decidiu:** sem "Tchin Tchin Plus"/assinatura (sem monetização); desativar (reversível) vs excluir (soft-delete 30d) com telas dedicadas.
 **⛔ Faltam no app (épicos):** persistência de preferências + enforcement, conta real (trocar email/senha, soft-delete 30d — **sem telefone, sem 2FA**), bloqueio enforced, exportar dados (LGPD), FAQ via CMS + tickets reais, chat de suporte ao vivo.
 
 ### Módulo 21 — Estados de sistema [📄 doc completo](21-estados-sistema.md)

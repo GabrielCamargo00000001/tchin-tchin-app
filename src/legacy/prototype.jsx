@@ -30,7 +30,7 @@ import { CadastroScreen, LoginScreen, OnboardingScreen, RecuperarSenhaScreen, We
 import { BadgesGaleriaScreen } from './screens-badges-galeria.jsx';
 import { ChatConversaScreen, ChatListaScreen } from './screens-chat.jsx';
 import { CarrinhoScreen, EnderecoScreen, PagamentoScreen, PedidoConfirmadoScreen } from './screens-checkout.jsx';
-import { BloqueadosScreen, ConfigContaScreen, ConfigNotifScreen, ConfigPrivacidadeScreen, PoliticaPrivacidadeScreen, TermosScreen } from './screens-config-detalhe.jsx';
+import { BloqueadosScreen, ConfigContaScreen, ConfigNotifScreen, ConfigPrivacidadeScreen, ContaDesativadaScreen, ContaExcluidaScreen, PoliticaPrivacidadeScreen, TermosScreen } from './screens-config-detalhe.jsx';
 import { ConfrariaConfigScreen, ConfrariaConvidarScreen, ConfrariaRegrasScreen, ConfrariaSairScreen, ConfrariaTransferirScreen } from './screens-confraria-full.jsx';
 import { ConfrariaDetalheScreen } from './screens-confraria.jsx';
 import { ComentariosScreen, CriarMomentoScreen, CriarPostScreen } from './screens-criar-post.jsx';
@@ -310,7 +310,7 @@ function TchinApp({ initialScreen = 'onboarding' }) {
     'perfil-outro', 'confraria-detalhe', 'register-consumo', 'favoritos',
     // Novos fluxos
     'editar-perfil', 'editar-perfil-foto', 'editar-perfil-paladar', 'editar-perfil-privacidade',
-    'config-notif', 'config-privacidade', 'config-conta', 'config-bloqueados',
+    'config-notif', 'config-privacidade', 'config-conta', 'config-bloqueados', 'conta-desativada', 'conta-excluida',
     'termos', 'politica-privacidade',
     'suporte-faq', 'suporte-contato',
     'confraria-config', 'confraria-convidar', 'confraria-sair', 'confraria-transferir', 'confraria-regras',
@@ -419,6 +419,8 @@ function TchinApp({ initialScreen = 'onboarding' }) {
       case 'config-privacidade':   return <ConfigPrivacidadeScreen go={go}/>;
       case 'config-conta':         return <ConfigContaScreen go={go}/>;
       case 'config-bloqueados':    return <BloqueadosScreen go={go}/>;
+      case 'conta-desativada':     return <ContaDesativadaScreen go={go}/>;
+      case 'conta-excluida':       return <ContaExcluidaScreen go={go}/>;
       case 'termos':               return <TermosScreen go={go}/>;
       case 'politica-privacidade': return <PoliticaPrivacidadeScreen go={go}/>;
       // ── Suporte (27.04-05) ────────────────────────────────

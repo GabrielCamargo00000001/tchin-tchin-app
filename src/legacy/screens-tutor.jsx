@@ -1061,7 +1061,7 @@ registerTutorial({
     {
       variant: 'bubble',
       body: 'Compartilhe seu link por WhatsApp, e-mail, Stories. Quanto mais amigos, mais desbloqueios.',
-      tip: 'Aos 5 amigos: 1 mês de Plus grátis. Aos 10: kit Tchin (taça personalizada).',
+      tip: 'Aos 5 amigos: 500 pontos bônus. Aos 10: kit Tchin (taça personalizada).',
     },
   ],
 });

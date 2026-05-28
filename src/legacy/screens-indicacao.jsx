@@ -62,7 +62,7 @@ function IndicacaoLandingScreen({ go, ctx }) {
             Cada amigo que entra, vocês dois ganham.
           </div>
           <div style={{ ...T.t.bodyLg, color: 'rgba(255,255,255,0.9)', lineHeight: 1.5 }}>
-            R$ 30 de desconto no marketplace pra você. R$ 30 pra quem entrou. Plus de 1 mês quando 5 amigos aceitam.
+            R$ 30 de desconto no marketplace pra você. R$ 30 pra quem entrou. 500 pontos bônus quando 5 amigos aceitam.
           </div>
         </div>
       </div>
@@ -111,7 +111,7 @@ function IndicacaoLandingScreen({ go, ctx }) {
           {[
             { n: 1,  reward: 'R$ 30 marketplace',          done: true },
             { n: 3,  reward: 'Selo "Embaixador" no perfil', done: false },
-            { n: 5,  reward: '1 mês de Plus grátis',       done: false },
+            { n: 5,  reward: '500 pontos bônus',           done: false },
             { n: 10, reward: 'Kit Tchin (taça personalizada)', done: false },
             { n: 25, reward: 'R$ 250 marketplace',          done: false },
           ].map((r, i, arr) => (
