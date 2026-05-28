@@ -104,7 +104,7 @@ _D+1 · D+3 · D+7 · D+14:_
 - **Push negado no SO** → push-negado + instrução de Configurações.
 - **Nudge depois de já ter criado evento** → não deveria disparar (gate de estado).
 
-## Pendências de backend / decisões do PO
+## Pendências de backend / decisões do Gabriel
 ### Críticas (bloqueadores GA)
 - **FCM/APNs real** + permission flow nativo.
 - **Agendador de nudges** server-side (cron por estado do usuário).
@@ -113,7 +113,7 @@ _D+1 · D+3 · D+7 · D+14:_
 - Agrupamento de notificações + canais configuráveis.
 - Outros gatilhos de nudge (streak/carrinho/wishlist).
 - Plus-one integrado a capacidade/pagamento do evento.
-### Decisões do PO
+### Decisões do Gabriel
 - Cadência dos nudges (D+1/3/7/14 definitiva?) + cap de frequência (anti-spam).
 - Quais canais on por padrão (opt-in vs opt-out)?
 

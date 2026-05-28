@@ -59,7 +59,7 @@
 - **Bloquear** (Módulo 14) deveria sumir a DM.
 - **Offline** — sem fila de envio.
 
-## Pendências de backend / decisões do PO
+## Pendências de backend / decisões do Gabriel
 ### Críticas (bloqueadores GA)
 - **Mensageria real** (WebSocket/Firestore) — enviar/receber/persistir + realtime.
 - **Entregue/lido** + push de nova mensagem (Módulo 18).
@@ -67,7 +67,7 @@
 - Nova conversa (iniciar DM).
 - Anexos (foto/vinho), reações, "digitando…".
 - Moderação/bloqueio refletido no chat.
-### Decisões do PO
+### Decisões do Gabriel
 - DM aberto pra qualquer um ou só pra quem você segue / mesma confraria?
 - Chat de grupo: histórico visível pra quem entra depois?
 

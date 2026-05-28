@@ -60,7 +60,7 @@ _Estante 🆕 · Diário · Indicadores · Paladar:_
 **Analytics:** `cellar_view { filled, total }`, `cellar_slot_add { index }`, `cellar_slot_open { wineId }`, `cellar_slot_remove { index }`.
 
 > **⚠️ DIVERGÊNCIA — persistência só na sessão** (`window.__tcCellar`). **Crítico:** mover pra `tc.cellar` localStorage + backend. Sem isso, a estante zera ao recarregar.
-> **⚠️ DIVERGÊNCIA — estante ≠ diário.** Hoje a estante é independente do diário (você pode ter vinho na estante sem registro). Isso confunde: o que é "minha adega"? **Recomendação PO:** definir se Estante = vinhos que possuo (cave física) vs Diário = vinhos que provei. São conceitos diferentes que hoje se misturam.
+> **⚠️ DIVERGÊNCIA — estante ≠ diário.** Hoje a estante é independente do diário (você pode ter vinho na estante sem registro). Isso confunde: o que é "minha adega"? **Recomendação Gabriel:** definir se Estante = vinhos que possuo (cave física) vs Diário = vinhos que provei. São conceitos diferentes que hoje se misturam.
 > **⛔ FALTA NO APP (épico pede):** **quantidade por slot** (tenho 3 garrafas do mesmo). Hoje 1 slot = 1 garrafa. Backlog **CELLAR-QTY**.
 > **⛔ FALTA NO APP (épico pede):** **organização por prateleira/região/tipo** (arrastar pra reorganizar). Backlog **CELLAR-ORGANIZE**.
 > **⛔ FALTA NO APP (épico pede):** **alerta de consumo ideal** ("esse vinho está no ponto / passando do ponto"). Backlog **CELLAR-DRINK-WINDOW**.
@@ -129,7 +129,7 @@ _Estante 🆕 · Diário · Indicadores · Paladar:_
 - **Card "Histórico do seu paladar"** (placeholder v2, opacity 0.7): "Em breve você vai poder ver como seu perfil mudou ao longo do tempo."
 - CTA "Refazer quiz" → `quiz`.
 
-> **⚠️ DIVERGÊNCIA — dimensões diferem do Módulo 03.** Aqui: Acidez/Tanino/Corpo/Doçura/**Aromas**. No quiz (Módulo 03): Acidez/Tanino/Corpo/Frutado/Doçura. **"Aromas" vs "Frutado"** desalinhados. **Recomendação:** unificar as 5 dimensões canônicas em todo o app. PO + dev decidem o set final.
+> **⚠️ DIVERGÊNCIA — dimensões diferem do Módulo 03.** Aqui: Acidez/Tanino/Corpo/Doçura/**Aromas**. No quiz (Módulo 03): Acidez/Tanino/Corpo/Frutado/Doçura. **"Aromas" vs "Frutado"** desalinhados. **Recomendação:** unificar as 5 dimensões canônicas em todo o app. Gabriel + dev decidem o set final.
 > **⛔ FALTA NO APP (épico pede):** **evolução real do paladar** (histórico temporal — placeholder hoje). Backlog **PAL-HISTORY**.
 
 **Status:** ⚠️ (dimensões desalinhadas com Módulo 03)
@@ -153,7 +153,7 @@ _Passo 1 (escolher vinho) · Passo 1 com busca:_
 
 **Analytics:** `register_start`, `register_step { n }`, `register_pick_wine { id }`, `register_scan_click`, `register_manual_click`, `register_save { rating, offline }`.
 
-> **⚠️ DIVERGÊNCIA — 2 fluxos de registro coexistem:** `register-consumo` (2 passos) e `registro-rapido`/`registro-completo` (f18). **Recomendação:** consolidar. `registro-rapido` (~15s) parece o canônico mais novo. Ver 07.7. PO decide qual aposentar.
+> **⚠️ DIVERGÊNCIA — 2 fluxos de registro coexistem:** `register-consumo` (2 passos) e `registro-rapido`/`registro-completo` (f18). **Recomendação:** consolidar. `registro-rapido` (~15s) parece o canônico mais novo. Ver 07.7. Gabriel decide qual aposentar.
 
 **Status:** ✅
 
@@ -226,7 +226,7 @@ _Registro rápido (~15s) · Registro completo · Confirmação (+pontos):_
 
 **Layout (`FavoritosScreen`):** header back + "Favoritos" + lista de cards de vinhos favoritados (de `ctx.favorites`). Empty state quando vazio.
 
-> **⚠️ DIVERGÊNCIA — 3 conceitos de "guardar" sobrepostos:** Favoritos (Adega), Wishlist/lista-desejos (Módulo 04), Estante (Adega). Confuso pro usuário. **Recomendação PO:** unificar ou diferenciar claramente (Favoritos = gostei / Wishlist = quero comprar / Estante = tenho/provei).
+> **⚠️ DIVERGÊNCIA — 3 conceitos de "guardar" sobrepostos:** Favoritos (Adega), Wishlist/lista-desejos (Módulo 04), Estante (Adega). Confuso pro usuário. **Recomendação Gabriel:** unificar ou diferenciar claramente (Favoritos = gostei / Wishlist = quero comprar / Estante = tenho/provei).
 
 **Status:** ✅
 
@@ -246,7 +246,7 @@ _Registro rápido (~15s) · Registro completo · Confirmação (+pontos):_
 - **Registro offline** — badge "Pendente" aparece mas não há fila de sync real.
 - **2 fluxos de registro** (`register-consumo` vs `registro-rapido/completo`) — risco de inconsistência de dados.
 
-## Pendências de backend / decisões do PO
+## Pendências de backend / decisões do Gabriel
 
 ### Críticas (bloqueadores GA)
 - **Persistência real** de Estante (`tc.cellar` + backend), Diário, Favoritos.
@@ -261,7 +261,7 @@ _Registro rápido (~15s) · Registro completo · Confirmação (+pontos):_
 - Insights acionáveis nos indicadores (NLG).
 - Rascunhos reais no registro completo.
 
-### Decisões do PO
+### Decisões do Gabriel
 - **Conceito Estante vs Diário vs Favoritos vs Wishlist** — 4 jeitos de "guardar" vinho. Definir taxonomia clara.
 - Estante: quantidade por slot? organização por prateleira?
 - Relatório: mensal + anual (retrospectiva)?

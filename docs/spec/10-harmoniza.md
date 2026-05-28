@@ -77,7 +77,7 @@ O índice menciona "reversa/calibração". No protótipo:
 - **`CalibracaoCincoVinhos`** (rota `calibracao`, dev-only) — fluxo de calibrar paladar provando 5 vinhos de estilos diferentes. Tangencia Harmoniza mas é mais do Paladar (Módulo 03).
 - **Reversa** (vinho → pratos) — **não tem rota/tela** no protótipo. Só conceito nos épicos. Ver backlog **HARMONIZA-REVERSA**.
 
-## Pendências de backend / decisões do PO
+## Pendências de backend / decisões do Gabriel
 ### Críticas
 - **Motor de matching real** (prato → perfil → ranking de vinhos), considerando o paladar do usuário.
 - **Base de pratos** (autocomplete real) + NLG da razão.
@@ -85,7 +85,7 @@ O índice menciona "reversa/calibração". No protótipo:
 - Harmonização reversa (vinho → pratos).
 - Foto do prato → identifica → harmoniza.
 - Filtros realmente refinando o ranking (hoje cosméticos sobre mock).
-### Decisões do PO
+### Decisões do Gabriel
 - Priorizar prato→vinho (atual) ou também vinho→prato no MVP?
 - Considerar contexto (ocasião, estação, orçamento) no matching?
 

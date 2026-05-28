@@ -12,10 +12,9 @@ import { Icon, T, TchinLogo } from './tokens.jsx';
 function WelcomeScreen({ go }) {
   const [gLoading, setGLoading] = React.useState(false);
   const [err, setErr] = React.useState(false);
-  const onGoogle = () => {
-    // Live: opens the social/magic-link picker. For demo of failure path,
-    // long-press would show toast; here we navigate.
-    go('login-social', { mode: 'cadastro' });
+  // SSO direto por provedor (Apple e Google). Sem "outros".
+  const onSocial = (provider) => {
+    go('login-social', { mode: 'cadastro', provider });
   };
   return (
     <div style={{
@@ -66,18 +65,28 @@ function WelcomeScreen({ go }) {
 
         {/* CTAs */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <button onClick={onGoogle} disabled={gLoading} style={{
+          {/* SSO — Apple */}
+          <button onClick={() => onSocial('apple')} style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
             height: 52, borderRadius: T.r.md, padding: '0 18px',
-            background: T.c.n0, color: T.c.n950, border: 'none', cursor: gLoading ? 'wait' : 'pointer',
+            background: '#000', color: '#fff', border: 'none', cursor: 'pointer',
+            fontSize: 15, fontWeight: 600, fontFamily: T.font,
+            boxShadow: '0 1px 3px rgba(0,0,0,0.25)',
+          }}>
+            <AppleLogo/>
+            <span>Continuar com Apple</span>
+          </button>
+
+          {/* SSO — Google */}
+          <button onClick={() => onSocial('google')} style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+            height: 52, borderRadius: T.r.md, padding: '0 18px',
+            background: T.c.n0, color: T.c.n950, border: 'none', cursor: 'pointer',
             fontSize: 15, fontWeight: 600, fontFamily: T.font,
             boxShadow: '0 1px 3px rgba(0,0,0,0.16)',
-            opacity: gLoading ? 0.85 : 1, transition: 'opacity 160ms',
           }}>
-            {gLoading
-              ? <span style={{ width: 18, height: 18, border: '2.5px solid #d6d6d6', borderTopColor: T.c.p700, borderRadius: '50%', display: 'inline-block', animation: 'tcSpin 700ms linear infinite' }}/>
-              : <GoogleG/>}
-            <span>{gLoading ? 'Conectando…' : 'Continuar com Google ou outros'}</span>
+            <GoogleG/>
+            <span>Continuar com Google</span>
           </button>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '4px 0' }}>
@@ -125,6 +134,14 @@ function WelcomeScreen({ go }) {
         </div>
       </div>
     </div>
+  );
+}
+
+function AppleLogo() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="#fff">
+      <path d="M17.05 12.04c-.03-2.6 2.12-3.85 2.22-3.91-1.21-1.77-3.09-2.01-3.76-2.04-1.6-.16-3.12.94-3.93.94-.81 0-2.06-.92-3.39-.89-1.74.03-3.35 1.01-4.25 2.57-1.81 3.14-.46 7.79 1.3 10.34.86 1.25 1.89 2.65 3.23 2.6 1.3-.05 1.79-.84 3.36-.84 1.57 0 2.01.84 3.39.81 1.4-.02 2.28-1.27 3.13-2.53.99-1.45 1.4-2.85 1.42-2.92-.03-.01-2.72-1.04-2.75-4.13zM14.47 4.38c.72-.87 1.2-2.08 1.07-3.28-1.03.04-2.28.69-3.02 1.56-.66.77-1.24 2-1.09 3.18 1.15.09 2.32-.59 3.04-1.46z"/>
+    </svg>
   );
 }
 

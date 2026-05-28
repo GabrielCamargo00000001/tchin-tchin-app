@@ -28,7 +28,7 @@
 **Analytics:** `journey_view { completed, total, points }`, `journey_step_tap { id }`.
 
 > **⚠️ DIVERGÊNCIA — marcos mock** (estado hard-coded). Backend: estado real de cada marco por usuário + pontos.
-> **⚠️ DIVERGÊNCIA — pontos fragmentados:** jornada (pontos de marco) + Treino (XP — M08) + indicação (pontos — M16). **Recomendação PO:** moeda/pontuação unificada. Backlog **POINTS-UNIFY**.
+> **⚠️ DIVERGÊNCIA — pontos fragmentados:** jornada (pontos de marco) + Treino (XP — M08) + indicação (pontos — M16). **Recomendação Gabriel:** moeda/pontuação unificada. Backlog **POINTS-UNIFY**.
 
 **Status:** ✅
 
@@ -71,7 +71,7 @@
 - **Desafio expirado** → estado "encerrado" + resultado.
 - **Pontos** não têm carteira unificada (espalhados por features).
 
-## Pendências de backend / decisões do PO
+## Pendências de backend / decisões do Gabriel
 ### Críticas (bloqueadores GA)
 - **Estado real dos marcos** por usuário + disparo da celebração.
 - **Desafios reais** (criação + validação automática + ranking).
@@ -79,7 +79,7 @@
 ### Importantes
 - Recompensa do desafio (pontos/badge) + histórico.
 - Badges unificados (M14 + M08 + aqui).
-### Decisões do PO
+### Decisões do Gabriel
 - Pontos servem pra quê? (resgatar em crédito/marketplace? só status?)
 - Desafios: sistema cria globalmente, ou cada confraria cria os seus?
 

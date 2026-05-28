@@ -10,7 +10,7 @@ fs.mkdirSync(OUT, { recursive: true });
 
 const homeTabs = ['descobrir', 'adega', 'comunidade', 'confrarias'];
 const routes = [
-  'onboarding','welcome','login','cadastro','login-social','magic-link-enviado','verif-telefone-otp','verif-concluida','recuperar','recuperar-email','recuperar-enviado','recuperar-otp','recuperar-redefinir','recuperar-sucesso','termos','politica-privacidade',
+  'onboarding','welcome','login','cadastro','login-social','recuperar','recuperar-email','recuperar-enviado','recuperar-otp','recuperar-redefinir','recuperar-sucesso','termos','politica-privacidade',
   'quiz-nivel','quiz-interesses','tela-intencao','gps-primer','gps-negado','welcome-final','tutoriais',
   'quiz','quiz-result',
   'marketplace','wine','busca','filtros-avancados','lista-desejos','comparar-vinhos',

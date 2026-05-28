@@ -200,7 +200,7 @@ _Conceito (vídeo-aula) · exercício (múltipla escolha) · feedback + "Entenda
 - **Vidas zeradas** — protótipo não bloqueia; produção deve gate (esperar regen / gastar cristais).
 - **Streak quebrado** — `computeStreakOnFinish` checa ontem/hoje. Congelamento (freeze) protege 1 dia.
 
-## Pendências de backend / decisões do PO
+## Pendências de backend / decisões do Gabriel
 
 ### Críticas (bloqueadores GA)
 - **Sync server-side** de progresso/XP/streak/cristais (anti-fraude).
@@ -215,7 +215,7 @@ _Conceito (vídeo-aula) · exercício (múltipla escolha) · feedback + "Entenda
 - Loja de cristais (power-ups).
 - Expansão de conteúdo (>3 unidades).
 
-### Decisões do PO
+### Decisões do Gabriel
 - Vidas: gate real ou só cosmético?
 - Liga: divisões nomeadas (Frisante→Gran Reserva)? liga entre amigos?
 - Cristais: o que dá pra comprar além de congelamento?

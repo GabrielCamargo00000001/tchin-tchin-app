@@ -107,7 +107,7 @@ _Vazio · com texto:_
 **Entradas:** FAB do feed (opção Momento). **Saídas:** publicar → back.
 **Layout (`CriarMomentoScreen`):** captura/foto em foco + overlay de texto/stickers + publicar.
 
-> **⚠️ DIVERGÊNCIA — momentos não aparecem no feed** (sem régua de stories — ver 13.1). Feature meio órfã hoje. **Recomendação PO:** integrar régua de stories no topo do feed ou cortar a feature.
+> **⚠️ DIVERGÊNCIA — momentos não aparecem no feed** (sem régua de stories — ver 13.1). Feature meio órfã hoje. **Recomendação Gabriel:** integrar régua de stories no topo do feed ou cortar a feature.
 > **⛔ FALTA NO APP (épico pede):** **expiração 24h** + visualizações ("quem viu"). Backlog **COM-MOMENTS-EPHEMERAL**.
 
 **Status:** ⚠️ (existe mas desconectada do feed)
@@ -135,7 +135,7 @@ _Vazio · com texto:_
 - **Momento** desconectado do feed (não há régua).
 - **Comentar offline** → sem fila de sync.
 
-## Pendências de backend / decisões do PO
+## Pendências de backend / decisões do Gabriel
 ### Críticas (bloqueadores GA)
 - **Feed real** (ranking, paginação, pull-to-refresh) + posts/comentários persistentes.
 - **Upload de foto** real (post + momento).
@@ -146,7 +146,7 @@ _Vazio · com texto:_
 - Menções (@) + autocomplete de hashtag.
 - Respostas aninhadas + curtir comentário.
 - Viés #educacao (14 dias) real.
-### Decisões do PO
+### Decisões do Gabriel
 - Consolidar `comentarios` (tela cheia) vs comentários inline do `post-detail`?
 - Manter Momentos/Stories ou cortar?
 - Audiência default do post (hoje "Minhas confrarias")?

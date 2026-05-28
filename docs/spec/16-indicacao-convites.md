@@ -100,7 +100,7 @@
 - **Janela de 7 dias** — não enforced.
 - **Crédito expira?** — não definido.
 
-## Pendências de backend / decisões do PO
+## Pendências de backend / decisões do Gabriel
 ### Críticas (bloqueadores GA)
 - **Link único rastreável** + deep link + atribuição de `ref` no cadastro.
 - **Carteira de créditos** real + consumo no checkout (Módulo 05).
@@ -110,7 +110,7 @@
 - Config server-side dos valores (campanha ajustável).
 - Janela de 7 dias enforced + expiração de crédito.
 - Notificação "seu amigo entrou / bônus liberado".
-### Decisões do PO
+### Decisões do Gabriel
 - Valores (R$ 30/30) e desbloqueios definitivos?
 - Bônus na 1ª compra do convidado ou no cadastro?
 - Teto de indicações por usuário?

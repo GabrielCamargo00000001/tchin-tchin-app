@@ -160,7 +160,7 @@ _Avaliar vinhos · Ata do encontro:_
 - **Editar evento confirmado** → sem notificação aos participantes.
 - **Tutorial `evento-usar`** (TchinTutor) existe (3 steps: RSVP / quem vai / chat) e dispara no detalhe — documentado no Módulo 11/06 (sistema de tutoriais).
 
-## Pendências de backend / decisões do PO
+## Pendências de backend / decisões do Gabriel
 ### Críticas (bloqueadores GA)
 - **CRUD real de evento** + RSVP + capacidade + lista de presença.
 - **LACI/Celcoin real** (webhook Pix → pagamento automático) — bloqueador do financeiro.
@@ -173,7 +173,7 @@ _Avaliar vinhos · Ata do encontro:_
 - Upload de capa + fotos da ata.
 - Notificar participantes em edição.
 - Consenso da confraria (média das notas).
-### Decisões do PO
+### Decisões do Gabriel
 - Rachão: valor fixo (atual) é suficiente no MVP, ou precisa split dinâmico já?
 - Taxa da plataforma sobre pagamentos? (modelo de receita)
 - Endereço sempre 24h antes, ou configurável pelo organizador?

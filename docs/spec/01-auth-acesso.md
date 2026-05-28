@@ -37,20 +37,21 @@ _Slides 1, 2 e 3 (carrossel):_
 
 <img src="shots/welcome.png" width="240"/>
 
-**Propósito:** hub de entrada — criar conta, Google/social, ou login.
-**Entradas:** fim dos slides; logout; deep link. **Saídas:** `login-social` (Google), `cadastro`, `login`, `termos`/`politica-privacidade` (rodapé).
+**Propósito:** hub de entrada — criar conta, login social (Apple/Google), ou login por e-mail.
+**Entradas:** fim dos slides; logout; deep link. **Saídas:** `login-social` (Apple ou Google), `cadastro`, `login`, `termos`/`politica-privacidade` (rodapé).
 **Layout & componentes (`WelcomeScreen`):**
 - Fundo vinoso (gradiente burgundy + silhuetas de taças brindando), `TchinLogo` 80px.
 - Headline (UI atual): **"Onde cada vinho vira uma boa experiência"** *(copy de marca — 🆕 vs doc; ver divergência)*.
-- CTA branco **"Continuar com Google ou outros"** (ícone Google) → `login-social {mode:'cadastro'}`; estado `gLoading` ("Conectando…").
+- **CTA preto "Continuar com Apple"** (logo Apple) → `login-social {mode:'cadastro', provider:'apple'}`.
+- **CTA branco "Continuar com Google"** (logo Google) → `login-social {mode:'cadastro', provider:'google'}`.
 - Divisor "OU".
 - CTA primário burgundy **"Criar conta"** → `cadastro`.
 - Link **"Já é do Tchin? Entrar"** → `login`.
 - Rodapé: Termos · Privacidade · Suporte (44px touch).
-**Estados:** normal; `gLoading` (spinner no botão Google); `err` (toast "Não foi possível continuar. Tente novamente.").
-**US:** US-002 (Google SSO — ponto de entrada), US-003 (login — link), US-001 (criar conta — CTA).
-> **⚠️ DIVERGÊNCIA / DECISÃO** — A **headline** e a copy dos CTAs foram atualizadas para o tom de marca (Fase 3 de copy). Os docs antigos traziam outra copy. **Recomendação:** a tela é a referência (copy de marca aprovada); atualizar o doc.
-**Status:** ✅ (copy = 🆕 atualizada)
+**Estados:** normal; `err` (toast "Não foi possível continuar. Tente novamente.").
+**US:** US-002 (SSO Apple/Google — ponto de entrada), US-003 (login — link), US-001 (criar conta — CTA).
+> **⚠️ DIVERGÊNCIA / DECISÃO** — **SSO definido: Apple + Google** (2 botões dedicados, **sem** "Google ou outros"). A **headline** e copy dos CTAs são tom de marca (Fase 3). A tela é a referência; doc atualizado.
+**Status:** ✅ (copy 🆕; SSO Apple+Google)
 
 ---
 
@@ -73,8 +74,8 @@ _Passo 1 (e-mail/senha) · Passo 2 (nome/nascimento) · Passo 3 (termos):_
 **Analytics (doc):** `signup_start`, `signup_step {n}`, `signup_complete`, `signup_email_exists`, `signup_underage_block`.
 > **⚠️ DIVERGÊNCIA / DECISÃO (3 pontos):**
 > 1. **Formato:** doc US-001 descreve **um único formulário** (Nome, E-mail, Senha, Nascimento); a tela faz **wizard de 3 passos**. → **Recomendação: manter o wizard** (menor carga cognitiva, melhor para iniciante — alinhado ao relatório). Atualizar o doc.
-> 2. **Regra de senha:** doc exige **mín. 8, 1 maiúscula, 1 número**; a tela usa medidor com **mín. 6**. → **Recomendação:** alinhar ao doc (8/1 maiúscula/1 número) no build real — **decisão do PO**.
-> 3. **Confirmação de e-mail (US-005):** doc pede link real 24h; protótipo **simula** (sem envio). → backend pendente (ver 01.7).
+> 2. **Regra de senha:** doc exige **mín. 8, 1 maiúscula, 1 número**; a tela usa medidor com **mín. 6**. → **Recomendação:** alinhar ao doc (8/1 maiúscula/1 número) no build real — **decisão do Gabriel**.
+> 3. **Confirmação de e-mail (US-005):** doc pede link real 24h; protótipo **simula** (sem envio). → backend pendente (serviço de e-mail).
 **Status:** ⚠️
 
 ---
@@ -94,19 +95,17 @@ _Passo 1 (e-mail/senha) · Passo 2 (nome/nascimento) · Passo 3 (termos):_
 
 ---
 
-## 01.5 `login-social` · `magic-link-enviado` · `verif-telefone-otp` · `verif-concluida` ✅
+## 01.5 `login-social` — SSO Apple / Google ✅
 
-<img src="shots/login-social.png" width="200"/> <img src="shots/magic-link-enviado.png" width="200"/> <img src="shots/verif-telefone-otp.png" width="200"/> <img src="shots/verif-concluida.png" width="200"/>
+<img src="shots/login-social.png" width="240"/>
 
-**Propósito:** entrada por SSO/OAuth, magic link e verificação de telefone (OTP). **US-002.**
-- `login-social` — picker social (Google e outros); `mode` = 'cadastro'|'login'. Sucesso → `quiz-nivel` (novo) ou `home` (existente).
-- `magic-link-enviado` — confirmação de envio do link mágico ("confere seu e-mail").
-- `verif-telefone-otp` — entrada de código OTP de telefone.
-- `verif-concluida` — sucesso da verificação.
-**Estados:** loading/enviado/erro/reenviar.
-**US-002 dados:** ID do provedor, foto de perfil (URL), `origem='google'`; SSO **pula** confirmação de e-mail.
-> **⚠️ DIVERGÊNCIA:** todos **simulados** no protótipo (sem OAuth/SMS reais). **Recomendação:** UI/fluxo são referência; backend implementa OAuth (Google Cloud Console — callbacks, Client ID/Secret) e provedor de SMS.
-**Status:** ✅ (UI) / backend pendente
+**Propósito:** entrada por **SSO/OAuth** (Apple ou Google). **US-002.**
+- `login-social` — recebe `mode` ('cadastro'|'login') + `provider` ('apple'|'google'). Sucesso → `quiz-nivel` (conta nova) ou `home` (existente). SSO **pula** confirmação de e-mail.
+**Dados (US-002):** ID do provedor, foto de perfil (URL), `origem` ('apple'|'google').
+**Estados:** loading / erro / retry.
+> **⚠️ DIVERGÊNCIA:** simulado no protótipo (sem OAuth real). **Recomendação:** backend implementa **Sign in with Apple** (Apple Developer — Services ID, key) + **Google OAuth** (Google Cloud Console — Client ID/Secret, callbacks).
+> **📌 ESCOPO DEFINIDO:** **magic-link e verificação por OTP de telefone NÃO fazem parte do produto** — telas legadas (`magic-link-enviado`, `verif-telefone-otp`, `verif-concluida`) foram **removidas da spec** e não devem ser implementadas.
+**Status:** ✅ (UI) / backend OAuth pendente
 
 ---
 
@@ -137,7 +136,7 @@ _Passo 1 (e-mail/senha) · Passo 2 (nome/nascimento) · Passo 3 (termos):_
 
 ## Pendências de backend deste módulo (para o build real)
 - Confirmação de e-mail real (US-005) + serviço de e-mail (SendGrid/SES).
-- OAuth Google + provedor SMS (OTP).
+- **OAuth real: Sign in with Apple + Google** (sem SMS/OTP — fora do escopo).
 - Hash de senha + token de sessão; rate limit server-side no login.
 - Telemetria dos slides (GATE-01) e dos funis de auth.
-- Decisões do PO: regra de senha (6 vs 8), `recuperar` duplicado, copy oficial dos slides.
+- Decisões do Gabriel: regra de senha (6 vs 8), `recuperar` duplicado, copy oficial dos slides.

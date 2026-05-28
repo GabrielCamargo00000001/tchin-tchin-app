@@ -150,7 +150,7 @@ _Welcome · Apresentar · Tour (3 slides):_
 
 - Intro "Sua Confraria · Você entrou! Vou te mostrar onde tudo acontece." → Mural é o coração → Encontros marcados → (chat/membros).
 
-> **⚠️ DIVERGÊNCIA — DOIS onboardings sobrepostos:** o fluxo welcome→apresentar→tour **E** o tutorial conversacional `confraria-usar` ambos rodam na entrada. Redundante. **Recomendação PO:** escolher um (provavelmente o welcome→apresentar→tour, que é mais rico; o tutorial vira opcional via menu).
+> **⚠️ DIVERGÊNCIA — DOIS onboardings sobrepostos:** o fluxo welcome→apresentar→tour **E** o tutorial conversacional `confraria-usar` ambos rodam na entrada. Redundante. **Recomendação Gabriel:** escolher um (provavelmente o welcome→apresentar→tour, que é mais rico; o tutorial vira opcional via menu).
 > **⚠️ DIVERGÊNCIA — `confraria-apresentar` posta mock** (toast, não cria post real no mural). Backend pendente.
 > **⚠️ Nota BACK_SKIP:** `confraria-welcome`, `confraria-apresentar`, `confraria-tour-rapido` estão no BACK_SKIP (Módulo 02) pra não cair no onboarding ao voltar — corrige o loop que existia.
 
@@ -165,7 +165,7 @@ _Welcome · Apresentar · Tour (3 slides):_
 - **Privacidade "Por aprovação"** → falta a fila de aprovação (entrar não é instantâneo).
 - **Refresh no wizard** → P1 tem rascunho (`tc.wizard.confraria.draft`); P2–P6 perdem.
 
-## Pendências de backend / decisões do PO
+## Pendências de backend / decisões do Gabriel
 ### Críticas (bloqueadores GA)
 - **CRUD real de confraria** (criar/editar/arquivar/excluir) + papéis + privacidade.
 - **Feed/mural, RSVP, membros, adega coletiva** reais (hoje mock).
@@ -176,7 +176,7 @@ _Welcome · Apresentar · Tour (3 slides):_
 - Moderação (remover post/membro, reportar).
 - Convites: integração com contatos do device.
 - Filtros avançados (distância/dia/preço/vagas).
-### Decisões do PO
+### Decisões do Gabriel
 - **Unificar os 2 onboardings** (welcome→apresentar→tour vs tutorial confraria-usar).
 - Confraria paga? (mensalidade/rachão de eventos → Módulo 12 financeiro).
 - Limite de membros? confraria privada vs pública nas buscas?

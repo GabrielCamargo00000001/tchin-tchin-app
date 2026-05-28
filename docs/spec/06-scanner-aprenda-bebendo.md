@@ -344,7 +344,7 @@ _Por match (default) · Por preço · Por tipo:_
 - **Sair do scanner no meio** (Ctrl+W, back): `getUserMedia` track precisa ser fechada via `stream.getTracks().forEach(t => t.stop())` — implementado no v2.
 - **Navegar pra `scanner-v2` sem ter paladar:** result-v2 cai na variante "Faça o quiz" — comportamento correto.
 
-## Pendências de backend / decisões do PO
+## Pendências de backend / decisões do Gabriel
 
 ### Críticas (bloqueadores GA)
 - **OCR + matching reais** — endpoint `/api/scan/label` e `/api/scan/menu` com modelo treinado em rótulos brasileiros + internacionais.
@@ -359,7 +359,7 @@ _Por match (default) · Por preço · Por tipo:_
 - Modo "lista digitada" do menu quando câmera não funciona.
 - Alternativas similares em result-v2 e porque-combina.
 
-### Decisões do PO
+### Decisões do Gabriel
 - Aposentar formalmente v1 do scanner ou manter como fallback?
 - Pontuação por contribuir vinho à base — quanto? validação humana ou automática?
 - Compartilhar carta com confraria — público ou só pro grupo?

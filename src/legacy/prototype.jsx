@@ -52,7 +52,7 @@ import { CompararVinhosScreen, FiltrosAvancadosScreen, ListaDesejosScreen } from
 import { Notificacoes } from './screens-notificacoes.jsx';
 import { NudgeD14Screen, NudgeD1Screen, NudgeD3Screen, NudgeD7Screen } from './screens-nudges.jsx';
 import { OfflineBanner } from './screens-offline-state.jsx';
-import { LoginSocialScreen, MagicLinkEnviadoScreen, VerifConcluidaScreen, VerifTelefoneOtpScreen } from './screens-onboarding-alt.jsx';
+import { LoginSocialScreen } from './screens-onboarding-alt.jsx';
 import { CelebrationToast, TOUR_STEPS, TutorialTooltip, WelcomeFinalScreen, readTourState, writeTourState } from './screens-onboarding-final.jsx';
 import { EventoEditarScreen, EventoPosAtaScreen, EventoPosAvaliarScreen, EventoPresencaScreen } from './screens-organizador.jsx';
 import { PerfilAtividadePublicaScreen, PerfilCompararPaladarScreen, PerfilSeguidoresScreen, PerfilSeguindoScreen, PerfilSugestoesScreen, PerfilVinhosProvadosScreen } from './screens-perfil-publico.jsx';
@@ -234,7 +234,7 @@ function TchinApp({ initialScreen = 'onboarding' }) {
   const BACK_SKIP = new Set([
     'welcome', 'onboarding', 'login', 'cadastro',
     'recuperar', 'recuperar-email', 'recuperar-enviado', 'recuperar-otp', 'recuperar-redefinir', 'recuperar-sucesso',
-    'login-social', 'magic-link-enviado', 'verif-telefone-otp', 'verif-concluida',
+    'login-social',
     'quiz', 'quiz-nivel', 'quiz-interesses', 'quiz-result',
     'tela-intencao', 'gps-primer', 'gps-negado', 'welcome-final',
     'confraria-welcome', 'confraria-apresentar', 'confraria-tour-rapido',
@@ -316,7 +316,7 @@ function TchinApp({ initialScreen = 'onboarding' }) {
     'carrinho', 'endereco', 'pagamento', 'pedido-confirmado',
     'notificacoes',
     // Onboarding alternativo (34.x)
-    'login-social', 'magic-link-enviado', 'verif-telefone-otp', 'verif-concluida',
+    'login-social',
     // Expert (35.x)
     'expert-virar', 'expert-aplicar', 'expert-pendente', 'expert-q-a', 'expert-responder', 'perguntar-expert',
     // Marketplace pro (36.x)
@@ -447,10 +447,8 @@ function TchinApp({ initialScreen = 'onboarding' }) {
       // ── Notificações (14.03) ─────────────────────────────
       case 'notificacoes':       return <Notificacoes go={go} ctx={ctx}/>;
       // ── Onboarding alternativo (34.x) ──────────────────
-      case 'login-social':         return <LoginSocialScreen go={go} mode={(current.params && current.params.mode) || 'cadastro'}/>;
-      case 'magic-link-enviado':   return <MagicLinkEnviadoScreen go={go} params={current.params}/>;
-      case 'verif-telefone-otp':   return <VerifTelefoneOtpScreen go={go} params={current.params}/>;
-      case 'verif-concluida':      return <VerifConcluidaScreen go={go} params={current.params}/>;
+      case 'login-social':         return <LoginSocialScreen go={go} mode={(current.params && current.params.mode) || 'cadastro'} provider={(current.params && current.params.provider) || 'google'}/>;
+      // magic-link e verif-telefone-otp/concluida removidos do produto (fora do escopo)
       // ── Modo Expert (35.x) ──────────────────────────────
       case 'expert-virar':       return <ExpertVirarScreen go={go} ctx={ctx}/>;
       case 'expert-aplicar':     return <ExpertAplicarScreen go={go}/>;

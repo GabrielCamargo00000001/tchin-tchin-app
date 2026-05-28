@@ -214,7 +214,7 @@ _Cartão (default, com card mock animado) · PIX (QR + 5% off) · Boleto (form C
 - **Voltar do `pedido-confirmado`** vai pra `pagamento` (back natural) — provavelmente errado. Deveria ir pra `home/descobrir` ou bloquear back. **Backlog MKT-CONFIRM-BACK-LOCK**.
 - **Sair do app no meio do PIX** (com QR aberto) — quando volta, precisa repoll o status pra ver se compensou. Hoje só toast genérico. Backlog **PAY-PIX-RECOVER**.
 
-## Pendências de backend / decisões do PO
+## Pendências de backend / decisões do Gabriel
 
 ### Críticas (bloqueadores GA)
 - **State lift do carrinho** (`ctx.cart` + `tc.cart` persistente).
@@ -231,7 +231,7 @@ _Cartão (default, com card mock animado) · PIX (QR + 5% off) · Boleto (form C
 - Verificação de idade no recebimento (foto RG, OTP).
 - Múltiplas transportadoras escolha do usuário.
 
-### Decisões do PO
+### Decisões do Gabriel
 - Manter cupom **único hard-coded** (BRINDE10) no MVP ou já criar tabela?
 - Bloqueio de back em `pedido-confirmado`?
 - Avaliar entrega obrigatório ou opcional?

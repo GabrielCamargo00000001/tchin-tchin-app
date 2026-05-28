@@ -97,13 +97,13 @@
 5. **Tranquilizar sobre dados** (sessão expirada → "nada se perde").
 6. **Ilustração consistente** (`EdgeIcon` 120px círculo colorido por tom).
 
-## Pendências de backend / decisões do PO
+## Pendências de backend / decisões do Gabriel
 ### Importantes
 - **Roteamento real de erros** (404/403/500 do backend → estas telas).
 - **Retry com backoff** no erro-servidor + telemetria de erro.
 - **Refresh token** real (sessão) em vez de só 30d hard-coded.
 - **Offline global** (sem internet) — falta uma tela/banner dedicado de "sem conexão". Backlog **SYS-OFFLINE**.
-### Decisões do PO
+### Decisões do Gabriel
 - Página de status/incidentes pública?
 - Toast: fila quando múltiplos disparam junto?
 

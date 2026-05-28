@@ -120,7 +120,7 @@ _Atividade pública · Vinhos provados:_
 **Entradas:** perfil → badges. **Saídas:** back.
 **Layout (`BadgesGaleriaScreen`):** grid de badges (earned coloridas / locked com cadeado + condição). Possivelmente agrupadas por categoria.
 
-> **⚠️ DIVERGÊNCIA — badges fragmentadas:** existem badges do Treino (Módulo 08), badges aqui, e jornada (Módulo 19). **Recomendação PO:** sistema de conquistas unificado. Backlog **BADGES-UNIFY**.
+> **⚠️ DIVERGÊNCIA — badges fragmentadas:** existem badges do Treino (Módulo 08), badges aqui, e jornada (Módulo 19). **Recomendação Gabriel:** sistema de conquistas unificado. Backlog **BADGES-UNIFY**.
 
 **Status:** ✅
 
@@ -132,7 +132,7 @@ _Atividade pública · Vinhos provados:_
 - **Privacidade** não enforced no protótipo (atividade/vinhos sempre visíveis).
 - **Loading skeleton** no perfil-outro (700ms) — boa prática, manter.
 
-## Pendências de backend / decisões do PO
+## Pendências de backend / decisões do Gabriel
 ### Críticas (bloqueadores GA)
 - **Grafo social real** (seguir/seguidores/sugestões) + contadores.
 - **Edição real** (nome/@único/bio) + **upload de foto**.
@@ -142,7 +142,7 @@ _Atividade pública · Vinhos provados:_
 - Busca nas listas sociais.
 - Unificar sistema de badges (Treino + perfil + jornada).
 - Unificar 5 dimensões do paladar (Frutado vs Aromas).
-### Decisões do PO
+### Decisões do Gabriel
 - Seguir assimétrico (atual) ou pedir aprovação (perfil privado)?
 - @handle: editável quantas vezes? reservado?
 - Perfil próprio: virar rota dedicada (`perfil-eu`) em vez de só sheet?

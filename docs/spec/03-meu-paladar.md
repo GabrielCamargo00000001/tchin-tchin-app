@@ -44,7 +44,7 @@ _P1 default · P1 selecionado · P2 · P3 · P4 · P5:_
 **Interação:** estado `pending` evita que o tap rebote — só consolida em `answers` ao clicar "Continuar"; voltar para uma pergunta já respondida re-popula a opção; barra de progresso anima a transição.
 **Estado/persistência:** `answers: { docura, acidez, tanino, corpo, alcool }` em state local; ao concluir, stash em `window.__tcUserPaladar` e passa pra `quiz-result`.
 **Analytics (recomendado):** `paladar_quiz_start { from }`, `paladar_quiz_step { n, value }`, `paladar_quiz_complete { paladar }`, `paladar_quiz_abandon { atStep }`.
-> **⚠️ DIVERGÊNCIA — back na P1 vai a `cadastro`:** legado de quando o quiz vinha no onboarding. Agora o quiz é contextual → back deveria honrar `params.returnTo` (ou `home` como fallback). **Recomendação:** ajustar a rota de back; **decisão do PO**.
+> **⚠️ DIVERGÊNCIA — back na P1 vai a `cadastro`:** legado de quando o quiz vinha no onboarding. Agora o quiz é contextual → back deveria honrar `params.returnTo` (ou `home` como fallback). **Recomendação:** ajustar a rota de back; **decisão do Gabriel**.
 > **⚠️ DIVERGÊNCIA — só 2 opções por pergunta:** o doc original previa escala Likert (3 ou 5 pontos). A tela usa **binário** (15/75, 80/25, etc.) por simplicidade HP3. **Recomendação:** manter binário no MVP; futuro: oferecer "meio termo" via Likert para usuários que pedirem refinar (Backlog **PALADAR-LIKERT-01**).
 **Status:** ✅
 
@@ -83,7 +83,7 @@ _P1 default · P1 selecionado · P2 · P3 · P4 · P5:_
 **Estado/persistência:** `window.__tcUserPaladar` setado no clique de "Continuar"; pluga no `ctx.user.paladar` quando integrar com backend.
 **Analytics:** `paladar_profile_shown { profile, paladar }`; `paladar_quiz_redo { from_profile }` no "Refazer quiz".
 
-> **⚠️ DIVERGÊNCIA — fluxo legado em `Continuar`:** sem `returnTo`, a CTA manda para `tela-intencao` (etapa 3 do onboarding antigo). Hoje o quiz é contextual → deveria voltar para o origem (Descobrir/Harmoniza/Adega-Paladar/Compare) ou home. **Recomendação:** corrigir o fallback para `home` (não `tela-intencao`); honrar `returnTo` quando vier do contexto. **PO decide.**
+> **⚠️ DIVERGÊNCIA — fluxo legado em `Continuar`:** sem `returnTo`, a CTA manda para `tela-intencao` (etapa 3 do onboarding antigo). Hoje o quiz é contextual → deveria voltar para o origem (Descobrir/Harmoniza/Adega-Paladar/Compare) ou home. **Recomendação:** corrigir o fallback para `home` (não `tela-intencao`); honrar `returnTo` quando vier do contexto. **Gabriel decide.**
 
 > **⚠️ DIVERGÊNCIA — eixo "Frutado" mapeia para `alcool`:** o campo no objeto paladar é `alcool` mas o label exibido é **"Frutado"**. Isso confunde dev/QA. **Recomendação:** renomear o campo para `frutado` (mais alinhado com a marca; "Álcool" como label causa estigma). Migration de dados quando ligar o backend. Backlog: **PALADAR-RENAME-01**.
 
@@ -115,10 +115,10 @@ O paladar não é só uma tela — é um **componente transversal** lido por:
 - **Sem paladar pré-existente em `quiz-result?paladar=...`:** se chamado sem param e sem `MOCK_USER.paladar`, mostraria zerado. *Hoje sempre cai em fallback (MOCK ou onboarding). Ok pra protótipo; no build real, redirecionar para `quiz`.*
 - **Deep link para `quiz-result`:** OK para compartilhamento ("vê meu paladar!"); precisará de id de usuário no payload no build real (não passar `paladar` na URL — é PII sensorial).
 
-## Pendências de backend / decisões do PO
+## Pendências de backend / decisões do Gabriel
 - **Persistir paladar** no perfil do usuário (backend) + sincronizar com `window.__tcUserPaladar`.
 - **Analytics:** ligar `paladar_quiz_*` na infra real.
 - **Migration:** renomear `alcool` → `frutado` (atual desalinhamento label vs key).
 - **Classificação v2:** trocar cadeia de `if` por distância vetorial ao centro do perfil (mais robusto).
 - **Draft + retomada:** salvar e recuperar quiz interrompido.
-- **Decisões do PO:** binário vs Likert 5 pontos; back da P1 (cadastro vs home); reuso de paladar contextual ("paladar do dia").
+- **Decisões do Gabriel:** binário vs Likert 5 pontos; back da P1 (cadastro vs home); reuso de paladar contextual ("paladar do dia").

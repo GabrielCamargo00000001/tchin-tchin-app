@@ -31,7 +31,7 @@
 **Interação:** tap único; feedback `pressed` 200ms (scale 0.98 + bg p50) antes da navegação; `routing` lock impede double-tap (outros cards opacity 0.55).
 **Estado/persistência:** stash em `window.__tcUserLevel` (lido depois por Aprender, Descobrir, Treino).
 **Analytics (não-negociável):** `level_selected { level }`.
-> **⚠️ DIVERGÊNCIA / DECISÃO** — Doc antigo previa quiz unificado (nível + paladar 5 perguntas) e **5 níveis**. Tela separa em Nível (aqui) + Paladar (contextual), com **3 níveis**. **Recomendação:** manter como está (alinha com HP3, menor fricção); atualizar o doc. PO decide.
+> **⚠️ DIVERGÊNCIA / DECISÃO** — Doc antigo previa quiz unificado (nível + paladar 5 perguntas) e **5 níveis**. Tela separa em Nível (aqui) + Paladar (contextual), com **3 níveis**. **Recomendação:** manter como está (alinha com HP3, menor fricção); atualizar o doc. Gabriel decide.
 **Backlog:** botão "Refazer onboarding" em `config-conta`.
 **Status:** ✅
 
@@ -56,7 +56,7 @@ Bottom bar **sticky**: contagem `aria-live` "X de 18 selecionados" (com "faltam 
 **Estado/persistência:** `window.__tcUserInterests` + payload `interests_completed { count, interests }`.
 **Analytics:** `interests_completed { count, interests:[ids] }` no tap "Continuar".
 > **⚠️ DIVERGÊNCIA — scroll:** ao tocar um item fora do viewport (ex.: Mendoza nas Regiões), os cards selecionados acima saem da tela. Não é bug — a contagem persiste. **Recomendação:** **mini-resumo sticky** com chips (X) acima da CTA. Backlog.
-> **⚠️ DIVERGÊNCIA — mínimo:** doc antigo pedia ≥5; tela usa **≥3** (HP3, menor barreira). **Recomendação:** manter 3. PO decide.
+> **⚠️ DIVERGÊNCIA — mínimo:** doc antigo pedia ≥5; tela usa **≥3** (HP3, menor barreira). **Recomendação:** manter 3. Gabriel decide.
 **Backlog:** "Meus interesses" editável em `editar-perfil-paladar`.
 **Status:** ✅
 
@@ -115,7 +115,7 @@ _Default (rota D, descobrir confrarias) · diálogo nativo simulado · variante 
 CTAs: **primária** "Ativar localização" + ícone `my_location` com loading 350ms ("Ativando…") antes de abrir o diálogo; **ghost** "Agora não" (nunca em vermelho/destrutivo).
 **Diálogo nativo simulado** (overlay 45% + card branco 28dp, estilo Android): título **"Permitir que Tchin Tchin acesse a localização deste dispositivo?"** + 3 botões em coluna (todos p700 sobre branco) — **"Durante o uso do app"** · **"Somente desta vez"** · **"Não permitir"**. Granted: toast success "Tudo certo! Mostrando confrarias da sua região." + 220ms delay + navega. Deny: `gps-negado`.
 **Analytics:** `gps_primer_shown { rota: D|E }` no mount; `gps_primer_response { rota, response: 'granted'|'denied'|'soft' }`.
-> **⚠️ DIVERGÊNCIA — chip "Etapa 7 de 7":** legado da numeração antiga (com mais passos). Confunde quando a tela é usada **fora** do onboarding. **Recomendação:** trocar por "Quase lá" ou esconder fora do onboarding. PO decide.
+> **⚠️ DIVERGÊNCIA — chip "Etapa 7 de 7":** legado da numeração antiga (com mais passos). Confunde quando a tela é usada **fora** do onboarding. **Recomendação:** trocar por "Quase lá" ou esconder fora do onboarding. Gabriel decide.
 > **⚠️ DIVERGÊNCIA — diálogo:** em produção é o prompt **real** do SO (não o simulado). Implementação real: `Geolocation.getCurrentPosition` **só depois** do tap da CTA; mapear `PERMISSION_DENIED` → `gps-negado`.
 **Status:** ✅ (UI/UX completos; integração com SO pendente no build real)
 
@@ -194,10 +194,10 @@ O onboarding **não termina** em `welcome-final`. Cada destino tem uma variaçã
 - **Login subsequente:** conta existente **não** passa pelo onboarding educacional (vai direto a `home`). Premissa: backend marca `onboarding_complete: true` ao fim da Intenção.
 - **Deep link** entrando direto numa tela do onboarding: em dev (`?screen=`) qualquer rota renderiza sem estado anterior; em produção, deep link para `quiz-nivel` exige sessão autenticada **e** onboarding incompleto — senão redireciona a `home`. **Backlog:** middleware no router.
 
-## Pendências de backend / decisões do PO
+## Pendências de backend / decisões do Gabriel
 - **Analytics:** ligar `level_selected`, `interests_completed`, `intent_selected`, `intent_skip_*`, `gps_primer_*`, `tour_*` na infra real.
 - **Persistência:** mover `__tcUserLevel/Interests/LastIntent` de `window.*` para localStorage + backend (perfil).
 - **GPS:** integrar API nativa (Geolocation) substituindo o diálogo simulado.
 - **First-time:** completar Comunidade FirstTime + nudge cruzado para `learn`/`treino_paladar`.
 - **Reset:** botão "Refazer onboarding" em `config-conta`.
-- **PO decide:** mínimo de interesses (3 vs 5), chip "Etapa 7 de 7" no GPS, copy adaptada por intent no `welcome-final`, `CelebrationToast` sempre no fim do tour.
+- **Gabriel decide:** mínimo de interesses (3 vs 5), chip "Etapa 7 de 7" no GPS, copy adaptada por intent no `welcome-final`, `CelebrationToast` sempre no fim do tour.

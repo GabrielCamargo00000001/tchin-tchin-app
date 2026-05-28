@@ -99,7 +99,7 @@ _FAQ · Contato:_
 - **Privacidade/bloqueio** não-enforced no protótipo.
 - **Trocar email/telefone/senha** → telas separadas (`config-trocar-*`, `recuperar-redefinir`).
 
-## Pendências de backend / decisões do PO
+## Pendências de backend / decisões do Gabriel
 ### Críticas (bloqueadores GA)
 - **Persistência de preferências** (notif/privacidade) + enforcement.
 - **Conta real** (trocar email/telefone/senha, 2FA, soft-delete 30 dias).
@@ -108,7 +108,7 @@ _FAQ · Contato:_
 - Exportar dados (LGPD).
 - FAQ via CMS + tickets de suporte reais.
 - Chat de suporte ao vivo.
-### Decisões do PO
+### Decisões do Gabriel
 - Tchin Tchin Plus (assinatura): escopo/preço?
 - Desativar vs excluir: comunicar diferença com clareza (feito na UI).
 

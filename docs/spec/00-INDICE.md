@@ -13,7 +13,7 @@
 ### 0.1 Fonte da verdade (regra de ouro)
 - **As TELAS do protótipo são a verdade de UI/UX** — layout, navegação, componentes, copy e estados refletem a versão **mais atual** do produto.
 - **Os DOCUMENTOS são a verdade de funcionalidade/requisito** — user stories, critérios de aceite, regras, analytics, dados a armazenar.
-- Quando os dois **divergem** (o doc pede algo que a tela não faz, faz diferente, ou que por produto/usabilidade deveríamos remover), há um **callout `⚠️ DIVERGÊNCIA / DECISÃO`** com a situação e a **recomendação** — a decisão final é do PO.
+- Quando os dois **divergem** (o doc pede algo que a tela não faz, faz diferente, ou que por produto/usabilidade deveríamos remover), há um **callout `⚠️ DIVERGÊNCIA / DECISÃO`** com a situação e a **recomendação** — a decisão final é do Gabriel.
 
 ### 0.2 Legenda de status (por tela/feature)
 | Selo | Significado |
@@ -48,7 +48,7 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 
 | # | Módulo | Telas | Doc principal |
 |---|---|---|---|
-| 01 | **[Auth & Acesso](01-auth-acesso.md)** ✅ | welcome, onboarding slides, login, cadastro, social/magic/verif, recuperar senha, termos | MVP1 Épico 1, SPEC Onboarding slides |
+| 01 | **[Auth & Acesso](01-auth-acesso.md)** ✅ | welcome (SSO Apple+Google), onboarding slides, login, cadastro, login-social, recuperar senha, termos | MVP1 Épico 1, SPEC Onboarding slides |
 | 02 | **[Onboarding educacional & Roteamento](02-onboarding-roteamento.md)** ✅ | quiz-nível, interesses, tela-intenção, GPS primer, welcome-final, tutoriais, destinos first-time | Revisão UI/UX v2.1, MVP1 Épico 1 |
 | 03 | **[Meu Paladar (quiz)](03-meu-paladar.md)** ✅ | quiz, quiz-result | Sprint 11-13 Épico T1 |
 | 04 | **[Descobrir & Marketplace](04-descobrir-marketplace.md)** ✅ | home/descobrir, marketplace, wine, busca, filtros, lista-desejos, comparar | MVP1 Épico 5/6, Sprint 11-13 |
@@ -78,8 +78,9 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 
 > Status preliminar; cada módulo confirma e detalha. `home` renderiza 4 variações por aba + estados first-time.
 
-### Módulo 01 — Auth & Acesso
-`welcome` ✅ · `onboarding` (slides pré-auth) ⚠️ · `login` ✅ · `cadastro` ⚠️ · `login-social` ✅ · `magic-link-enviado` ✅ · `verif-telefone-otp` ✅ · `verif-concluida` ✅ · `recuperar` ✅ · `recuperar-email` ✅ · `recuperar-enviado` ✅ · `recuperar-otp` ✅ · `recuperar-redefinir` ✅ · `recuperar-sucesso` ✅ · `termos` ✅ · `politica-privacidade` ✅
+### Módulo 01 — Auth & Acesso [📄 doc completo](01-auth-acesso.md)
+`welcome` ✅ (SSO Apple+Google) · `onboarding` (slides pré-auth) ⚠️ · `login` ✅ · `cadastro` ⚠️ · `login-social` ✅ · `recuperar` ✅ · `recuperar-email` ✅ · `recuperar-enviado` ✅ · `recuperar-otp` ✅ · `recuperar-redefinir` ✅ · `recuperar-sucesso` ✅ · `termos` ✅ · `politica-privacidade` ✅
+**📌 Fora do escopo (removidos):** `magic-link-enviado`, `verif-telefone-otp`, `verif-concluida` — magic-link e OTP de telefone NÃO fazem parte do produto.
 
 ### Módulo 02 — Onboarding educacional & Roteamento [📄 doc completo](02-onboarding-roteamento.md)
 `quiz-nivel` ✅ · `quiz-interesses` ✅ · `tela-intencao` ✅ · `gps-primer` ✅ · `gps-negado` ✅ · `welcome-final` ✅ · `tutoriais` ✅ · (destinos first-time = variações de `home`) ✅
@@ -118,7 +119,7 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 ### Módulo 09 — Aprenda [📄 doc completo](09-aprenda.md)
 `aprender` ✅ · `aprenda` ✅ · `aprenda-detalhe` ✅
 **Estados extra capturados:** `aprender-default`, `aprenda-default`, `aprenda-detalhe-default`.
-**⚠️ Sobreposição com Módulo 08** ("Aprenda" editorial vs "Aprenda bebendo" gamificado) — decisão PO.
+**⚠️ Sobreposição com Módulo 08** ("Aprenda" editorial vs "Aprenda bebendo" gamificado) — decisão Gabriel.
 **⛔ Faltam no app (épicos):** CMS de artigos, progresso de leitura real, favoritar artigo, marcar como lido, link Aprenda↔Treino.
 
 ### Módulo 10 — Harmoniza [📄 doc completo](10-harmoniza.md)

@@ -42,7 +42,7 @@ aprenda-detalhe ─ artigo + vinhos relacionados → wine | outros artigos → a
 **Estado:** `userLevel` de `__tcUserLevel`/ctx (fallback iniciante).
 **Analytics:** `rota_b_to_feed { level }`, `rota_b_to_paladar { from_entry }`.
 
-> **⚠️ DIVERGÊNCIA — cards são read-only aqui** (preview). Ao tocar não abrem detalhe — só os CTAs roteiam. **Recomendação:** permitir tap no card → `aprenda-detalhe` (usuário espera que abram). Decisão de PO/UX.
+> **⚠️ DIVERGÊNCIA — cards são read-only aqui** (preview). Ao tocar não abrem detalhe — só os CTAs roteiam. **Recomendação:** permitir tap no card → `aprenda-detalhe` (usuário espera que abram). Decisão de Gabriel/UX.
 > **⚠️ DIVERGÊNCIA — "Começar a aprender"** pode ir pra `aprenda` OU `comunidade?feedFilter=educacao` (o doc original previa feed com viés #educacao por 14 dias). Hoje o protótipo roteia pra `aprenda`. Confirmar destino canônico.
 
 **Status:** ✅
@@ -104,9 +104,9 @@ aprenda-detalhe ─ artigo + vinhos relacionados → wine | outros artigos → a
 | Entrada | intent `treino_paladar` | intent `learn` |
 | Tom | Joguinho | Revista/blog |
 
-> **⚠️ DIVERGÊNCIA — sobreposição conceitual.** "Aprenda bebendo" (Módulo 08) e "Aprenda" (Módulo 09) têm nomes parecidos e ambos ensinam. **Recomendação PO:** clarificar a diferença na UI (Treino = praticar / Aprenda = ler) ou unificar entradas. Hoje pode confundir.
+> **⚠️ DIVERGÊNCIA — sobreposição conceitual.** "Aprenda bebendo" (Módulo 08) e "Aprenda" (Módulo 09) têm nomes parecidos e ambos ensinam. **Recomendação Gabriel:** clarificar a diferença na UI (Treino = praticar / Aprenda = ler) ou unificar entradas. Hoje pode confundir.
 
-## Pendências de backend / decisões do PO
+## Pendências de backend / decisões do Gabriel
 ### Críticas
 - **CMS de artigos** (hoje `APRENDA_CATALOG` + `LEARNING_CARDS` hard-coded).
 - **Progresso de leitura** real por usuário.
@@ -114,7 +114,7 @@ aprenda-detalhe ─ artigo + vinhos relacionados → wine | outros artigos → a
 - Salvar/favoritar artigo; marcar como lido ao rolar.
 - Cards de `aprender` abrirem detalhe (não só CTA).
 - Integração Aprenda ↔ Treino (Módulo 08).
-### Decisões do PO
+### Decisões do Gabriel
 - Destino de "Começar a aprender": `aprenda` vs `comunidade?feedFilter=educacao`?
 - Diferenciar/unificar "Aprenda" vs "Aprenda bebendo" (08)?
 

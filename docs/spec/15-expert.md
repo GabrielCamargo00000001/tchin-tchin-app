@@ -116,7 +116,7 @@ expert-q-a (inbox de perguntas) → expert-responder { pergunta } → publica re
 - **Candidatura recusada** → sem tela de recusa + reaplicação (cooldown?).
 - **Pergunta sem expert disponível** na especialidade → fallback.
 
-## Pendências de backend / decisões do PO
+## Pendências de backend / decisões do Gabriel
 ### Críticas (bloqueadores GA)
 - **Fila de curadoria** real (submissão → aprovação/recusa) + selo no perfil.
 - **Q&A real** (roteamento por especialidade, publicar resposta, thread).
@@ -125,7 +125,7 @@ expert-q-a (inbox de perguntas) → expert-responder { pergunta } → publica re
 - Notificações (aprovação/recusa, nova pergunta, resposta recebida).
 - Reputação do expert (úteis/likes → ranking).
 - Tela "você já é expert" + gestão do status.
-### Decisões do PO
+### Decisões do Gabriel
 - Expert é gratuito ou tem contrapartida (comissão/destaque pago)?
 - Q&A público (todos veem) ou privado (1:1)?
 - Cooldown de reaplicação após recusa?
