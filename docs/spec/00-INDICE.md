@@ -55,7 +55,7 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 | 06 | **[Scanner & Aprenda Bebendo](06-scanner-aprenda-bebendo.md)** ✅ | scanner(+v2/result/fallback), modo-restaurante, carta-matches, porque-combina | MVP1 Épico 4, Sprint 11-13 Épico T3 |
 | 07 | **[Adega, Diário & Estante](07-adega-diario-estante.md)** ✅ 🆕 | home/adega (Estante/Diário/Indicadores/Paladar), register-consumo, registro rápido/completo/confirmação, relatório mensal, favoritos | MVP1 Épico 7, Sprint 11-13 Épico T2 |
 | 08 | **[Treine seu Paladar (Duolingo do vinho)](08-treine-seu-paladar.md)** ✅ 🆕 | treino-paladar, treino-licao, treino-liga, treino-aprender | Sprint 11-13 Épico T3, MVP2 Épico 8/9/10 |
-| 09 | **Aprenda (hub educacional)** | aprender, aprenda, aprenda-detalhe | MVP2 Épico 10 |
+| 09 | **[Aprenda (hub educacional)](09-aprenda.md)** ✅ | aprender, aprenda, aprenda-detalhe | MVP2 Épico 10 |
 | 10 | **Harmoniza** | harmoniza, harmoniza-resultados (+ reversa) | Sprint 11-13 Épico T4 |
 | 11 | **Confrarias** | home/confrarias, detalhe (4 abas), wizard 1-6, config/convidar/sair/transferir/regras, welcome/apresentar/tour | MVP2 Épicos 1-7, Filtros das Confrarias |
 | 12 | **Eventos** | wizard 1-5, detalhe, editar, presença/RSVP/QR, pós-evento (avaliar/ata) | MVP2 Épico 2 |
@@ -114,8 +114,11 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 **Estados extra capturados:** `treino-onb-{intro,say1,objetivo,goal,say2,streakgoal,gems,final}` (8 passos do onboarding do mascote), `treino-home`, `treino-licao-{conceito,exercicio,feedback,completa}`, `treino-liga-default`, `treino-aprender-default`.
 **⛔ Faltam no app (épicos):** sync server-side (anti-fraude), CMS de lições (hoje hard-coded), matchmaking real de ligas, conteúdo de micro-vídeos, notificação de streak em risco, fim de vidas real, loja de cristais, expansão >3 unidades, busca livre no Aprender, link scanner→lição.
 
-### Módulo 09 — Aprenda
+### Módulo 09 — Aprenda [📄 doc completo](09-aprenda.md)
 `aprender` ✅ · `aprenda` ✅ · `aprenda-detalhe` ✅
+**Estados extra capturados:** `aprender-default`, `aprenda-default`, `aprenda-detalhe-default`.
+**⚠️ Sobreposição com Módulo 08** ("Aprenda" editorial vs "Aprenda bebendo" gamificado) — decisão PO.
+**⛔ Faltam no app (épicos):** CMS de artigos, progresso de leitura real, favoritar artigo, marcar como lido, link Aprenda↔Treino.
 
 ### Módulo 10 — Harmoniza
 `harmoniza` ✅ · `harmoniza-resultados` ✅ · (reversa/calibração nos componentes f23_*) ✅

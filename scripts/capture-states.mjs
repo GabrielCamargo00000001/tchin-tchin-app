@@ -94,6 +94,23 @@ const SEQ = [
     { shot: 'tutoriais-hub' },
   ]},
 
+  // ── Módulo 09 — Aprenda (hub educacional) ───────────────
+  // aprender (04.B "Você veio no lugar certo" — preview por nível)
+  { url: '?screen=aprender', ops: [
+    { wait: 500 },
+    { shot: 'aprender-default' },
+  ]},
+  // aprenda (catálogo/hub de conteúdo) + busca
+  { url: '?screen=aprenda', ops: [
+    { wait: 500 },
+    { shot: 'aprenda-default' },
+  ]},
+  // aprenda-detalhe (artigo/card)
+  { url: '?screen=aprenda-detalhe', ops: [
+    { wait: 500 },
+    { shot: 'aprenda-detalhe-default' },
+  ]},
+
   // ── Módulo 08 — Treine seu Paladar (Duolingo do vinho) ──
   // Onboarding do mascote TchinDuo (8 passos) — clearLs força aparecer
   { url: '?screen=treino-paladar', clearLs: ['tc.treino.v3'], keepTutors: true, ops: [
