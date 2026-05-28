@@ -24,7 +24,7 @@
 
 ### Regras de disparo
 - **Permissão:** sempre via **primer** antes do prompt nativo do SO (best practice — igual GPS no M02). Nunca prompt frio.
-- **Canais padrão (✅ Gabriel decidiu — opt-out pro relevante, opt-in pro marketing):** **ON** = confrarias, eventos, chat, social, gamificação/pontos, wishlist, pedidos, dicas/curadoria, conta&segurança. **OFF** (opt-in) = ranking, promoções/marketing.
+- **Canais padrão (✅ Gabriel decidiu — TUDO opt-out):** **push, in-app e e-mail vêm LIGADOS por padrão** (todos os canais ON); o usuário desliga o que não quiser. **Exceção:** **Conta & segurança é sempre ativo** (não desligável). Marketing por e-mail sempre traz link de descadastro e transacional/crítico é enviado independente das preferências (compliance).
 - **Quiet hours:** **22h–8h** sem push (exceto crítico). Configurável em `config-notif`.
 - **Frequency cap (anti-spam):** máx **~4 push/dia** não-críticos + **1 marketing/dia**. Crítico não conta. *(Calibrável.)*
 - **Agrupamento (batching):** curtidas/seguidores agrupam numa janela (~1h) → "{nome} e mais {n} curtiram"; atividade de confraria agrupa por confraria.
@@ -194,7 +194,7 @@
 
 **Saídas:** "Criar evento" → `event-wizard-1 { fromNudge }`; "Depois" → `comunidade`.
 
-> **✅ GABRIEL DECIDIU — cadência D+1/3/7/14** definitiva, com **cap de 1 nudge/dia** e parada ao criar evento (anti-spam). *(Janela calibrável.)*
+> **✅ GABRIEL DECIDIU (criado) — cadência D+1/3/7/14 definitiva** + **anti-spam:** cap de **1 nudge/dia** por usuário, soma no teto global de **~4 push/dia** (não-críticos), respeita quiet hours 22h–8h e **para assim que o usuário cria o evento**. *(Janela/teto calibráveis.)*
 > **⛔ FALTA NO APP (já no catálogo, falta o cron):** `streak_risk` (M08), `cart_abandoned` (M05), `wishlist_price_drop`/`back_in_stock` (M04), `reactivation`, `diary_reminder`. Backlog **NUDGE-TRIGGERS**.
 
 **Status:** ✅
@@ -232,23 +232,30 @@
 - E-mail transacional (templates de order/resumo/segurança).
 ### ✅ Decisões do Gabriel (fechadas)
 - **Catálogo completo** acima é a fonte da verdade (textos/canais/destinos).
-- **Canais padrão:** opt-out pro relevante, opt-in pro marketing/ranking.
-- **Cadência nudges:** D+1/3/7/14 + cap 1/dia + para ao criar evento.
+- **Canais padrão = TUDO opt-out:** **push, in-app e e-mail ligados por padrão**; usuário desliga o que quiser. Exceção: Conta & segurança sempre ativo. (Marketing por e-mail com unsubscribe; transacional/crítico sempre enviado.)
+- **Cadência nudges D+1/3/7/14 (criada)** + anti-spam: cap 1 nudge/dia, teto global ~4 push/dia, para ao criar evento.
 - **Quiet hours 22h–8h** + cap ~4 push/dia (calibrável).
 
 ## Conexões com outros módulos (origem das notificações)
 | Módulo | Notificações que origina |
 |---|---|
-| **M02 Onboarding** | push-primer (espelha GPS primer); nudges no BACK_SKIP |
+| **M01 Auth** | dispara `account_reactivated` no retorno (notifs de conta detalhadas em M20/M21) |
+| **M02 Onboarding** | push-primer (espelha o GPS primer); nudges entram no `BACK_SKIP` |
+| **M03 Paladar** | sem notif própria — calibrar paladar vira marco (notif via M19) |
 | **M04 Marketplace** | `wishlist_price_drop`, `back_in_stock` |
 | **M05 Carrinho/Checkout** | `order_confirmed/shipped/delivered`, `cart_abandoned` |
+| **M06 Scanner** | sem notif própria — escanear vira marco (notif via M19) |
+| **M07 Adega/Diário** | `diary_reminder` (lembra de registrar, +10 pts); registrar dispara `challenge_done` (via M19) |
 | **M08 Treino** | `streak_risk`, `daily_goal`, `levelup` |
-| **M11 Confrarias** | `invite_brotherhood`, `join_request`, `new_member`, `brotherhood_activity`, `role_changed` |
-| **M12 Eventos** | `event_*`, `plus_one_joined`, `event_payment_due`, pós-evento; nudges levam ao wizard |
-| **M13 Comunidade** | `like`, `comment`, `comment_reply`, `mention_post` |
+| **M09 Aprenda** | `weekly_curation` (curadoria da semana / harmonização) |
+| **M10 Harmoniza** | sem notif própria (feature pontual) |
+| **M11 Confrarias** | `invite_brotherhood`, `join_request`, `request_approved`, `new_member`, `brotherhood_activity`, `role_changed` |
+| **M12 Eventos** | `event_invite/new_in_brotherhood/tomorrow/soon/changed/canceled`, `plus_one_joined`, `event_payment_due`, `event_post_rate/ata`; nudges levam ao wizard |
+| **M13 Comunidade** | `like` (agrupada), `comment`, `comment_reply`, `mention_post` |
 | **M14 Perfil** | `follow` |
 | **M15 Expert** | `expert_replied`, `expert_question_new`, `expert_application` |
 | **M16 Indicação** | `referral_joined/reward/unlock` |
 | **M17 Chat** | `chat_message`, `chat_mention` |
-| **M19 Jornada/Pontos** | `challenge_*`, `badge_unlocked`, `milestone_done`, `ranking_*`, `points_expiring`, `redeem_confirmed` |
+| **M19 Jornada/Pontos** | `challenge_open/ending/done`, `badge_unlocked`, `milestone_done`, `ranking_up/down`, `points_expiring`, `redeem_confirmed` |
 | **M20/M21 Conta** | `security_login`, `password_changed`, `account_reactivated`, `re_auth` |
+| **Editorial/Retenção** *(transversal)* | `monthly_summary`, `weekly_curation`, `reactivation`, `diary_reminder` (curadoria + win-back) |

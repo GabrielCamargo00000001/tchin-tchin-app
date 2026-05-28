@@ -411,11 +411,13 @@ function PushNegadoScreen({ go }) {
 
 // ═══ 41.03 PushCanais ══════════════════════════════════
 function PushCanaisScreen({ go }) {
+  // Todos os canais opt-out (ligados por padrão) — Gabriel decidiu. O usuário
+  // desliga o que quiser. (Conta & segurança é sempre ativo, fora deste state.)
   const [state, setState] = React.useState({
     all: true,
     confraria: true, eventos: true, chat: true,
-    desafios: true, ranking: false, pontos: true,
-    nudges: true, marketing: false,
+    desafios: true, ranking: true, pontos: true,
+    nudges: true, marketing: true,
     wishlist: true, pedidos: true, social: true,
   });
   const set = (k) => (v) => setState(s => ({ ...s, [k]: v }));
