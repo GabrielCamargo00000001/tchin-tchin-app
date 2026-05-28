@@ -170,7 +170,7 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 
 ### Módulo 18 — Notificações & Engajamento [📄 doc completo](18-notificacoes-engajamento.md)
 `notificacoes` ✅ · `push-primer` ✅ · `push-negado` ✅ · `push-canais` ✅ · `push-preview` ✅ · `nudge-d1/d3/d7/d14` ✅ · `plus-one` ✅
-**Estados extra capturados:** os 10 (`notificacoes`, `push-{primer,negado,canais,preview}`, `nudge-d1/d3/d7/d14`, `plus-one`).
+**Estados extra capturados:** `notificacoes`, `push-{primer,negado,canais,preview}`, `nudge-d1/d3/d7/d14`, `plus-one-{default|link}` (convite por link, sem telefone).
 **⛔ Faltam no app (épicos):** FCM/APNs real + permission nativo, agendador de nudges server-side (cron por estado), feed de notificações real, agrupamento, outros gatilhos (streak/carrinho/wishlist), plus-one integrado a capacidade/pagamento.
 
 ### Módulo 19 — Jornada & Desafios [📄 doc completo](19-jornada-desafios.md)

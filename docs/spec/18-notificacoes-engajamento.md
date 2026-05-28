@@ -86,13 +86,15 @@ _D+1 · D+3 · D+7 · D+14:_
 
 ## 18.4 `plus-one` — Trazer acompanhante (`PlusOneScreen`) ✅
 
-<img src="shots/plus-one.png" width="240"/>
+<img src="shots/plus-one-default.png" width="220"/> <img src="shots/plus-one-link.png" width="220"/>
 
 **Propósito:** convidar acompanhante para um evento (+1). **US-NOTIF-05.**
-**Entradas:** evento/convite → "Levar acompanhante". **Saídas:** confirmar → volta ao evento.
-**Layout (`PlusOneScreen`):** quem você quer levar (contato/convidado externo) + dados do +1 + confirmar.
+**Entradas:** evento/convite → "Levar acompanhante". **Saídas:** gerar link → compartilhar → "Concluir" volta ao evento.
 
-> **⚠️ DIVERGÊNCIA — plus-one mock.** Backend: contar +1 na capacidade do evento; cobrança do +1 se evento pago (Módulo 12).
+> **✅ GABRIEL DECIDIU — convite por LINK, sem telefone.** O app **não coleta o número** de ninguém (nem do convidado). O host digita só o **nome** (+ foto opcional), toca **"Gerar link de convite"** e recebe um **link compartilhável** (`tchin.app/e/<id>/<token>`) com **Copiar** + **Compartilhar** (share nativo). O convidado abre o link e cai direto no evento.
+**Layout (`PlusOneScreen`):** nome do convidado + foto opcional + prévia do convite ("Como vai aparecer pra ele", sem mais o frame de WhatsApp) → estado inicial com CTA **"Gerar link de convite"**; após gerar, mostra o **link** (Copiar) + CTAs **"Compartilhar convite"** / **"Concluir"**.
+
+> **⚠️ DIVERGÊNCIA — plus-one mock.** Backend: link único por convite (token + atribuição), contar +1 na capacidade do evento; cobrança do +1 se evento pago (Módulo 12).
 > **⛔ FALTA NO APP:** integração com capacidade/pagamento do evento.
 
 **Status:** ✅

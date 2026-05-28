@@ -164,7 +164,15 @@ const SEQ = [
   { url: '?screen=nudge-d3',  ops: [ { wait: 500 }, { shot: 'nudge-d3' } ]},
   { url: '?screen=nudge-d7',  ops: [ { wait: 500 }, { shot: 'nudge-d7' } ]},
   { url: '?screen=nudge-d14', ops: [ { wait: 500 }, { shot: 'nudge-d14' } ]},
-  { url: '?screen=plus-one',  ops: [ { wait: 500 }, { shot: 'plus-one' } ]},
+  // plus-one (Levar acompanhante) — convite por LINK compartilhável (sem telefone).
+  { url: '?screen=plus-one',  ops: [
+    { wait: 600 }, { shot: 'plus-one-default' },
+    { fillType: ['text', 'João Silva'] },
+    { wait: 250 },
+    { click: 'Gerar link de convite' },
+    { wait: 1000 },
+    { shot: 'plus-one-link' },
+  ]},
 
   // ── Módulo 17 — Chat / DMs ──────────────────────────────
   { url: '?screen=chat-lista',    ops: [ { wait: 500 }, { shot: 'chat-lista' } ]},

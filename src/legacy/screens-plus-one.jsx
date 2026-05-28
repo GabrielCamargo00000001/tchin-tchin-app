@@ -8,9 +8,9 @@ import { Icon, T } from './tokens.jsx';
 
 // Tchin Tchin — 11.05 Plus One (convidar acompanhante não-membro)
 // ────────────────────────────────────────────────────────────────
-// Fluxo de convite via WhatsApp Business API pra acompanhante que
-// ainda não é membro do Tchin. US-14-2-01. Aparece após user confirmar
-// RSVP via CTA secundário "Levar acompanhante?" na tela do evento.
+// Fluxo de convite por LINK COMPARTILHÁVEL pra acompanhante que ainda não é
+// membro do Tchin (NÃO coletamos telefone — Gabriel decidiu). US-14-2-01.
+// Aparece após user confirmar RSVP via CTA "Levar acompanhante?" na tela do evento.
 //
 // Regras:
 //   • 1 Plus One por user por evento (default; admin configura em 09.04)
@@ -24,46 +24,52 @@ const NAME_MAX = 60;
 //  props:
 //    event: { id, title, date, time, location, modality, capacity?, confirmedCount? }
 //    inviterName?: string                        — pra montar o preview
-//    onSendInvite: (data) => Promise<void>
-//    onCancel: () => void
-function PlusOne({ event, inviterName, onSendInvite, onCancel }) {
+//    onGenerateLink: (data) => Promise<string>    — retorna a URL do convite
+//    onShare: (link) => void                      — dispara o share nativo
+//    onDone / onCancel: () => void
+function PlusOne({ event, inviterName, onGenerateLink, onShare, onDone, onCancel }) {
   const [name, setName]     = React.useState('');
-  const [phone, setPhone]   = React.useState('+55 ');
   const [photo, setPhoto]   = React.useState(null);     // mock — só flag
-  const [sending, setSending] = React.useState(false);
+  const [generating, setGenerating] = React.useState(false);
+  const [link, setLink]     = React.useState(null);     // null = ainda não gerou
+  const [copied, setCopied] = React.useState(false);
   const [error, setError]   = React.useState(null);
 
   // Lista de espera quando o evento está esgotado
   const isSoldOut = event && event.capacity != null && event.confirmedCount != null
     && event.confirmedCount >= event.capacity;
 
-  const phoneRaw = phone.replace(/\D/g, '');
-  const phoneValid = phoneRaw.length >= 12; // 55 + DDD + 9 dígitos
   const nameValid  = name.trim().length >= 2;
-  const valid = nameValid && phoneValid && !sending;
+  const valid = nameValid && !generating;
 
   const onChangeName = (v) => setName(v.slice(0, NAME_MAX));
-  const onChangePhone = (v) => setPhone(formatBRPhone(v));
 
-  const handleSend = async () => {
+  // Gera um link de convite compartilhável (sem coletar telefone — Gabriel decidiu).
+  const handleGenerate = async () => {
     if (!valid) return;
-    setSending(true); setError(null);
-    fbEvent('plus_one_invited', {
+    setGenerating(true); setError(null);
+    fbEvent('plus_one_link_generated', {
       event_id: event.id,
       waitlisted: isSoldOut,
     });
     try {
-      await onSendInvite({
+      const url = await onGenerateLink({
         eventId: event.id,
         name: name.trim(),
-        phone: phoneRaw,
         photoAttached: Boolean(photo),
         waitlisted: isSoldOut,
       });
+      setLink(url || `tchin.app/e/${event.id || 'evt'}/a1b2c3`);
     } catch (e) {
-      setError('Não conseguimos enviar agora. Tenta de novo.');
-      setSending(false);
+      setError('Não conseguimos gerar o link agora. Tenta de novo.');
     }
+    setGenerating(false);
+  };
+
+  const handleCopy = () => {
+    try { if (navigator && navigator.clipboard) navigator.clipboard.writeText('https://' + link); } catch (e) {}
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1800);
   };
 
   const inviterDisplayName = inviterName
@@ -79,13 +85,13 @@ function PlusOne({ event, inviterName, onSendInvite, onCancel }) {
       }}>
         <button
           onClick={onCancel} aria-label="Fechar"
-          disabled={sending}
+          disabled={generating}
           style={{
             width: 44, height: 44, borderRadius: '50%',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             background: 'transparent', border: 'none',
-            cursor: sending ? 'not-allowed' : 'pointer',
-            color: T.c.n950, opacity: sending ? 0.5 : 1,
+            cursor: generating ? 'not-allowed' : 'pointer',
+            color: T.c.n950, opacity: generating ? 0.5 : 1,
           }}>
           <Icon name="close" size={24}/>
         </button>
@@ -109,7 +115,7 @@ function PlusOne({ event, inviterName, onSendInvite, onCancel }) {
             fontSize: 15, lineHeight: 1.5, color: T.c.n800,
             textWrap: 'pretty',
           }}>
-            Você pode convidar <strong style={{ color: T.c.n950 }}>1 amigo</strong> que ainda não tá no Tchin. Ele recebe convite no WhatsApp e cai direto no evento.
+            Você pode convidar <strong style={{ color: T.c.n950 }}>1 amigo</strong> que ainda não tá no Tchin. Gera um link e manda pra ele por onde quiser — ao abrir, ele cai direto no evento.
           </p>
 
           {isSoldOut && (
@@ -144,22 +150,43 @@ function PlusOne({ event, inviterName, onSendInvite, onCancel }) {
 
           <div style={{ height: 16 }}/>
 
-          {/* WhatsApp */}
-          <FloatingInput
-            label="WhatsApp do convidado"
-            value={phone}
-            onChange={onChangePhone}
-            type="tel"
-            placeholder="+55 (DDD) 9XXXX-XXXX"
-            leading={<Icon name="chat" size={16} color={T.c.p700} fill={1}/>}
-            helper="Vamos mandar o convite por aqui"
-            required
-          />
-
-          <div style={{ height: 16 }}/>
-
           {/* Foto (opcional) */}
           <PhotoPicker hasPhoto={photo} onPick={() => setPhoto(true)} onRemove={() => setPhoto(null)}/>
+
+          {/* Link gerado */}
+          {link && (
+            <div style={{ marginTop: 20 }}>
+              <div style={{
+                fontFamily: T.font, fontSize: 11, fontWeight: 600, lineHeight: 1.4,
+                color: T.c.n600, marginBottom: 8, paddingLeft: 4,
+                textTransform: 'uppercase', letterSpacing: '0.5px',
+              }}>
+                Link do convite
+              </div>
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                padding: '12px 14px',
+                background: T.c.s100, border: `1px solid ${T.c.s700}`, borderRadius: T.r.md,
+              }}>
+                <Icon name="link" size={18} color={T.c.s700} fill={1} style={{ flexShrink: 0 }}/>
+                <div style={{
+                  flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                  fontFamily: T.mono, fontSize: 13, color: T.c.n950,
+                }}>
+                  {link}
+                </div>
+                <button onClick={handleCopy} style={{
+                  flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: 4,
+                  padding: '6px 10px', background: T.c.n0, border: `1.5px solid ${T.c.s700}`,
+                  borderRadius: T.r.sm, color: T.c.s700, cursor: 'pointer',
+                  fontFamily: T.font, fontSize: 12, fontWeight: 600,
+                }}>
+                  <Icon name={copied ? 'check' : 'content_copy'} size={14} color={T.c.s700}/>
+                  {copied ? 'Copiado' : 'Copiar'}
+                </button>
+              </div>
+            </div>
+          )}
 
           <div style={{ height: 24 }}/>
 
@@ -217,17 +244,33 @@ function PlusOne({ event, inviterName, onSendInvite, onCancel }) {
         background: T.c.n0, borderTop: `1px solid ${T.c.n100}`,
         flexShrink: 0,
       }}>
-        <Button
-          variant="primary" size="lg" fullWidth
-          loading={sending}
-          disabled={!valid}
-          onClick={handleSend}
-          leading={!sending && <Icon name="chat" size={18} color="#FFFFFF" fill={1}/>}>
-          {sending ? 'Enviando…' : 'Enviar convite no WhatsApp'}
-        </Button>
-        <Button variant="ghost" size="md" fullWidth onClick={onCancel} disabled={sending}>
-          Cancelar
-        </Button>
+        {!link ? (
+          <>
+            <Button
+              variant="primary" size="lg" fullWidth
+              loading={generating}
+              disabled={!valid}
+              onClick={handleGenerate}
+              leading={!generating && <Icon name="link" size={18} color="#FFFFFF" fill={1}/>}>
+              {generating ? 'Gerando…' : 'Gerar link de convite'}
+            </Button>
+            <Button variant="ghost" size="md" fullWidth onClick={onCancel} disabled={generating}>
+              Cancelar
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button
+              variant="primary" size="lg" fullWidth
+              onClick={() => onShare && onShare(link)}
+              leading={<Icon name="ios_share" size={18} color="#FFFFFF" fill={1}/>}>
+              Compartilhar convite
+            </Button>
+            <Button variant="ghost" size="md" fullWidth onClick={onDone || onCancel}>
+              Concluir
+            </Button>
+          </>
+        )}
       </div>
     </div>
   );
@@ -335,7 +378,7 @@ function PhotoPicker({ hasPhoto, onPick, onRemove }) {
           <div style={{
             fontFamily: T.font, fontSize: 11, color: T.c.n600,
           }}>
-            Vai aparecer no convite do WhatsApp
+            Vai aparecer no convite
           </div>
         </div>
         <button onClick={onRemove}
@@ -389,17 +432,17 @@ function PreviewCard({ event, inviterName, guestName, isSoldOut }) {
         borderRadius: T.r.lg,
         padding: 16,
       }}>
-        {/* WhatsApp-ish header */}
+        {/* Header do convite */}
         <div style={{
           display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12,
           paddingBottom: 10, borderBottom: `1px solid ${T.c.n200}`,
         }}>
           <div style={{
             width: 28, height: 28, borderRadius: '50%',
-            background: '#25D366', // WhatsApp green
+            background: T.c.p700,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            <Icon name="chat" size={16} color="#FFFFFF" fill={1}/>
+            <Icon name="wine_bar" size={16} color="#FFFFFF" fill={1}/>
           </div>
           <div style={{ flex: 1 }}>
             <div style={{
@@ -410,7 +453,7 @@ function PreviewCard({ event, inviterName, guestName, isSoldOut }) {
             <div style={{
               fontFamily: T.font, fontSize: 10, color: T.c.n600,
             }}>
-              Mensagem via WhatsApp
+              Convite pra evento
             </div>
           </div>
         </div>
@@ -461,7 +504,7 @@ function PreviewCard({ event, inviterName, guestName, isSoldOut }) {
         <div style={{
           display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6,
           padding: '8px 16px',
-          background: '#25D366', color: '#FFFFFF',
+          background: T.c.p700, color: '#FFFFFF',
           borderRadius: T.r.full,
           fontFamily: T.font, fontSize: 12, fontWeight: 700,
         }}>
@@ -474,7 +517,7 @@ function PreviewCard({ event, inviterName, guestName, isSoldOut }) {
           fontFamily: T.mono, fontSize: 10, color: T.c.n600,
           letterSpacing: '0.4px', textTransform: 'uppercase',
         }}>
-          Link AppsFlyer → app store ou direto pro evento
+          Abrindo o link → app store ou direto pro evento
         </div>
       </div>
     </div>
@@ -482,19 +525,6 @@ function PreviewCard({ event, inviterName, guestName, isSoldOut }) {
 }
 
 // ─── Helpers ────────────────────────────────────────────────
-// Format BR phone with mask "+55 (DD) 9XXXX-XXXX"
-function formatBRPhone(input) {
-  // Strip everything that's not digits
-  const digits = input.replace(/\D/g, '').slice(0, 13);
-  // Always assume +55 country code
-  const cc = '55';
-  const rest = digits.startsWith(cc) ? digits.slice(2) : digits;
-  if (!rest) return '+55 ';
-  if (rest.length <= 2) return `+55 (${rest}`;
-  if (rest.length <= 7) return `+55 (${rest.slice(0, 2)}) ${rest.slice(2)}`;
-  return `+55 (${rest.slice(0, 2)}) ${rest.slice(2, 7)}-${rest.slice(7, 11)}`;
-}
-
 function formatEventShort(dateStr, time) {
   if (!dateStr) return time || '';
   const [y, m, d] = dateStr.split('-').map(Number);
@@ -517,20 +547,28 @@ function PlusOneScreen({ go, params = {} }) {
   };
   const inviterName = (typeof window !== 'undefined' && window.MOCK_USER && window.MOCK_USER.name) || 'Ana';
 
-  const onSendInvite = async (data) => {
-    await new Promise(r => setTimeout(r, 1000));
-    go('toast', { kind: 'success', message: data.waitlisted
-      ? 'Convite enviado — está na lista de espera.'
-      : 'Convite enviado no WhatsApp!' });
-    window.setTimeout(() => go('back'), 400);
+  // Gera um link de convite (mock). Em produção: deep link único por convite
+  // (token + atribuição), sem coletar telefone de ninguém.
+  const onGenerateLink = async (data) => {
+    await new Promise(r => setTimeout(r, 700));
+    return `tchin.app/e/${data.eventId || 'evt'}/a1b2c3`;
   };
+  const onShare = (link) => {
+    try {
+      if (navigator && navigator.share) { navigator.share({ title: 'Convite Tchin Tchin', url: 'https://' + link }); return; }
+    } catch (e) {}
+    go('toast', { kind: 'success', message: 'Link pronto — manda pro seu convidado.' });
+  };
+  const onDone = () => go('back');
   const onCancel = () => go('back');
 
   return (
     <PlusOne
       event={event}
       inviterName={inviterName}
-      onSendInvite={onSendInvite}
+      onGenerateLink={onGenerateLink}
+      onShare={onShare}
+      onDone={onDone}
       onCancel={onCancel}
     />
   );
@@ -539,8 +577,7 @@ function PlusOneScreen({ go, params = {} }) {
 Object.assign(window, {
   PlusOne,
   PlusOneScreen,
-  formatBRPhone,
 });
 
 
-export { FloatingInput, NAME_MAX, PhotoPicker, PlusOne, PlusOneScreen, PreviewCard, formatBRPhone, formatEventShort };
+export { FloatingInput, NAME_MAX, PhotoPicker, PlusOne, PlusOneScreen, PreviewCard, formatEventShort };
