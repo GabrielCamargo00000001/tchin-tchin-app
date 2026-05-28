@@ -66,7 +66,7 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 | 17 | **[Chat / DMs](17-chat-dms.md)** ✅ | chat-lista, chat-conversa | MVP2 Épico 13 |
 | 18 | **[Notificações & Engajamento](18-notificacoes-engajamento.md)** ✅ | notificações, push (primer/negado/canais/preview), nudges D1/D3/D7/D14, plus-one | MVP1, Sprint 11-13 |
 | 19 | **[Jornada & Desafios](19-jornada-desafios.md)** ✅ | jornada, jornada-celebrar, desafio-detalhe, badges (=badges-galeria, M14) | MVP2 Épico 7/9 |
-| 20 | **Config & Suporte** | config (notif/privacidade/conta/bloqueados), suporte (FAQ/contato) | MVP1 |
+| 20 | **[Config & Suporte](20-config-suporte.md)** ✅ | config (notif/privacidade/conta/bloqueados), suporte (FAQ/contato) | MVP1 |
 | 21 | **Estados de sistema** | erro-404/permissão/sessão/servidor, vinho-indisponível, toast | transversal |
 
 > **Financeiro / Rachão (LACI/Celcoin)** é transversal — documentado dentro de **Eventos** (12) e referenciado em **Confrarias** (11). Specs: MVP2 Épico 3, Sprint 11-13 Épico T5.
@@ -177,8 +177,10 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 **⚠️ Pontos fragmentados:** jornada (pontos) + Treino (XP M08) + indicação (pontos M16) — recomendo moeda unificada.
 **⛔ Faltam no app (épicos):** estado real dos marcos + disparo da celebração, desafios reais (validação automática + ranking + recompensa), pontuação unificada, badges unificados.
 
-### Módulo 20 — Config & Suporte
+### Módulo 20 — Config & Suporte [📄 doc completo](20-config-suporte.md)
 `config-notif` ✅ · `config-privacidade` ✅ · `config-conta` ✅ · `config-bloqueados` ✅ · `suporte-faq` ✅ · `suporte-contato` ✅
+**Estados extra capturados:** os 6 (`config-{notif,privacidade,conta,bloqueados}`, `suporte-{faq,contato}`).
+**⛔ Faltam no app (épicos):** persistência de preferências + enforcement, conta real (trocar email/senha/2FA, soft-delete 30d), bloqueio enforced, exportar dados (LGPD), FAQ via CMS + tickets reais, chat de suporte ao vivo.
 
 ### Módulo 21 — Estados de sistema
 `erro-404` ✅ · `erro-permissao` ✅ · `erro-sessao` ✅ · `erro-servidor` ✅ · `vinho-indisponivel` ✅ · `toast` (overlay) ✅

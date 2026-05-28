@@ -94,6 +94,14 @@ const SEQ = [
     { shot: 'tutoriais-hub' },
   ]},
 
+  // ── Módulo 20 — Config & Suporte ────────────────────────
+  { url: '?screen=config-notif',       ops: [ { wait: 500 }, { shot: 'config-notif' } ]},
+  { url: '?screen=config-privacidade', ops: [ { wait: 500 }, { shot: 'config-privacidade' } ]},
+  { url: '?screen=config-conta',       ops: [ { wait: 500 }, { shot: 'config-conta' } ]},
+  { url: '?screen=config-bloqueados',  ops: [ { wait: 500 }, { shot: 'config-bloqueados' } ]},
+  { url: '?screen=suporte-faq',        ops: [ { wait: 500 }, { shot: 'suporte-faq' } ]},
+  { url: '?screen=suporte-contato',    ops: [ { wait: 500 }, { shot: 'suporte-contato' } ]},
+
   // ── Módulo 19 — Jornada & Desafios ──────────────────────
   { url: '?screen=jornada',          ops: [ { wait: 500 }, { shot: 'jornada' } ]},
   { url: '?screen=jornada-celebrar', ops: [ { wait: 600 }, { shot: 'jornada-celebrar' } ]},
