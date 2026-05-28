@@ -62,7 +62,7 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 | 13 | **[Comunidade & Feed](13-comunidade-feed.md)** ✅ | home/comunidade, criar-post, criar-momento, post-detail, comentários | MVP1 Épico 2, MVP2 Épico 15 |
 | 14 | **[Perfil & Social](14-perfil-social.md)** ✅ | perfil-outro, editar-perfil (+foto/paladar/privacidade), seguidores/seguindo/atividade/vinhos/sugestões/comparar, badges-galeria | MVP1, MVP2 |
 | 15 | **[Expert](15-expert.md)** ✅ | virar/aplicar/pendente, Q&A, responder, perguntar | MVP1 Épico 2 (badge expert) |
-| 16 | **Indicação & Convites** | indicação (landing/compartilhar/meus-convites/recompensas), convite-recebido | Filtros das Confrarias (Convites US-C) |
+| 16 | **[Indicação & Convites](16-indicacao-convites.md)** ✅ | indicação (landing/compartilhar/meus-convites/recompensas), convite-recebido | Filtros das Confrarias (Convites US-C) |
 | 17 | **Chat / DMs** | chat-lista, chat-conversa | MVP2 Épico 13 |
 | 18 | **Notificações & Engajamento** | notificações, push (primer/negado/canais/preview), nudges D1/D3/D7/D14, plus-one | MVP1, Sprint 11-13 |
 | 19 | **Jornada & Desafios** | jornada, jornada-celebrar, desafio-detalhe, badges | MVP2 Épico 7/9 |
@@ -156,8 +156,10 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 **Estados extra capturados:** os 6 (`expert-{virar,aplicar,pendente,q-a,responder}`, `perguntar-expert`).
 **⛔ Faltam no app (épicos):** fila de curadoria real, Q&A real (roteamento/thread/publicar), checagem de requisitos, notificações (decisão/pergunta/resposta), reputação do expert.
 
-### Módulo 16 — Indicação & Convites
-`indicacao-landing` ✅ · `indicacao-compartilhar` ✅ · `indicacao-meus-convites` ✅ · `indicacao-recompensas` ✅ · `convite-recebido` ✅
+### Módulo 16 — Indicação & Convites [📄 doc completo](16-indicacao-convites.md)
+`indicacao-landing` ✅ · `indicacao-compartilhar` ✅ · `indicacao-meus-convites` ✅ · `indicacao-recompensas` ✅ · `convite-recebido` ⚠️
+**Estados extra capturados:** os 5 (`indicacao-{landing,compartilhar,meus-convites,recompensas}`, `convite-recebido`).
+**⛔ Faltam no app (épicos):** link único rastreável + deep link + atribuição de ref no cadastro, carteira de créditos + consumo no checkout (M05), anti-fraude, funil real, config server-side dos valores.
 
 ### Módulo 17 — Chat / DMs
 `chat-lista` ✅ · `chat-conversa` ✅ *(UI pronta; DM completo é MVP2 Épico 13)*

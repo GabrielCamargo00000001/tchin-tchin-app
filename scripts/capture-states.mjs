@@ -94,6 +94,13 @@ const SEQ = [
     { shot: 'tutoriais-hub' },
   ]},
 
+  // ── Módulo 16 — Indicação & Convites ────────────────────
+  { url: '?screen=indicacao-landing',       ops: [ { wait: 500 }, { shot: 'indicacao-landing' } ]},
+  { url: '?screen=indicacao-compartilhar',  ops: [ { wait: 500 }, { shot: 'indicacao-compartilhar' } ]},
+  { url: '?screen=indicacao-meus-convites', ops: [ { wait: 500 }, { shot: 'indicacao-meus-convites' } ]},
+  { url: '?screen=indicacao-recompensas',   ops: [ { wait: 500 }, { shot: 'indicacao-recompensas' } ]},
+  { url: '?screen=convite-recebido',        ops: [ { wait: 500 }, { shot: 'convite-recebido' } ]},
+
   // ── Módulo 15 — Expert ──────────────────────────────────
   { url: '?screen=expert-virar',     ops: [ { wait: 500 }, { shot: 'expert-virar' } ]},
   { url: '?screen=expert-aplicar',   ops: [ { wait: 500 }, { shot: 'expert-aplicar' } ]},
