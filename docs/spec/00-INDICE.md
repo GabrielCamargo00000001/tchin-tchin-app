@@ -53,7 +53,7 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 | 04 | **[Descobrir & Marketplace](04-descobrir-marketplace.md)** ✅ | home/descobrir, marketplace, wine, busca, filtros, lista-desejos, comparar | MVP1 Épico 5/6, Sprint 11-13 |
 | 05 | **[Carrinho & Checkout](05-carrinho-checkout.md)** ⚠️ | carrinho, endereço, pagamento, pedido-confirmado | MVP1 Épico 6 + Sprint 11-13 |
 | 06 | **[Scanner & Aprenda Bebendo](06-scanner-aprenda-bebendo.md)** ✅ | scanner(+v2/result/fallback), modo-restaurante, carta-matches, porque-combina | MVP1 Épico 4, Sprint 11-13 Épico T3 |
-| 07 | **Adega, Diário & Estante** | home/adega (Estante/Diário/Indicadores/Paladar), register-consumo, registro rápido/completo/confirmação, relatório mensal, favoritos | MVP1 Épico 7, Sprint 11-13 Épico T2 |
+| 07 | **[Adega, Diário & Estante](07-adega-diario-estante.md)** ✅ 🆕 | home/adega (Estante/Diário/Indicadores/Paladar), register-consumo, registro rápido/completo/confirmação, relatório mensal, favoritos | MVP1 Épico 7, Sprint 11-13 Épico T2 |
 | 08 | **Treine seu Paladar (Duolingo do vinho)** 🆕 | treino-paladar, treino-licao, treino-liga, treino-aprender | Sprint 11-13 Épico T3, MVP2 Épico 8/9/10 |
 | 09 | **Aprenda (hub educacional)** | aprender, aprenda, aprenda-detalhe | MVP2 Épico 10 |
 | 10 | **Harmoniza** | harmoniza, harmoniza-resultados (+ reversa) | Sprint 11-13 Épico T4 |
@@ -103,8 +103,11 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 **Tutoriais conversacionais capturados:** `tutor-scanner-{intro,step-1,step-2,step-3}` (3 steps), `tutor-restaurante-{intro,step-1,step-2,step-3,step-4}` (4 steps).
 **⛔ Faltam no app (vêm dos épicos):** OCR real (rótulo + carta), NLG real do "Por que combina", base de vinhos populada, calibração de câmera, histórico de scans, histórico de cartas com lookup por restaurante (GPS), modo "lista digitada", fuzzy match "Você quis dizer X?", integração com Treino seu Paladar.
 
-### Módulo 07 — Adega, Diário & Estante
+### Módulo 07 — Adega, Diário & Estante [📄 doc completo](07-adega-diario-estante.md)
 `home/adega` (Estante 🆕 / Diário / Indicadores / Paladar) ✅ · `register-consumo` ✅ · `registro-rapido` ✅ · `registro-completo` ✅ · `registro-confirmacao` ✅ · `relatorio-mensal` ✅ · `favoritos` ✅
+**Estados extra capturados:** `home-adega-{estante,diario,indicadores,paladar}`, `register-consumo-step1|step1-busca`, `registro-rapido-default`, `registro-completo-default`, `registro-confirmacao-default`, `relatorio-mensal-default`, `favoritos-default`.
+**⚠️ Divergências-chave:** persistência da Estante só na sessão (window.__tcCellar); 4 conceitos de "guardar" sobrepostos (Estante/Diário/Favoritos/Wishlist); dimensões do paladar desalinhadas (Aromas vs Frutado); 2 fluxos de registro coexistem.
+**⛔ Faltam no app (épicos):** persistência real, sync offline, editar/excluir registro, filtros do diário, export, geração de imagem do Wrapped, insights NLG, quantidade por slot na estante.
 
 ### Módulo 08 — Treine seu Paladar (Duolingo do vinho) 🆕
 `treino-paladar` 🆕 · `treino-licao` 🆕 · `treino-liga` 🆕 · `treino-aprender` 🆕

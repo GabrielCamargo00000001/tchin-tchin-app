@@ -94,6 +94,44 @@ const SEQ = [
     { shot: 'tutoriais-hub' },
   ]},
 
+  // ── Módulo 07 — Adega, Diário & Estante ─────────────────
+  // register-consumo (2 passos: escolher vinho → avaliar)
+  { url: '?screen=register-consumo', ops: [
+    { shot: 'register-consumo-step1' },
+    { fill: ['Buscar vinho na base', 'Malbec'] },
+    { wait: 500 },
+    { shot: 'register-consumo-step1-busca' },
+  ]},
+
+  // registro-rapido (modal/tela de avaliacao rapida)
+  { url: '?screen=registro-rapido', ops: [
+    { wait: 400 },
+    { shot: 'registro-rapido-default' },
+  ]},
+
+  // registro-completo (form completo)
+  { url: '?screen=registro-completo', ops: [
+    { wait: 400 },
+    { shot: 'registro-completo-default' },
+  ]},
+
+  // registro-confirmacao (sucesso + pontos)
+  { url: '?screen=registro-confirmacao', ops: [
+    { wait: 500 },
+    { shot: 'registro-confirmacao-default' },
+  ]},
+
+  // relatorio-mensal (wrapped da adega)
+  { url: '?screen=relatorio-mensal', ops: [
+    { wait: 500 },
+    { shot: 'relatorio-mensal-default' },
+  ]},
+
+  // favoritos
+  { url: '?screen=favoritos', ops: [
+    { shot: 'favoritos-default' },
+  ]},
+
   // ── Módulo 06 — Scanner & Aprenda Bebendo ───────────────
   // Scanner v1 (legacy): viewfinder default + tooltip + help sheet
   { url: '?screen=scanner', ops: [
