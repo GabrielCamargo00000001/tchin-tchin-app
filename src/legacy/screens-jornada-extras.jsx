@@ -50,6 +50,15 @@ function WlShell({ title, onBack, children, sticky }) {
 function ConfrariaWelcomeScreen({ go, params }) {
   const confraria = (params && params.confraria) || { name: 'Brindar em Brasília', members: 24 };
   const admin = { name: 'Carla Mendes', level: 'expert' };
+  // 3 highlights do que rola na confraria. Regras:
+  //  • Próximos eventos = eventos com data futura (mostra contagem).
+  //  • Conversas ativas = threads do mural/chat com mensagem nas últimas 48h.
+  //  • Adega coletiva = vinhos que os membros provaram/recomendaram nos encontros.
+  const highlights = [
+    { icon: 'event',    n: (confraria.upcomingEvents != null ? confraria.upcomingEvents : 2), l: 'Próximos eventos' },
+    { icon: 'forum',    n: (confraria.activeThreads  != null ? confraria.activeThreads  : 3), l: 'Conversas ativas' },
+    { icon: 'wine_bar', n: (confraria.cellarCount    != null ? confraria.cellarCount    : 18), l: 'Na adega coletiva' },
+  ];
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: T.c.n0 }}>
       <div style={{
@@ -84,8 +93,22 @@ function ConfrariaWelcomeScreen({ go, params }) {
           <div style={{ fontFamily: '"Fraunces", Georgia, serif', fontSize: 32, fontWeight: 600, color: T.c.n0, lineHeight: 1.15, marginBottom: 12, textWrap: 'balance' }}>
             Bem-vinda à<br/>{confraria.name}
           </div>
-          <div style={{ ...T.t.bodyLg, color: 'rgba(255,255,255,0.9)', lineHeight: 1.5, marginBottom: 24, maxWidth: 320, margin: '0 auto 24px' }}>
-            Você é a {confraria.members + 1}ª pessoa do grupo. Bora apresentar.
+          <div style={{ ...T.t.bodyLg, color: 'rgba(255,255,255,0.9)', lineHeight: 1.5, marginBottom: 20, maxWidth: 320, margin: '0 auto 20px' }}>
+            Você é a {confraria.members + 1}ª pessoa do grupo. Olha o que já tá rolando:
+          </div>
+
+          {/* 3 highlights — o que tem dentro da confraria */}
+          <div style={{ display: 'flex', gap: 8, maxWidth: 340, margin: '0 auto 24px' }}>
+            {highlights.map((h, i) => (
+              <div key={i} style={{
+                flex: 1, background: 'rgba(255,255,255,0.16)', backdropFilter: 'blur(6px)',
+                borderRadius: T.r.md, padding: '12px 6px', textAlign: 'center',
+              }}>
+                <Icon name={h.icon} size={20} color={T.c.n0}/>
+                <div style={{ fontSize: 22, fontWeight: 800, fontFamily: T.font, color: T.c.n0, lineHeight: 1, marginTop: 6 }}>{h.n}</div>
+                <div style={{ ...T.t.caption, color: 'rgba(255,255,255,0.88)', fontSize: 10.5, lineHeight: 1.25, marginTop: 4 }}>{h.l}</div>
+              </div>
+            ))}
           </div>
 
           {/* Admin card */}

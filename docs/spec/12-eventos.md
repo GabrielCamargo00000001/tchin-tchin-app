@@ -46,6 +46,34 @@ _P1 nome/tipo · P2 quando/onde · P3 vinhos · P4 capacidade/pagamento · P5 re
 
 **Status:** ✅
 
+### 12.1.1 🆕 Templates de evento — capa, regras e local/horário (✅ definido)
+Cada **tipo de evento** (P1) tem uma **capa padrão** (gradiente da marca — `EVENT_COVERS`/`COVER_BY_TYPE` em `event-covers.jsx`; o organizador pode trocar entre 6: Clássico/Tinto/Dourado/Jantar/Vinícola/Noturno) + **regras sugeridas** + **defaults de local/horário** que pré-preenchem o P2:
+
+| Tipo | Capa padrão | Local sugerido | Horário default | Regras sugeridas (P2/P4) |
+|---|---|---|---|---|
+| **Degustação** | Clássico 🍷 | casa de um membro ou wine bar | sábado **19h** · ~2h | "Cada um traz 1 garrafa do tema (às cegas, no saco de papel)"; 1 taça/pessoa; água + pão |
+| **Jantar** | Jantar 🍽️ | casa/restaurante | sex ou sáb **20h** · ~3h | harmonização por prato; cada um traz um vinho do tema; rateio do jantar |
+| **Festa** | Dourado 🎉 | salão/casa | sex ou sáb **21h** · ~4h | espumante de boas-vindas; playlist colaborativa; dress code opcional |
+| **Visita a vinícola** | Vinícola 🌿 | endereço da vinícola | domingo **10h** · dia | transporte combinado (caronas); levar meio de pagamento p/ compras; sem dirigir após degustar |
+| **Outro** | Clássico | livre | sábado **19h** | livre (organizador define) |
+
+- **Online** (modalidade) → sem endereço; campo vira **link** (Meet/Zoom) + "tragam a própria garrafa".
+- **Privacidade do endereço:** endereço completo só liberado **24h antes** pra quem confirmou (ver 12.2).
+
+### 12.1.2 🆕 Correlação confraria → template de evento (✅ definido)
+Ao criar o 1º evento (vindo do P6 da confraria), o sistema **pré-seleciona** tipo + capa + nome a partir do **template da confraria** (P2). Em código: `eventPrefillFromTemplate(templateId)` + `suggestEventNames(type, tags)`.
+
+| Template da confraria (P2) | → Tipo de evento | Capa | Nome sugerido (exemplo) |
+|---|---|---|---|
+| **Iniciantes bem-vindos** | Degustação | Clássico | "Primeira degustação dos {confraria}" |
+| **Tintos do Mundo** | Degustação | Tinto | "Tintos do Mundo — rodada 1" |
+| **Churrasco & Vinho** | Jantar | Jantar | "Churrasco harmonizado" |
+| **Wine & Netflix** | Jantar (casual) | Noturno | "Wine & Netflix night" |
+| **Girls Wine Night** | Festa | Dourado | "Girls Wine Night" |
+| **Do zero** (sem template) | Degustação *(default)* | Clássico | sugerido pelas **tags** da confraria |
+
+**Ordem de decisão:** (1) template da confraria → mapa acima; (2) se "Do zero", usa **tags** (ex.: tag "Espumantes" → festa/Dourado; "Portugal" → degustação/Tinto); (3) **modalidade** Online força link em vez de endereço. Tudo editável pelo organizador.
+
 ---
 
 ## 12.2 `event-detalhe` — Detalhe + RSVP ✅

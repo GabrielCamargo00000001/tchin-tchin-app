@@ -48,6 +48,29 @@ _Aba Confrarias · aba Eventos:_
 
 **Status:** ✅
 
+### 11.1.1 🆕 Badges nos cards de confraria — regras de exibição (✅ definido)
+Cada card mostra **no máx. 2 badges de estado** (por prioridade) + **1 tier de atividade** (sempre). Fonte: `getConfrariaBadges()` / `ACTIVITY_META` em `cards.jsx`.
+
+**Tier de atividade (sempre 1):**
+| Tier | Quando (regra) |
+|---|---|
+| 🔥 **Muito ativa** | ≥ 2 eventos **ou** ≥ 8 posts nos últimos 30 dias |
+| ⚡ **Ativa** | ≥ 1 evento **ou** ≥ 3 posts nos últimos 30 dias |
+| 💤 **Pouco ativa** | teve atividade, mas só há > 30 dias |
+| 🌙 **Inativa** | sem evento nem post há > 90 dias |
+
+**Badges de estado (máx. 2, nesta ordem de prioridade):**
+| Badge | Mostra quando (`flag`) |
+|---|---|
+| **Verificada** | `verified` — organizador verificado / confraria parceira |
+| **Evento esta semana** | `eventThisWeek` — há evento nos próximos 7 dias |
+| **Em alta** | `trending` — crescimento acima da média (ex.: **+20% de membros em 7 dias** ou pico de atividade) |
+| **Nova** | `isNew` — criada há < 30 dias (ou recém-criada na sessão) |
+| **Perto de você** | presencial **na mesma cidade** do usuário (compara `location` × cidade do user) |
+| **Iniciantes bem-vindos** | tem tag de iniciante (`/iniciante/i`) |
+
+> Regra de empilhamento: ordena por prioridade acima e corta em 2. Tier de atividade é separado e sempre aparece.
+
 ---
 
 ## 11.2 `confraria-detalhe` — Detalhe (4 abas) ✅
@@ -102,6 +125,8 @@ _P1 nome · P2 template · P3 personalizar · P4 localização · P5 revisar · 
 > **⚠️ DIVERGÊNCIA — criação é mock async** (resolve `{brotherhoodId}` fake). Backend: criar confraria real + retornar id.
 > **⛔ FALTA NO APP (épico pede):** **upload de capa real** (P3 usa gradiente do template; "Trocar capa" é placeholder). Backlog **CONF-COVER-UPLOAD**.
 
+> **🆕 ✅ GABRIEL DEFINIU — modal/tela pós-criação (P6) sugere o 1º evento por template.** Ao terminar de criar a confraria, o P6 ("Bora marcar o primeiro encontro") **pré-seleciona um template de evento** a partir das **informações da confraria**. **Quais informações decidem o template** (em ordem): (1) **template da confraria** (P2) → mapa direto; (2) **tags** (P3); (3) **modalidade** (Presencial/Online/Ambos). Ver a tabela de correlação completa no **Módulo 12 › 12.1.1**. Em código: `eventPrefillFromTemplate(templateId)` (`screens-event-wizard-p1.jsx`) já faz o mapa template→tipo+nome+capa; `suggestEventNames(type, tags)` sugere o nome.
+
 **Status:** ✅
 
 ---
@@ -140,7 +165,16 @@ _Welcome · Apresentar · Tour (3 slides):_
 **Propósito:** acolher o novo membro — celebrar entrada, apresentar-se ao grupo, e ensinar como a confraria funciona. **US-CONF-05.**
 **Entradas:** ao entrar numa confraria. **Saídas:** encadeado welcome → apresentar → tour → `confraria-detalhe`.
 
-- **`confraria-welcome`** — gradiente + confetti + "VOCÊ FAZ PARTE · Bem-vinda à {nome}" + "Você é a Nª pessoa do grupo. Bora apresentar." + admin card. CTAs: "Me apresentar pro grupo" / "Pular e ver como funciona".
+- **`confraria-welcome`** 🆕 — gradiente + confetti + "VOCÊ FAZ PARTE · Bem-vindo à {confraria}!" + "Você é a Nª pessoa do grupo. Olha o que já tá rolando:" + **3 highlights** (cards translúcidos) + admin card. CTAs: "Me apresentar pro grupo" / "Pular e ver como funciona".
+
+> **🆕 ✅ GABRIEL DEFINIU — os 3 highlights do welcome** (mostram que a confraria já tem vida):
+> | Highlight | O que mostra | Definição / regra |
+> |---|---|---|
+> | **Próximos eventos** | contagem de eventos com data futura | nº de eventos `data ≥ hoje` |
+> | **Conversas ativas** | contagem de conversas rolando | **"conversa ativa" = thread do mural OU do chat com pelo menos 1 mensagem nas últimas 48h** (e ≥ 2 participantes) |
+> | **Adega coletiva** | contagem de vinhos | **"adega coletiva" = vinhos que os membros provaram/avaliaram nos encontros + recomendações fixadas**; o card mostra o **total de vinhos**; ao abrir a aba Adega: lista com vinho, quem trouxe/avaliou, nota média da confraria e nº de avaliações |
+>
+> **🆕 Label "Ver eventos" → "Ver próximo evento":** dentro da confraria, a CTA de eventos passa a ser **"Ver próximo evento"** e aponta pro evento de **data mais próxima no futuro** (`min(data ≥ hoje)`). Se não houver evento futuro → "Ver eventos" (volta ao genérico) ou estado vazio "Nenhum encontro marcado ainda".
 - **`confraria-apresentar`** — form de apresentação (nome + emoji [10 opções] + profissão + vinho favorito + história 240 chars) com **pré-visualização** do post + "Postar no mural" / "Pular por enquanto".
 - **`confraria-tour-rapido`** — 3 slides: **Mural é o coração** · **Eventos juntam o pessoal** · **Chat é direto**. Skip → detalhe; último → "Bora começar" → detalhe.
 
