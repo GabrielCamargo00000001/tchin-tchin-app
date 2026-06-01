@@ -31,7 +31,7 @@ import { BadgesGaleriaScreen } from './screens-badges-galeria.jsx';
 import { ChatConversaScreen, ChatListaScreen } from './screens-chat.jsx';
 import { CarrinhoScreen, EnderecoScreen, PagamentoScreen, PedidoConfirmadoScreen } from './screens-checkout.jsx';
 import { BloqueadosScreen, ConfigContaScreen, ConfigNotifScreen, ConfigPrivacidadeScreen, ContaDesativadaScreen, ContaExcluidaScreen, PoliticaPrivacidadeScreen, TermosScreen } from './screens-config-detalhe.jsx';
-import { PreviewDescobrirEmpty, PreviewEventosDescobrir, PreviewEventosMeus, PreviewModalParticiparPrivada, PreviewModalParticiparPublica } from './preview-eventos.jsx';
+import { PreviewConfrariaPrivada, PreviewConfrariaPublica, PreviewEventosDescobrir, PreviewEventosDescobrirEmpty, PreviewEventosMeus, PreviewModalParticiparPrivada, PreviewModalParticiparPublica } from './preview-eventos.jsx';
 import { ConfrariaConfigScreen, ConfrariaConvidarScreen, ConfrariaRegrasScreen, ConfrariaSairScreen, ConfrariaTransferirScreen } from './screens-confraria-full.jsx';
 import { ConfrariaDetalheScreen } from './screens-confraria.jsx';
 import { ComentariosScreen, CriarMomentoScreen, CriarPostScreen } from './screens-criar-post.jsx';
@@ -343,6 +343,10 @@ function TchinApp({ initialScreen = 'onboarding' }) {
     'push-primer', 'push-negado', 'push-canais', 'push-preview',
     // Jornada (42.x)
     'jornada', 'jornada-celebrar', 'pontos',
+    // Previews M11/M12 (full-screen mockups com chrome próprio)
+    'prev-eventos-meus', 'prev-eventos-descobrir', 'prev-eventos-descobrir-empty',
+    'prev-confraria-publica', 'prev-confraria-privada',
+    'prev-modal-publica', 'prev-modal-privada',
     // Treine seu Paladar (feature)
     'treino-paladar', 'treino-licao', 'treino-liga', 'treino-aprender',
   ].includes(current.screen);
@@ -503,11 +507,13 @@ function TchinApp({ initialScreen = 'onboarding' }) {
       case 'jornada-celebrar':    return <JornadaCelebrarScreen go={go} params={current.params}/>;
       case 'pontos':              return <PontosScreen go={go} ctx={ctx} params={current.params}/>;
       // ── PREVIEWS (Gabriel aprova antes de virar implementação) ──
-      case 'prev-eventos-meus':       return <PreviewEventosMeus go={go}/>;
-      case 'prev-eventos-descobrir':  return <PreviewEventosDescobrir go={go}/>;
-      case 'prev-modal-publica':      return <PreviewModalParticiparPublica go={go}/>;
-      case 'prev-modal-privada':      return <PreviewModalParticiparPrivada go={go}/>;
-      case 'prev-descobrir-empty':    return <PreviewDescobrirEmpty go={go}/>;
+      case 'prev-eventos-meus':              return <PreviewEventosMeus go={go}/>;
+      case 'prev-eventos-descobrir':         return <PreviewEventosDescobrir go={go}/>;
+      case 'prev-eventos-descobrir-empty':   return <PreviewEventosDescobrirEmpty go={go}/>;
+      case 'prev-confraria-publica':         return <PreviewConfrariaPublica go={go}/>;
+      case 'prev-confraria-privada':         return <PreviewConfrariaPrivada go={go}/>;
+      case 'prev-modal-publica':             return <PreviewModalParticiparPublica go={go}/>;
+      case 'prev-modal-privada':             return <PreviewModalParticiparPrivada go={go}/>;
 
       // ── Treine seu Paladar (feature) ──────────────────────
       case 'treino-paladar':      return <TreinoPaladarHome go={go}/>;
