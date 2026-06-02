@@ -3,8 +3,48 @@
 > **Documento único, ultra-detalhado, para o time de Dev.** Reúne **todos os fluxos e telas** do app com suas histórias de usuário, regras de negócio, estados e comportamentos.
 > Gerado a partir de: (a) **as telas implementadas** no protótipo `tchin-tchin-app` e (b) os **11 documentos de épicos/MVPs/specs** em `…/duolingo do vinho/epicos`.
 >
-> **Última atualização:** 2026-05-28 · **Status:** ✅ **COMPLETO — 21/21 módulos documentados** (texto ultra-detalhado + ~200 prints reais embutidos + divergências e pendências sinalizadas).
+> **Última atualização:** 2026-06-02 · **Status:** ✅ **21/21 módulos documentados** · 🎯 **8/21 módulos com decisões TOTALMENTE FECHADAS** · ⏳ 13/21 com decisões em aberto (não revisados em sessão dedicada). **318 PNGs** capturadas, **228 referenciadas** nos docs.
 > **Protótipo navegável (fonte de verdade comportamental):** https://tchin-tchin-app.vercel.app
+
+---
+
+## 🎯 Mapa de status real por módulo (junho/2026)
+
+### ✅ FECHADOS — decisões revisadas em sessão dedicada e aplicadas no doc + protótipo
+| # | Módulo | Última revisão | Decisões-chave fechadas |
+|---|---|---|---|
+| **01** | Auth & Acesso | M01 review | Apple+Google · sem magic-link · sem OTP de telefone |
+| **02** | Onboarding & Roteamento | M02 review | GPS por intent · mínimo 3 interesses · welcome 3 highlights |
+| **11** | Confrarias | esta sessão | § 11.0: Pública/Privada · papéis · visibilidade · "Descobrir" bottom nav ≠ "Descobrir eventos" |
+| **12** | Eventos | esta sessão | § 12.0: 17 sub-regras · fluxo de pagamento LACI/Pagar fora · 3 janelas de cancelamento · check-in MVP1/1.5/v2 |
+| **18** | Notificações | M18 + esta sessão | Catálogo ~50 notifs · canais opt-out · nudges D+1/3/7/14 · +8 eventos pagamento/cancelamento/waitlist |
+| **19** | Jornada & Pontos | M19 review | Economia unificada · loja resgate (crédito/vinhos/experiências) · 8 templates desafio · 5 celebrações |
+| **20** | Config & Suporte | M20 review | Sem telefone · sem 2FA · sem Tchin Tchin Plus · telas desativar+excluir |
+| **21** | Estados do sistema | M21 review | erro-sessao com 3 motivos (atualização/segurança/inatividade) |
+
+### ⏳ COM DECISÕES EM ABERTO — nunca revisados em sessão dedicada (Gabriel precisa decidir)
+| # | Módulo | Decisões pendentes |
+|---|---|---|
+| **03** | Meu Paladar | — *(sem decisões críticas em aberto)* |
+| **04** | Descobrir/Marketplace | algoritmo de recomendação · onde "Comprar" mora |
+| **05** | Carrinho/Checkout | Cupom hard-coded vs tabela · Bloqueio back · Avaliar obrigatório · Cancelar pedido · Modo "presente" |
+| **06** | Scanner | Aposentar v1? · Pontos por contribuir vinho · Compartilhar carta · Limite páginas |
+| **07** | Adega/Diário | **Taxonomia Estante/Diário/Favoritos/Wishlist** · Quantidade por slot · Relatório anual? · Escalar +10 com qualidade? |
+| **08** | Treino Paladar | Vidas: real ou cosmético · Divisões nomeadas · Cristais comprar o quê · Vídeo-aula manter? |
+| **09** | Aprenda | Destino "Começar" · Unificar com "Aprenda bebendo"? |
+| **10** | Harmoniza | Vinho→prato no MVP? · Contexto (ocasião/orçamento)? |
+| **11** | Confrarias *(parcial)* | **Unificar 2 onboardings** · Confraria paga? · Limite de membros? |
+| **12** | Eventos *(parcial)* | **Taxa da plataforma** (modelo de receita)? · Split dinâmico no MVP? · Endereço configurável? |
+| **13** | Comunidade/Feed | Comentários cheia vs inline · Momentos/Stories? · Audiência default |
+| **14** | Perfil/Social | Seguir assimétrico vs aprovação · @handle editável · Perfil próprio rota dedicada? |
+| **15** | Expert | Gratuito ou comissão? · Q&A público ou privado · Cooldown reaplicação |
+| **16** | Indicação | Bônus na 1ª compra ou cadastro? · Teto de indicações |
+| **17** | Chat/DMs | DM aberto ou só seguidos/mesma confraria? · Histórico de grupo retroativo? |
+| **21** | Estados *(parcial)* | Página status/incidentes pública? · Toast: fila quando múltiplos? |
+
+> **Resumo:** os **8 módulos fechados** cobrem a infra fundamental (auth, onboarding, confrarias, eventos, notificações, pontos, config, estados). Os **13 com decisões em aberto** estão **documentados, com telas capturadas e regras descritas no doc** — só faltam as **respostas finais do Gabriel** pra alguns pontos que tu pode bater em sessão dedicada. Nenhum doc está vazio ou faltando tela; o que existe é "pendência de decisão de produto", não falta de documentação.
+
+---
 
 ---
 
