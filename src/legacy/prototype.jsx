@@ -31,7 +31,7 @@ import { BadgesGaleriaScreen } from './screens-badges-galeria.jsx';
 import { ChatConversaScreen, ChatListaScreen } from './screens-chat.jsx';
 import { CarrinhoScreen, EnderecoScreen, PagamentoScreen, PedidoConfirmadoScreen } from './screens-checkout.jsx';
 import { BloqueadosScreen, ConfigContaScreen, ConfigNotifScreen, ConfigPrivacidadeScreen, ContaDesativadaScreen, ContaExcluidaScreen, PoliticaPrivacidadeScreen, TermosScreen } from './screens-config-detalhe.jsx';
-import { PreviewBannerConfirmado, PreviewConfrariaPrivada, PreviewConfrariaPublica, PreviewEventAguardandoAdmin, PreviewEventAguardandoPix, PreviewEventExpirado, PreviewEventPago, PreviewEventosDescobrir, PreviewEventosDescobrirEmpty, PreviewEventosMeus, PreviewHomeConfrarias, PreviewModalPrivada, PreviewModalPublicaGratuito, PreviewModalPublicaPago, PreviewSheetMetodo, PreviewSheetPagarFora, PreviewSheetPixAguardando, PreviewSheetPixConfirmado } from './preview-eventos.jsx';
+import { PreviewBannerConfirmado, PreviewConfrariaPrivada, PreviewConfrariaPublica, PreviewEventAguardandoAdmin, PreviewEventAguardandoPix, PreviewEventConfirmadoPago, PreviewEventExpirado, PreviewEventPago, PreviewEventosDescobrir, PreviewEventosDescobrirEmpty, PreviewEventosMeus, PreviewHomeConfrarias, PreviewModalCancelarVariacoes, PreviewModalPrivada, PreviewModalPublicaGratuito, PreviewModalPublicaPago, PreviewSheetMetodo, PreviewSheetPagarFora, PreviewSheetPixAguardando, PreviewSheetPixConfirmado } from './preview-eventos.jsx';
 import { ConfrariaConfigScreen, ConfrariaConvidarScreen, ConfrariaRegrasScreen, ConfrariaSairScreen, ConfrariaTransferirScreen } from './screens-confraria-full.jsx';
 import { ConfrariaDetalheScreen } from './screens-confraria.jsx';
 import { ComentariosScreen, CriarMomentoScreen, CriarPostScreen } from './screens-criar-post.jsx';
@@ -349,7 +349,7 @@ function TchinApp({ initialScreen = 'onboarding' }) {
     'prev-modal-publica-gratuito', 'prev-modal-publica-pago', 'prev-modal-privada',
     'prev-sheet-metodo', 'prev-sheet-pix-aguardando', 'prev-sheet-pix-confirmado', 'prev-sheet-pagar-fora',
     'prev-event-aguardando-pix', 'prev-event-aguardando-admin', 'prev-event-pago', 'prev-event-expirado',
-    'prev-banner-confirmado',
+    'prev-banner-confirmado', 'prev-event-confirmado-pago', 'prev-modal-cancelar-variacoes',
     // Treine seu Paladar (feature)
     'treino-paladar', 'treino-licao', 'treino-liga', 'treino-aprender',
   ].includes(current.screen);
@@ -528,6 +528,8 @@ function TchinApp({ initialScreen = 'onboarding' }) {
       case 'prev-event-pago':                return <PreviewEventPago go={go}/>;
       case 'prev-event-expirado':            return <PreviewEventExpirado go={go}/>;
       case 'prev-banner-confirmado':         return <PreviewBannerConfirmado go={go}/>;
+      case 'prev-event-confirmado-pago':     return <PreviewEventConfirmadoPago go={go}/>;
+      case 'prev-modal-cancelar-variacoes':  return <PreviewModalCancelarVariacoes go={go}/>;
 
       // ── Treine seu Paladar (feature) ──────────────────────
       case 'treino-paladar':      return <TreinoPaladarHome go={go}/>;

@@ -728,6 +728,113 @@ function PreviewBannerConfirmado({ go }) {
   );
 }
 
+// ════════════════════════════════════════════════════════════════
+// PREVIEW 19 — event-detalhe CONFIRMADO + PAGO (com "Mudar pra Não vou") 🆕
+// ════════════════════════════════════════════════════════════════
+function PreviewEventConfirmadoPago({ go }) {
+  return (
+    <EventDetalheShell
+      event={{ title: 'Degustação de Malbecs', date: 'SÁB 23 MAI · 19h30', confraria: 'Brindar em Brasília · Pública', from: '#722F37', to: '#4A1F24', price: 80 }}
+      paymentBanner={<PaymentBanner kind="pago" label="✓ Pagamento confirmado · vaga garantida" sub="R$ 80,00 recebidos. Endereço completo + lista de confirmados liberados. Lembretes ativados (D-7, D-1, 2h)."/>}
+      body={(
+        <>
+          <div style={{ ...T.t.overline, color: T.c.n600, marginBottom: 6 }}>VOCÊ ESTÁ CONFIRMADO</div>
+          <div style={{ display: 'flex', gap: 8, marginBottom: 6 }}>
+            <div style={{ flex: 1, padding: '12px 4px', borderRadius: T.r.md, background: T.c.s100, border: `1.5px solid ${T.c.s700}`, color: T.c.s700, fontFamily: T.font, fontSize: 13, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+              <Icon name="check_circle" size={16} color={T.c.s700} fill={1}/>Vou
+            </div>
+          </div>
+          <div style={{ textAlign: 'center', marginBottom: 14 }}>
+            <span style={{ ...T.t.caption, color: T.c.n600, fontStyle: 'italic', textDecoration: 'underline', cursor: 'pointer' }}>
+              Mudar pra "Não vou"
+            </span>
+          </div>
+          <div style={{ ...T.t.overline, color: T.c.n600, marginBottom: 6 }}>VINHOS DO ENCONTRO</div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            {[1,2,3].map(i => (
+              <div key={i} style={{ flex: 1, height: 60, borderRadius: T.r.md, background: `linear-gradient(135deg, ${T.c.p500}, ${T.c.p900})`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Icon name="wine_bar" size={20} color="#fff"/>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    />
+  );
+}
+
+// ════════════════════════════════════════════════════════════════
+// PREVIEW 20 — Modal Cancelar — 3 variações comparativas 🆕
+// ════════════════════════════════════════════════════════════════
+function PreviewModalCancelarVariacoes({ go }) {
+  const variacoes = [
+    {
+      tag: 'JANELA A · >24h antes',
+      tagBg: T.c.s100, tagFg: T.c.s700,
+      icon: 'undo', iconBg: T.c.s100, iconFg: T.c.s700,
+      title: 'Cancelar sua presença?',
+      body: 'Você vai receber R$ 80,00 de volta (no mesmo método). Sua vaga libera pra lista de espera.',
+      bullets: ['✓ Reembolso integral', '✓ Vaga vai pra lista de espera'],
+      cta: 'Sim, cancelar', ctaTone: T.c.p700,
+    },
+    {
+      tag: 'JANELA B · 24h-2h antes',
+      tagBg: T.c.w100, tagFg: T.c.w700,
+      icon: 'redeem', iconBg: T.c.w100, iconFg: T.c.w700,
+      title: 'Cancelamento tardio',
+      body: 'Nesse prazo, o admin já se planejou pro número confirmado. O valor (R$ 80,00) NÃO volta em dinheiro — vira 800 pontos Tchin que você usa em qualquer evento ou no marketplace.',
+      bullets: ['⚠️ Sem reembolso em dinheiro', '✓ 800 pts Tchin de crédito', '✓ Vaga vai pra lista de espera se houver tempo'],
+      cta: 'Aceitar e cancelar', ctaTone: T.c.w700,
+    },
+    {
+      tag: 'JANELA C · <2h antes / em andamento',
+      tagBg: T.c.e100, tagFg: T.c.e700,
+      icon: 'block', iconBg: T.c.e100, iconFg: T.c.e700,
+      title: 'Não dá mais pra cancelar',
+      body: 'Faltam menos de 2h e o admin já se preparou. Não há reembolso nem crédito. Se não conseguir mesmo ir, avise o admin pelo chat — fica registrado como falta.',
+      bullets: ['❌ Sem reembolso', '❌ Sem crédito em pontos', '· Conta como falta no histórico'],
+      cta: 'Avisar o admin', ctaTone: T.c.n800,
+    },
+  ];
+  return (
+    <div style={{ minHeight: '100%', display: 'flex', flexDirection: 'column', background: T.c.n50 }}>
+      <header style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px', background: T.c.n0, borderBottom: `1px solid ${T.c.n200}`, flexShrink: 0 }}>
+        <Icon name="arrow_back" size={22} color={T.c.n950}/>
+        <div style={{ flex: 1 }}>
+          <div style={{ ...T.t.h3, color: T.c.n950, fontSize: 16, fontWeight: 700 }}>Cancelar presença</div>
+          <div style={{ ...T.t.caption, color: T.c.n600, marginTop: 1, fontSize: 11.5 }}>3 variações do modal · uma dispara conforme a janela</div>
+        </div>
+      </header>
+      <div style={{ padding: '10px 10px 16px' }}>
+        {variacoes.map((v, i) => (
+          <div key={i} style={{ background: T.c.n0, borderRadius: T.r.md, padding: 12, marginBottom: 8, border: `1px solid ${T.c.n200}` }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+              <span style={{ padding: '2px 7px', background: v.tagBg, color: v.tagFg, borderRadius: T.r.full, fontFamily: T.mono, fontSize: 9.5, fontWeight: 700, letterSpacing: 0.3 }}>{v.tag}</span>
+            </div>
+            <div style={{ display: 'flex', gap: 10, marginBottom: 6 }}>
+              <div style={{ width: 28, height: 28, borderRadius: '50%', background: v.iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <Icon name={v.icon} size={15} color={v.iconFg} fill={1}/>
+              </div>
+              <div style={{ flex: 1, ...T.t.bodyB, color: T.c.n950, fontSize: 14, fontFamily: '"Fraunces", Georgia, serif', lineHeight: 1.2 }}>{v.title}</div>
+            </div>
+            <div style={{ ...T.t.caption, color: T.c.n800, lineHeight: 1.45, fontSize: 11.5, marginBottom: 6 }}>{v.body}</div>
+            <div style={{ ...T.t.caption, color: T.c.n800, lineHeight: 1.45, fontSize: 11, marginBottom: 8, paddingLeft: 4 }}>
+              {v.bullets.join(' · ')}
+            </div>
+            <div style={{ display: 'flex', gap: 6 }}>
+              <div style={{ flex: 1, padding: '7px 10px', background: v.ctaTone, color: T.c.n0, borderRadius: T.r.sm, textAlign: 'center', fontFamily: T.font, fontSize: 12, fontWeight: 700 }}>{v.cta}</div>
+              <div style={{ padding: '7px 14px', background: T.c.n0, color: T.c.n800, border: `1px solid ${T.c.n300}`, borderRadius: T.r.sm, textAlign: 'center', fontFamily: T.font, fontSize: 12, fontWeight: 600 }}>Voltar</div>
+            </div>
+          </div>
+        ))}
+        <div style={{ background: T.c.i100, padding: '8px 10px', borderRadius: T.r.sm, ...T.t.caption, color: T.c.n800, lineHeight: 1.45, fontSize: 10.5 }}>
+          <strong>Exceções:</strong> evento cancelado pelo admin → reembolso integral em dinheiro sempre. Casos humanos → admin aprova manualmente em <code>evento-presenca › Pagamentos</code>.
+        </div>
+      </div>
+    </div>
+  );
+}
+
 Object.assign(window, {
   PreviewHomeConfrarias, PreviewEventosMeus, PreviewEventosDescobrir, PreviewEventosDescobrirEmpty,
   PreviewConfrariaPublica, PreviewConfrariaPrivada,
@@ -735,6 +842,7 @@ Object.assign(window, {
   PreviewSheetMetodo, PreviewSheetPixAguardando, PreviewSheetPixConfirmado, PreviewSheetPagarFora,
   PreviewEventAguardandoPix, PreviewEventAguardandoAdmin, PreviewEventPago, PreviewEventExpirado,
   PreviewBannerConfirmado,
+  PreviewEventConfirmadoPago, PreviewModalCancelarVariacoes,
 });
 
 export {
@@ -742,5 +850,6 @@ export {
   PreviewEventAguardandoAdmin, PreviewEventAguardandoPix, PreviewEventExpirado, PreviewEventPago,
   PreviewEventosDescobrir, PreviewEventosDescobrirEmpty, PreviewEventosMeus,
   PreviewHomeConfrarias, PreviewModalPrivada, PreviewModalPublicaGratuito, PreviewModalPublicaPago,
+  PreviewEventConfirmadoPago, PreviewModalCancelarVariacoes,
   PreviewSheetMetodo, PreviewSheetPagarFora, PreviewSheetPixAguardando, PreviewSheetPixConfirmado,
 };
