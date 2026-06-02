@@ -32,6 +32,7 @@ import { ChatConversaScreen, ChatListaScreen } from './screens-chat.jsx';
 import { CarrinhoScreen, EnderecoScreen, PagamentoScreen, PedidoConfirmadoScreen } from './screens-checkout.jsx';
 import { BloqueadosScreen, ConfigContaScreen, ConfigNotifScreen, ConfigPrivacidadeScreen, ContaDesativadaScreen, ContaExcluidaScreen, PoliticaPrivacidadeScreen, TermosScreen } from './screens-config-detalhe.jsx';
 import { PreviewBannerConfirmado, PreviewConfrariaPrivada, PreviewConfrariaPublica, PreviewEventAguardandoAdmin, PreviewEventAguardandoPix, PreviewEventConfirmadoPago, PreviewEventExpirado, PreviewEventPago, PreviewEventosDescobrir, PreviewEventosDescobrirEmpty, PreviewEventosMeus, PreviewHomeConfrarias, PreviewModalCancelarVariacoes, PreviewModalPrivada, PreviewModalPublicaGratuito, PreviewModalPublicaPago, PreviewSheetMetodo, PreviewSheetPagarFora, PreviewSheetPixAguardando, PreviewSheetPixConfirmado } from './preview-eventos.jsx';
+import { CancelarSheet, ConfirmadoBanner, EscolherMetodoSheet, PagarForaSheet, ParticiparSheet, PaymentBanner, PixLaciSheet } from './event-pagamento.jsx';
 import { ConfrariaConfigScreen, ConfrariaConvidarScreen, ConfrariaRegrasScreen, ConfrariaSairScreen, ConfrariaTransferirScreen } from './screens-confraria-full.jsx';
 import { ConfrariaDetalheScreen } from './screens-confraria.jsx';
 import { ComentariosScreen, CriarMomentoScreen, CriarPostScreen } from './screens-criar-post.jsx';
@@ -119,11 +120,17 @@ function shotParams(screen) {
 function TchinApp({ initialScreen = 'onboarding' }) {
   const __q = (typeof window !== 'undefined') ? new URLSearchParams(window.location.search) : new URLSearchParams();
   const __ss = __q.get('screen'); const __st = __q.get('tab'); const __si = __q.get('intent'); const __sr = __q.get('reason'); const __sk = __q.get('kind'); const __sstate = __q.get('state');
+  const __pay = __q.get('paymentState'); const __sheet = __q.get('sheet'); const __priv = __q.get('priv'); const __paid = __q.get('paid');
   const __params = __ss ? shotParams(__ss) : {};
   if (__si) { __params.intent = __si; try { window.__tcLastIntent = __si; } catch (e) {} } // capture-mode: ?intent= injeta o intent (gps-primer narrativas + welcome-final copy)
   if (__sr) { __params.reason = __sr; } // capture-mode: ?reason= injeta o motivo (erro-sessao, vinho-indisponivel, etc.)
   if (__sk) { __params.kind = __sk; } // capture-mode: ?kind= injeta o tipo de celebração (jornada-celebrar)
   if (__sstate) { __params.state = __sstate; } // capture-mode: ?state= injeta o estado (desafio-detalhe: active/done/expired)
+  // capture-mode: estados do fluxo de pagamento no event-detalhe
+  if (__pay) { __params.paymentState = __pay; }  // 'aguardando-pix' | 'aguardando-admin' | 'pago' | 'expirado' | 'confirmado-banner'
+  if (__sheet) { __params.sheet = __sheet; }     // 'participar' | 'metodo' | 'pix-aguardando' | 'pix-confirmado' | 'pagar-fora' | 'cancelar-a' | 'cancelar-b' | 'cancelar-c'
+  if (__priv) { __params.priv = __priv; }        // 'publica' | 'privada' — pra ParticiparSheet
+  if (__paid) { __params.paid = __paid === '1'; } // pago ou não
   const [stack, setStack] = React.useState([{ screen: __ss || initialScreen, params: __params }]);
   const [tab, setTab] = React.useState(__st || 'descobrir');
   const [toast, setToast] = React.useState(null);
@@ -406,7 +413,47 @@ function TchinApp({ initialScreen = 'onboarding' }) {
       case 'desafio-detalhe': return <DetalheDesafio challenge={(current.params && current.params.challenge) || { title: 'Prove um vinho espanhol', weekNumber: 21, endsAt: new Date(Date.now() + 1000*60*60*24*3).toISOString(), criteria: 'Registre um vinho da Espanha antes do prazo.', country: 'Espanha' }} state={(current.params && current.params.state) || 'active'} inConfraria={true} registered={(current.params && current.params.registered) || []} onBack={() => go('back')} onTapWine={(w) => go('wine', { wine: w })} onRegisterFromHere={() => go('registro-rapido')}/>;
       case 'ranking':       return <RankingConfraria confraria={(current.params && current.params.confraria) || { name: 'Brindar em Brasília' }} challenge={{ title: 'Desafio espanhol', flag: '🇪🇸', weekNumber: 21, qualifier: 'espanhóis', unitSingular: 'vinho', unitPlural: 'vinhos' }} entries={[{ userId: 'u1', name: 'Carla Mendes', count: 4, points: 200 }, { userId: 'u2', name: 'Diego Reis', count: 3, points: 150 }, { userId: 'u3', name: 'Fernando Medrado', count: 3, points: 150 }, { userId: 'u4', name: 'Helena Britto', count: 2, points: 100 }, { userId: 'u5', name: 'João Bernardes', count: 2, points: 100 }, { userId: 'me', name: ctx.user.name, count: 1, points: 50 }]} currentUser={{ userId: 'me', name: ctx.user.name, position: 6, count: 1, points: 50 }} onBack={() => go('back')} onRegisterNow={() => go('registro-rapido')}/>;
       case 'calibracao':    return <CalibracaoCincoVinhos selections={[{ wine: MOCK_WINES[0], style: 'Tinto encorpado', styleKey: 'tinto-encorpado', priceRange: 'R$ 150–200', status: 'pending' }, { wine: MOCK_WINES[5], style: 'Tinto médio', styleKey: 'tinto-medio', priceRange: 'R$ 60–100', status: 'pending' }, { wine: MOCK_WINES[2], style: 'Branco seco', styleKey: 'branco-seco', priceRange: 'R$ 200–300', status: 'pending' }, { wine: MOCK_WINES[7], style: 'Branco encorpado', styleKey: 'branco-encorpado', priceRange: 'R$ 120–180', status: 'pending' }, { wine: MOCK_WINES[4], style: 'Espumante', styleKey: 'espumante', priceRange: 'R$ 80–130', status: 'pending' }]} onBack={() => go('back')} onTapWine={(s) => go('wine', { wine: s.wine })} onMarkTasted={() => go('registro-rapido')}/>;
-      case 'event-detalhe': return <EventDetalheScreen event={current.params && current.params.event} brotherhood={current.params && current.params.brotherhood} go={go}/>;
+      case 'event-detalhe': {
+        // 🆕 Wrap com fluxo de pagamento (overlay condicional):
+        // ?paymentState=aguardando-pix|aguardando-admin|pago|expirado|confirmado-banner
+        // ?sheet=participar|metodo|pix-aguardando|pix-confirmado|pagar-fora|cancelar-a|cancelar-b|cancelar-c
+        // ?priv=publica|privada · ?paid=0|1 (pra ParticiparSheet)
+        const params = current.params || {};
+        const goBack = () => go('event-detalhe', { ...params, sheet: null, paymentState: params.paymentState });
+        const paymentBanner = (() => {
+          switch (params.paymentState) {
+            case 'aguardando-pix':   return <PaymentBanner kind="pix" label="Aguardando seu PIX via LACI" sub="Expira em 24min — quando cair, sua vaga é consolidada automaticamente." ctaLabel="Abrir PIX" onCta={() => go('event-detalhe', { ...params, sheet: 'pix-aguardando' })}/>;
+            case 'aguardando-admin': return <PaymentBanner kind="admin" label="Aguardando confirmação do admin" sub="Você combinou pagar por fora. Quando o admin marcar como pago, te avisamos. Prazo: até 24h antes do evento." ctaLabel="Ver instruções" onCta={() => go('event-detalhe', { ...params, sheet: 'pagar-fora' })}/>;
+            case 'pago':             return <PaymentBanner kind="pago" label="✓ Pagamento confirmado · vaga garantida" sub="R$ 80,00 recebidos. Endereço completo + lista de confirmados liberados. Lembretes ativados (D-7, D-1, 2h)."/>;
+            case 'expirado':         return <PaymentBanner kind="expir" label="Pagamento não recebido" sub="Seu PIX expirou e a vaga foi pra lista de espera. Pague agora pra voltar — se não houver vaga, você entra na fila." ctaLabel="Pagar agora" onCta={() => go('event-detalhe', { ...params, sheet: 'pix-aguardando' })}/>;
+            default: return null;
+          }
+        })();
+        const sheet = (() => {
+          const close = () => go('event-detalhe', { ...params, sheet: null });
+          switch (params.sheet) {
+            case 'participar':     return <ParticiparSheet privacy={params.priv || 'publica'} paid={params.paid === true || params.paid === '1'} onClose={close} onProceed={() => go('event-detalhe', { ...params, sheet: (params.priv === 'privada' ? null : (params.paid ? 'metodo' : null)) })}/>;
+            case 'metodo':         return <EscolherMetodoSheet onClose={close} onPickLaci={() => go('event-detalhe', { ...params, sheet: 'pix-aguardando', paymentState: 'aguardando-pix' })} onPickFora={() => go('event-detalhe', { ...params, sheet: 'pagar-fora', paymentState: 'aguardando-admin' })}/>;
+            case 'pix-aguardando': return <PixLaciSheet status="aguardando" onClose={close} onAlreadyPaid={() => go('event-detalhe', { ...params, sheet: 'pix-confirmado', paymentState: 'pago' })}/>;
+            case 'pix-confirmado': return <PixLaciSheet status="confirmado" onClose={close} onSeeEvent={close}/>;
+            case 'pagar-fora':     return <PagarForaSheet onClose={close} onConfirm={close}/>;
+            case 'cancelar-a':     return <CancelarSheet janela="A" onClose={close} onConfirm={close}/>;
+            case 'cancelar-b':     return <CancelarSheet janela="B" onClose={close} onConfirm={close}/>;
+            case 'cancelar-c':     return <CancelarSheet janela="C" onClose={close} onConfirm={close}/>;
+            default: return null;
+          }
+        })();
+        return (
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
+            {params.paymentState === 'confirmado-banner' && <ConfirmadoBanner onTap={() => go('event-detalhe', { ...params, paymentState: 'pago' })}/>}
+            {paymentBanner}
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+              <EventDetalheScreen event={params.event} brotherhood={params.brotherhood} go={go}/>
+            </div>
+            {sheet}
+          </div>
+        );
+      }
       case 'post-detail':   return <PostDetailScreen go={go} params={current.params}/>;
       case 'busca':         return <BuscaScreen go={go}/>;
       case 'perfil-outro':  return <PerfilOutroScreen go={go} params={current.params}/>;
