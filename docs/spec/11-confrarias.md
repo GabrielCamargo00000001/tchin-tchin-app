@@ -4,22 +4,59 @@
 > **Fonte de verdade:** `screens-app.jsx` (`ConfrariasScreen` home), `screens-confraria.jsx` (`ConfrariaDetalheScreen` + 4 abas), `screens-wizard-confraria*.jsx` (wizard P1–P6), `screens-confraria-full.jsx` (config/convidar/sair/transferir/regras), `screens-jornada-extras.jsx` (welcome/apresentar/tour), `screens-tutor.jsx` (tutorial `confraria-usar`). Doc funcional: **MVP2 Épicos 1-7** + **Filtros das Confrarias**.
 > **Épicos/US:** US-CONF-01 (descobrir/buscar/filtrar), US-CONF-02 (criar — wizard), US-CONF-03 (detalhe 4 abas), US-CONF-04 (gestão admin), US-CONF-05 (onboarding pós-entrada), US-CONF-06 (convites), US-CONF-07 (papéis/privacidade), US-CONF-08 (transferir/sair/arquivar).
 
-**Regra de negócio canônica:** confraria tem **privacidade** (Aberta / Por aprovação / Fechada) e **papéis** (admin vs membro). Criar = wizard de 6 passos (nome → template → personalizar → localização → revisar → 1º evento). Entrar dispara **onboarding** (welcome → apresentar → tour). Admin tem zona de gestão (editar, convidar, regras, transferir, arquivar, excluir). Localização é opcional (auto-skip se Online).
+**Regra de negócio canônica:** confraria tem **privacidade** (Pública / Privada) e **papéis** (admin/co-admin vs membro vs não-membro). Criar = wizard de 6 passos (nome → template → personalizar → localização → revisar → 1º evento). Entrar dispara **onboarding** (welcome → apresentar → tour). Admin tem zona de gestão (editar, convidar, regras, transferir, arquivar, excluir). Localização é opcional (auto-skip se Online).
+
+---
+
+## 11.0 🆕 Definições canônicas — Privacidade, Papéis e Visibilidade (✅ Gabriel definiu)
+
+### 11.0.1 Privacidade da confraria (dois únicos modos)
+| Modo | Aparece em busca/Recomendações/Descobrir? | Não-membro vê | Botão "Participar" |
+|---|---|---|---|
+| **Pública** | ✅ Sim, listada normal | **Tudo:** Eventos · Publicações · Membros · Adega | Entra direto (consentimento explícito) |
+| **Privada** | ✅ Sim, listada normal (com ícone 🔒) | **Só aba Eventos.** Publicações / Membros / Adega ficam fechadas | Vira **solicitação ao admin** |
+
+> **Não existe "flag de visibilidade por evento".** A privacidade do evento é **herdada da confraria**.
+
+### 11.0.2 Papéis
+- **Admin / co-admin** — cria e gerencia eventos, aprova/recusa pedidos, marca pagamentos manuais, edita config/regras.
+- **Membro** — RSVP livre, vê tudo da confraria, posta no mural, paga eventos pagos.
+- **Não-membro** — visibilidade conforme privacidade (acima). Pode "Participar" (pública) ou "Solicitar" (privada).
+
+### 11.0.3 Modelo de visibilidade (quem vê o quê)
+| Item | Pública | Privada (não-membro) |
+|---|---|---|
+| Aparece no Descobrir/busca | ✅ | ✅ |
+| Aba Eventos (listagem) | ✅ | ✅ |
+| Publicações / Membros / feed | ✅ | ❌ (cadeado) |
+| **Endereço exato** + **lista nominal** de confirmados | ✅ | ❌ Só UF+Cidade. Libera após aprovação |
+| Botão Participar | Entra direto | Vira solicitação pro admin |
+
+### 11.0.4 "Descobrir" da bottom nav vs "Descobrir eventos"
+> **São duas coisas diferentes** (perguntado pelo time dev):
+> - **Descobrir** (bottom nav) = hub de **vinhos/marketplace**. Confrarias **não** aparecem aqui no MVP1 (backlog `CONF-IN-DISCOVER` pra cards editoriais futuros).
+> - **Descobrir eventos** = sub-segmento dentro de `home/confrarias › aba Eventos` (ver M12 § 12.0).
+
+---
+
+
 
 ## Mapa do fluxo
 ```
-home/confrarias ─┬─ aba Confrarias (busca + filtros · sub: Recomendadas/Suas)
+home/confrarias ─┬─ aba Confrarias (busca + filtros · sub: Recomendadas/Suas)  ← INTACTA
                  │     ├─ "Criar confraria" → wizard-confraria-1…6
                  │     └─ tap card → confraria-detalhe
-                 └─ aba Eventos (sub: Minhas/Inscritos)  [Módulo 12]
+                 └─ aba Eventos 🆕 (segmented: Meus | Descobrir · chips: Próx/Andamento/Final)
+                       └─ [Módulo 12 § 12.0]
 
 wizard-confraria: 1 nome → 2 template → 3 personalizar → 4 localização → 5 revisar → 6 "1º encontro"
                   (P4 auto-skip se Online; P5 cria async; P6 → criar evento OU ver confraria)
 
-[entrar numa confraria] → confraria-welcome → confraria-apresentar → confraria-tour-rapido → confraria-detalhe
-                          (+ tutorial conversacional 'confraria-usar' por cima do detalhe na 1ª visita)
+[entrar numa confraria] → confraria-welcome (3 highlights) → confraria-apresentar → confraria-tour-rapido → confraria-detalhe
 
 confraria-detalhe (4 abas: Eventos · Publicações · Membros · Adega)
+   ├─ PÚBLICA: 4 abas abertas pra qualquer um · botão "Participar" entra direto
+   ├─ PRIVADA: só aba Eventos aberta pra não-membro · 3 outras com cadeado · botão "Solicitar"
    └─ menu ⋯ (admin): config · convidar · regras · transferir · sair
 ```
 

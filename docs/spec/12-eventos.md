@@ -4,7 +4,166 @@
 > **Fonte de verdade:** `screens-event-wizard-p1…p5.jsx` (wizard), `screens-event-detalhe.jsx` (`EventDetalheScreen`), `screens-organizador.jsx` (`EventoEditarScreen` + `EventoPresencaScreen` + `EventoPosAvaliarScreen` + `EventoPosAtaScreen`), `screens-resumo-pos-evento.jsx` (card de resumo). Doc funcional: **MVP2 Épico 2** + **MVP2 Épico 3 (Financeiro/Rachão)** + **Sprint 11-13 Épico T5**.
 > **Épicos/US:** US-EV-01 (criar — wizard), US-EV-02 (detalhe + RSVP), US-EV-03 (editar), US-EV-04 (presença/check-in), US-EV-05 (pagamentos/rachão — LACI/Celcoin), US-EV-06 (pós: avaliar vinhos), US-EV-07 (pós: ata), US-EV-08 (resumo pós-evento no feed).
 
-**Regra de negócio canônica:** evento é criado por admin da confraria (wizard 5 passos). Pode ser **gratuito** ou **valor fixo por pessoa**. RSVP: Confirmar / Talvez / Não vou. **Quem confirma vê o endereço completo 24h antes.** Pagamento via **LACI** (reconhecido automático) ou pago pela conta ou marcado manualmente pelo admin. Pós-evento: avaliar vinhos (vai pro diário + média da confraria) + publicar ata (foto + destaques).
+**Regra de negócio canônica:** evento é criado por admin da confraria (wizard 5 passos). Pode ser **gratuito** ou **valor fixo por pessoa**. RSVP: Vou / Talvez / Não vou (em pago só Vou/Não vou — sem Talvez). Privacidade **herdada da confraria** (não há flag por evento). Pagamento via **LACI** (reconhecimento automático) ou **fora do LACI** (PIX externo / dinheiro no local, admin confirma). Pós-evento: avaliar vinhos + publicar ata. Pontos só pra quem fez **check-in real**.
+
+---
+
+## 12.0 🆕 Modelo canônico — Aba Eventos, RSVP, Pagamento, Cancelamento (✅ Gabriel definiu)
+
+### 12.0.1 Dois locais de listagem de eventos
+| Local | Conteúdo | Tem segmented Meus/Descobrir? |
+|---|---|---|
+| **A.** `home/confrarias › aba Eventos` *(global)* | Eventos de todas as confrarias | **SIM** — Meus / Descobrir |
+| **B.** `confraria-detalhe › aba Eventos` *(local)* | Só eventos daquela confraria | **NÃO** — só chips Próximos / Passados |
+
+### 12.0.2 Eixos de filtro na aba Eventos global (A)
+**Eixo de escopo** (segmented no topo): **Meus eventos** | **Descobrir eventos**
+**Eixo de status** (chips abaixo): **Próximos** | **Andamento** | **Finalizados** *(em "Descobrir", "Finalizados" some)*
+
+**Default ao abrir:** Meus eventos → Próximos.
+
+**"Meus eventos" =** união de:
+- Eventos das confrarias que sou **membro** (qualquer status: próximos, andamento, finalizados — histórico vale).
+- Eventos onde dei **RSVP "Vou"** (mesmo se entrei na confraria só por causa do evento).
+
+**"Descobrir eventos" =** evento aparece se TODAS forem verdadeiras:
+- `data_inicio ≥ agora` (futuro) OU está em janela de andamento.
+- **Eu NÃO sou membro** da confraria (evita duplicar com Meus).
+- Confraria pode ser Pública ou Privada (ambas entram).
+- "Perto de mim" é **opt-in** (filtro que aparece como dropdown — não é ordenação por distância nem mostra km).
+
+### 12.0.3 Ordenação
+**Sempre cronológica** (mais cedo primeiro). Vale com ou sem localização. **Não existe "mais perto"** em lugar nenhum da UI.
+- Desempate de mesma data/hora: ordem de criação (mais antigo primeiro).
+- Evento "Em andamento" **sobe pro topo de Próximos** enquanto durar a janela (apenas em "Meus") — não troca de chip, só destaque visual com badge "Acontecendo agora". Visão dedicada do andamento fica no chip "Andamento".
+
+### 12.0.4 Card e detalhe do evento
+**Card** (em qualquer listagem): capa, título, data/hora, local. Em "Descobrir" mostra **`Origem · {Confraria}`**. **Não mostra:** distância em km, "Quem vai", selo de RSVP.
+**Detalhe (`event-detalhe`):** descrição, **Adega do evento** (vinhos), organizador, local, vagas, lista de confirmados, botão Participar.
+
+**Privada · não-membro:** endereço aparece como **UF + Cidade**; lista nominal de confirmados **oculta**; só número total agregado. Tudo libera após aprovação.
+
+### 12.0.5 Ação Participar (o portão)
+| Confraria | Ao tocar "Participar" |
+|---|---|
+| **Pública** | Abre modal "Participar do evento" com consentimento explícito: *"Ao confirmar, você participa de {evento} e entra na confraria {nome}"*. RSVP entra na hora. |
+| **Privada** | Abre modal "Solicitar para participar" → envia solicitação ao admin. Admin aprova evento + entrada de uma vez. Reusa fluxo `join_request` existente. **Pagamento (se houver) só rola após aprovação** — nunca cobramos antes. |
+
+### 12.0.6 RSVP (Vou / Talvez / Não vou)
+| Tipo de evento | Quem pode ver | Vou | Talvez | Não vou |
+|---|---|---|---|---|
+| Gratuito · Pública | Qualquer usuário | ✅ | ✅ | ✅ |
+| Gratuito · Privada (membro) | Membro | ✅ | ✅ | ✅ |
+| Gratuito · Privada (não-membro) | Não-membro | passa por "Solicitar" | ❌ | ❌ |
+| **Pago · Pública** | Qualquer usuário | ✅ (+ pagar) | **❌ não existe** | ✅ |
+| **Pago · Privada (membro)** | Membro | ✅ (+ pagar) | **❌** | ✅ |
+| Pago · Privada (não-membro) | Não-membro | "Solicitar" | ❌ | ❌ |
+
+**Regras:**
+- Inscrição = "Vou" automaticamente. "Talvez" e "Não vou" **não ocupam vaga**.
+- "Talvez" só existe em evento gratuito (gera ambiguidade em pago).
+- Membro pode mudar a resposta **até 2h antes** (depois disso vai pra fluxo de cancelamento — § 12.0.10).
+
+### 12.0.7 Estados do RSVP × Pagamento (em evento pago)
+| Estado | Quando | Vaga |
+|---|---|---|
+| **Vou — vaga provisória** | Confirmou, ainda não escolheu método ou desistiu do PIX | Reservada por **2h** |
+| **Vou — Aguardando PIX (LACI)** | Gerou QR LACI, aguardando webhook | Reservada (timer 30min) |
+| **Vou — Aguardando admin** | Escolheu "Pagar fora" (PIX externo / dinheiro no local) | Reservada até **24h antes** do evento |
+| **Vou — ✓ Pago** | Webhook LACI OK ou admin marcou | Consolidada — endereço + lista liberados |
+| **Vou — Pagamento expirado** | PIX expirou ou prazo manual venceu | Liberada pra lista de espera |
+| Talvez / Não vou | RSVP sem pagar | — |
+
+### 12.0.8 Fluxo de pagamento (3 sheets + 4 estados no event-detalhe)
+**Sheets (em sequência):**
+1. **Modal Participar** → "+ R$ X" no botão. RSVP "Vou" leva pra step 2.
+2. **Sheet Escolher método** → LACI (recomendado, instantâneo) **ou** Pagar fora (PIX externo / dinheiro no local; "no local" só pra modalidade presencial/híbrida).
+3. **Sheet do método escolhido:**
+   - **PIX LACI** → QR + copia/cola + timer (30min). Webhook confirma automático. Banner "Pode fechar — a gente avisa".
+   - **Pagar fora** → instruções do admin (chave PIX dele / no local) + nota "Sua vaga é provisória até o admin marcar".
+
+**3 caminhos paralelos pra fechar o loop quando o user não está mais na tela:**
+1. **Push** (M18 catalog): `payment_confirmed_laci`, `payment_confirmed_manual`, `payment_expired`, `payment_pending_reminder` (D-3 + 6h antes).
+2. **Banner ao reabrir o app** se houver confirmação desde a última visita.
+3. **Estado no event-detalhe** sempre reflete a verdade (Aguardando PIX / Aguardando admin / Pago / Expirado).
+
+### 12.0.9 Lista de espera
+- Evento lotado → botão muda pra **"Entrar na lista de espera"**.
+- Quando alguém cancela: **1º da fila é promovido** pra "Aguardando pagamento" + push "🎉 Vaga liberou — confirma em 6h".
+- **Prazo do promovido: 6h** pra escolher método e iniciar pagamento. Se não, volta pro fim da fila e próximo é chamado.
+- Lista de espera fecha **2h antes do evento** (sem tempo útil pra promover).
+- Cancelar da própria lista de espera: livre, sem fricção.
+
+### 12.0.10 Cancelamento depois de pago — 3 janelas
+| Janela | Pode mudar pra "Não vou"? | R$ | Vaga |
+|---|---|---|---|
+| **> 24h antes** | ✅ Livre | **Reembolso integral** mesmo método (LACI estorna; pago fora → admin estorna) | Libera pra lista de espera |
+| **24h–2h antes** | ⚠️ Com fricção | **Sem dinheiro de volta — vira crédito em Pontos Tchin** (R$80 = 800 pts, taxa M19) | Libera se houver tempo |
+| **< 2h antes ou em andamento** | ❌ Não dá | Sem reembolso, sem crédito | Vaga reservada · **registra como falta** |
+
+**Exceções (override do prazo):**
+- Evento cancelado pelo admin → **reembolso integral em dinheiro sempre**, qualquer janela.
+- Caso humano → admin pode aprovar reembolso manual em `evento-presenca › Pagamentos`.
+
+### 12.0.11 Confirmação, lembretes e cancelamento do evento
+**Após RSVP "Vou" confirmado:**
+- Modal de sucesso + **iCal** (add ao calendário) + e-mail de confirmação.
+
+**Lembretes (push — respeitam quiet hours 22h–8h, exceto o de 2h):**
+- **D-7** → confirmados.
+- **D-3** → só "Talvez" / sem resposta.
+- **D-1** → confirmados + Talvez.
+- **2h antes** → só confirmados (única notif que fura quiet hours).
+- Quem marcou "Não vou" não recebe nada.
+
+**Evento cancelado pelo admin:**
+- Cancela lembretes pendentes.
+- Push de cancelamento na hora pros confirmados.
+- Reembolso integral automático (todos os métodos).
+
+### 12.0.12 Andamento e check-in
+Na janela do evento, estado vira **"Acontecendo agora"** e libera check-in. **3 métodos:**
+- **Manual** (admin marca cada nome em `evento-presenca`). **MVP1**.
+- **QR code** — admin gera QR estável durante a janela; participante escaneia com o app. **MVP1.5**.
+- **Geolocalização** — botão "Cheguei" + verificação no raio de 80m. **v2** (precisão indoor é instável; valida-se depois).
+
+### 12.0.13 Pós-evento
+- Vai pro histórico em "Meus eventos → Finalizados".
+- Libera:
+  - **Avaliar vinhos** → diário (M07) + média da confraria.
+  - **Ata** (foto do grupo + destaques + próximo passo) → post no mural.
+  - **Fotos do evento** 🆕 (entidade `EventPhoto`): só quem fez **check-in** pode publicar. Layout = grade no event-detalhe + opção "compartilhar no mural" vira post regular.
+  - **Pontos por participação** (M19) — só com check-in real.
+  - **Ranking de participação** 🆕 (interno da confraria) — ordenado por nº de check-ins reais nos últimos 12 meses. Aparece em `confraria-detalhe › aba Membros` (card "Top 3").
+
+### 12.0.14 Saída da confraria e cancelar RSVP (ações separadas)
+- **Cancelar RSVP** ≠ **Sair da confraria** — duas ações distintas.
+- Quem entrou via evento sai da confraria normalmente em `confraria-detalhe › menu ⋯ › Sair`.
+- Cancelar presença em um evento não tira o usuário da confraria.
+
+### 12.0.15 Estados vazios (cold start)
+- **Descobrir vazio** → empty state honesto: *"Ainda não tem evento perto de você. Crie uma confraria e seja o primeiro."* + CTA "Criar uma confraria". Nunca deixar tela só vazia.
+- Não promover "Descobrir eventos" em campanha enquanto não houver evento real pra descobrir.
+
+### 12.0.16 Regras de borda
+- **Cancelar RSVP:** permitido até **24h antes** (depois entra no fluxo das 3 janelas).
+- **Só admin/co-admin cria evento.**
+- Evento só com **no mínimo 24h de antecedência** (exceção: hoje, se faltam mais de 4h).
+- Membro com notificações desativadas no app não recebe lembrete (3 níveis: master switch · canal `eventos` · silenciar evento específico).
+
+### 12.0.17 Analytics (North Star = eventos completados/mês)
+Eventos a disparar:
+`descobrir_evento_visto`, `evento_detalhe_aberto`, `rsvp_confirmado { origem: minha_confraria | descobrir }`,
+`entrou_confraria_via_evento_publica`, `solicitacao_participacao_privada { status: enviada|aprovada|rejeitada }`,
+`pagamento_metodo_escolhido { metodo }`, `pagamento_confirmado_laci`, `pagamento_confirmado_manual`,
+`pagamento_expirado`, `lista_espera_entrou`, `lista_espera_promovido`,
+`checkin_realizado { metodo: manual|qr|geo }`, `evento_completado`,
+`rsvp_cancelado { janela: A|B|C, retorno: dinheiro|pontos|nada }`.
+**Medir especialmente:** quem entrou via evento e voltou (membro ativo vs número inflado).
+
+---
+
+
 
 ## Mapa do fluxo
 ```

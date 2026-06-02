@@ -889,7 +889,8 @@ function ComunidadeScreen({ go, ctx }) {
 function ConfrariasScreen({ go }) {
   const [mainTab, setMainTab] = React.useState('confrarias'); // confrarias | eventos
   const [confSub, setConfSub] = React.useState('recomendadas'); // recomendadas | suas
-  const [evSub, setEvSub] = React.useState('minhas'); // minhas | inscritos
+  // 🆕 Formato: 'meus:proximos' | 'meus:andamento' | 'meus:finalizados' | 'descobrir:proximos' | 'descobrir:andamento'
+  const [evSub, setEvSub] = React.useState('meus:proximos');
   const [query, setQuery] = React.useState('');
   const [filterOpen, setFilterOpen] = React.useState(false);
   const [filters, setFilters] = React.useState({ activity: [], modality: [], style: [] });
@@ -921,9 +922,7 @@ function ConfrariasScreen({ go }) {
   const styleOptions = ['Degustação Técnica', 'Vinhos da Região', 'Harmonização', 'Pequenos Produtores'];
 
   // Eventos
-  const eventosMinhas = MOCK_EVENTS; // eventos das confrarias que você participa
-  const eventosInscritos = MOCK_EVENTS.filter(e => e.joined);
-  const eventosList = evSub === 'minhas' ? eventosMinhas : eventosInscritos;
+  // (eventos: lógica reescrita inline na aba — segmented Meus|Descobrir + chips de status)
 
   const mainTabStyle = (active) => ({
     flex: 1, padding: '12px 0', background: 'none', border: 'none',
@@ -1033,31 +1032,89 @@ function ConfrariasScreen({ go }) {
         </>
       )}
 
-      {mainTab === 'eventos' && (
-        <>
-          {/* Sub-tabs: Das minhas confrarias | Inscritos */}
-          <div style={{ display: 'flex', gap: 8, padding: '12px 16px 4px', overflowX: 'auto' }}>
-            {[{ id: 'minhas', label: 'Das minhas confrarias' }, { id: 'inscritos', label: `Inscritos (${eventosInscritos.length})` }].map(s => (
-              <button key={s.id} onClick={() => setEvSub(s.id)} style={subPill(evSub === s.id)}>{s.label}</button>
-            ))}
-          </div>
-          <div style={{ flex: 1, overflow: 'auto', padding: '8px 16px 80px' }}>
-            {eventosList.length > 0 ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                {eventosList.map(e => <EventCard key={e.id} event={e} onClick={() => go('event-detalhe', { event: e })}/>)}
-              </div>
-            ) : (
-              <div style={{ padding: 32, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
-                <div style={{ width: 64, height: 64, borderRadius: '50%', background: T.c.p50, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Icon name="event_busy" size={32} color={T.c.p700}/>
+      {mainTab === 'eventos' && (() => {
+        // 🆕 Nova estrutura: segmented Meus|Descobrir + chips Próximos|Andamento|Finalizados
+        // (Finalizados só em Meus). Default: Meus → Próximos.
+        const evScope = evSub === 'descobrir' ? 'descobrir' : 'meus';
+        const evStatus = (evSub.split(':')[1]) || 'proximos'; // 'meus:proximos' | 'descobrir:andamento' etc.
+        // Mock: derivar listas. Em produção, vem do backend filtrado.
+        const allEvents = MOCK_EVENTS || [];
+        const isMeus = evScope === 'meus';
+        const list = isMeus ? allEvents : allEvents.filter(e => !e.joined); // mock: descobrir = não-membro
+        const visible = list.filter(e => {
+          if (evStatus === 'finalizados') return e.isPast;
+          if (evStatus === 'andamento') return e.isOngoing;
+          return !e.isPast && !e.isOngoing; // próximos = futuros
+        });
+        const setScope = (s) => setEvSub(`${s}:proximos`);
+        const setStatus = (st) => setEvSub(`${evScope}:${st}`);
+        return (
+          <>
+            {/* Segmented: Meus | Descobrir */}
+            <div style={{ display: 'flex', padding: 4, background: T.c.n100, borderRadius: T.r.full, margin: '12px 16px' }}>
+              {[{ v: 'meus', l: 'Meus eventos' }, { v: 'descobrir', l: 'Descobrir eventos' }].map(opt => (
+                <button key={opt.v} onClick={() => setScope(opt.v)} style={{
+                  flex: 1, padding: '10px 12px', borderRadius: T.r.full, border: 'none', cursor: 'pointer',
+                  background: evScope === opt.v ? T.c.n0 : 'transparent',
+                  color: evScope === opt.v ? T.c.n950 : T.c.n600,
+                  fontFamily: T.font, fontSize: 13, fontWeight: 700,
+                  boxShadow: evScope === opt.v ? '0 1px 3px rgba(0,0,0,0.10)' : 'none',
+                }}>{opt.l}</button>
+              ))}
+            </div>
+            {/* Chips de status (Finalizados só em Meus) */}
+            <div style={{ display: 'flex', gap: 6, padding: '0 16px 8px', overflowX: 'auto' }}>
+              {[
+                { v: 'proximos', l: 'Próximos' },
+                { v: 'andamento', l: 'Andamento' },
+                ...(isMeus ? [{ v: 'finalizados', l: 'Finalizados' }] : []),
+              ].map(opt => (
+                <button key={opt.v} onClick={() => setStatus(opt.v)} style={{
+                  flexShrink: 0, padding: '7px 14px', borderRadius: T.r.full, cursor: 'pointer',
+                  background: evStatus === opt.v ? T.c.p700 : T.c.n0,
+                  color: evStatus === opt.v ? T.c.n0 : T.c.n800,
+                  border: `1.5px solid ${evStatus === opt.v ? T.c.p700 : T.c.n200}`,
+                  fontFamily: T.font, fontSize: 13, fontWeight: 600,
+                }}>{opt.l}</button>
+              ))}
+            </div>
+            <div style={{ padding: '0 16px 8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ ...T.t.caption, color: T.c.n600 }}>
+                {visible.length} {visible.length === 1 ? 'evento' : 'eventos'} · ordem cronológica
+              </span>
+              {!isMeus && (
+                <span style={{ ...T.t.caption, color: T.c.p700, fontWeight: 700, cursor: 'pointer' }}>Perto de mim ▾</span>
+              )}
+            </div>
+            <div style={{ flex: 1, overflow: 'auto', padding: '0 16px 80px' }}>
+              {visible.length > 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {visible.map(e => <EventCard key={e.id} event={e} showOrigin={!isMeus} onClick={() => go('event-detalhe', { event: e })}/>)}
                 </div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: T.c.n950 }}>{evSub === 'inscritos' ? 'Você ainda não se inscreveu em nenhum evento' : 'Sem eventos nas suas confrarias'}</div>
-                <div style={{ fontSize: 13, color: T.c.n600, maxWidth: 260 }}>Quando rolar um encontro, ele aparece aqui.</div>
-              </div>
-            )}
-          </div>
-        </>
-      )}
+              ) : (
+                <div style={{ padding: 32, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+                  <div style={{ width: 64, height: 64, borderRadius: '50%', background: T.c.n100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Icon name="event_busy" size={32} color={T.c.n400}/>
+                  </div>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: T.c.n950 }}>
+                    {isMeus
+                      ? (evStatus === 'finalizados' ? 'Nada no seu histórico ainda' : evStatus === 'andamento' ? 'Nenhum evento rolando agora' : 'Sem eventos nas suas confrarias')
+                      : 'Ainda não tem evento perto de você'}
+                  </div>
+                  <div style={{ fontSize: 13, color: T.c.n600, maxWidth: 280 }}>
+                    {!isMeus ? 'Crie uma confraria e seja o primeiro a marcar um encontro na sua região.' : 'Quando rolar um encontro, ele aparece aqui.'}
+                  </div>
+                  {!isMeus && (
+                    <Button variant="primary" size="md" leading={<Icon name="add" size={16}/>} onClick={() => go('wizard-confraria-1')}>
+                      Criar uma confraria
+                    </Button>
+                  )}
+                </div>
+              )}
+            </div>
+          </>
+        );
+      })()}
 
       {filterOpen && (
         <ModalSheet onClose={() => setFilterOpen(false)}>

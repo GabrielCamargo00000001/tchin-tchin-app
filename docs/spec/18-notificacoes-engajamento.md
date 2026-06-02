@@ -57,6 +57,14 @@
 | `event_canceled` | cancelado | 🔔📥✉️ | "O {evento} foi cancelado" | `event-detalhe` |
 | `plus_one_joined` | seu +1 se cadastrou | 🔔📥 | "Seu convidado {nome} se cadastrou! 🎉" | `event-detalhe` |
 | `event_payment_due` | evento pago, confirmar | 🔔📥✉️ ⚑crítico | "Confirme o pagamento do {evento} até {prazo}" | `evento-presenca › pagamentos` |
+| 🆕 `payment_confirmed_laci` | webhook LACI confirmou PIX | 🔔📥 ⚑crítico | "✓ Pagamento de {evento} confirmado. Vaga garantida!" | `event-detalhe` |
+| 🆕 `payment_confirmed_manual` | admin marcou pago | 🔔📥 ⚑crítico | "✓ {admin} confirmou seu pagamento de {evento}" | `event-detalhe` |
+| 🆕 `payment_expired` | PIX LACI expirou ou prazo manual venceu | 🔔📥 | "⚠️ Seu pagamento de {evento} expirou. Pagar de novo?" | `event-detalhe` (estado expirado) |
+| 🆕 `payment_pending_reminder` | D-3 e 6h antes se ainda não pagou | 🔔📥 | "💰 Seu pagamento de {evento} ainda tá pendente — sua vaga pode liberar" | `event-detalhe` |
+| 🆕 `rsvp_canceled_refund` | cancelou >24h, reembolso integral | 📥✉️ | "Reembolso de R$ {x} processado · {evento}" | `event-detalhe` |
+| 🆕 `rsvp_canceled_pts` | cancelou 24h-2h, crédito em pontos | 📥 | "💎 R$ {x} viraram {pts} pontos Tchin no seu saldo" | `pontos` |
+| 🆕 `waitlist_promoted` | foi promovido da fila | 🔔📥 ⚑crítico | "🎉 Vaga liberou em {evento} — confirma em 6h" | `event-detalhe` |
+| 🆕 `waitlist_lost_window` | perdeu prazo de 6h | 🔔📥 | "Voltou pra lista de espera — não pagou no prazo" | `event-detalhe` |
 | `event_post_rate` | pós-evento, avaliar vinhos | 🔔📥 | "Avalie os vinhos do {evento}" | `evento-pos-avaliar` |
 | `event_post_ata` | ata pronta | 📥 | "A ata do {evento} está pronta" | `evento-pos-ata` |
 

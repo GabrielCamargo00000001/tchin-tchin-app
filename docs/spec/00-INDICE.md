@@ -67,6 +67,10 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 | 17 | **[Chat / DMs](17-chat-dms.md)** ✅ | chat-lista, chat-conversa | MVP2 Épico 13 |
 | 18 | **[Notificações & Engajamento](18-notificacoes-engajamento.md)** ✅ | notificações, push (primer/negado/canais/preview), nudges D1/D3/D7/D14, plus-one | MVP1, Sprint 11-13 |
 | 19 | **[Jornada, Pontos & Desafios](19-jornada-desafios.md)** ✅ | jornada, pontos (carteira+resgate), jornada-celebrar (5 variações), desafio-detalhe (8 templates · 3 estados), badges (M14) | MVP2 Épico 7/9 |
+
+> **🆕 Revisão consolidada Confrarias & Eventos (Gabriel decidiu — junho/2026):**
+> Privacidade reduzida a **Pública** vs **Privada**; aba Eventos da home com novo segmented **Meus | Descobrir** + chips **Próximos | Andamento | Finalizados** *(Finalizados só em Meus)*; fluxo de pagamento completo **LACI / Pagar fora** com 6 estados + 3 sheets; cancelamento pós-pago em **3 janelas** (>24h reembolso · 24h-2h crédito em Pontos · <2h registra falta); check-in **manual** (MVP1) + **QR** (MVP1.5) + **geo** (v2); 20 telas-preview viraram **design board** pro time dev (mantidas em `docs/spec/shots/prev-*.png`).
+> Detalhes canônicos: **[M11 § 11.0](11-confrarias.md#110-)** (papéis/privacidade) · **[M12 § 12.0](12-eventos.md#120-)** (17 sub-regras + pagamento + cancelamento) · **[M18 catálogo](18-notificacoes-engajamento.md)** (notifs de pagamento + cancelamento + lista de espera adicionadas).
 | 20 | **[Config & Suporte](20-config-suporte.md)** ✅ | config (notif/privacidade/conta/bloqueados), suporte (FAQ/contato) | MVP1 |
 | 21 | **[Estados de sistema](21-estados-sistema.md)** ✅ | erro-404/permissão/sessão/servidor, vinho-indisponível, toast | transversal |
 
