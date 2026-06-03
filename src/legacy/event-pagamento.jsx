@@ -16,6 +16,52 @@ import React from 'react';
 import { Button } from './components.jsx';
 import { Icon, T } from './tokens.jsx';
 
+// ─── Taxa Tchin Tchin (Gabriel jun/2026) ─────────────────────
+// Custo BaaS real: R$ 1 PIX / 3,5% cartão. Margem: R$ 0,20 / 0,5%.
+// Decisão: sempre VISÍVEL e SEPARADA do preço base. Nunca embutida.
+export const TAXAS = {
+  pix:    { tipo: 'fixo',     valor: 1.20, label: 'Taxa Tchin Tchin (PIX)' },
+  cartao: { tipo: 'percent',  valor: 0.04, label: 'Taxa Tchin Tchin (cartão)' },
+  fora:   { tipo: 'fixo',     valor: 0,    label: 'Sem taxa (combinado com admin)' },
+};
+
+// Retorna { base, fee, total, feeLabel } pra um preço base e método
+export function calcTaxa(price, method = 'pix') {
+  const t = TAXAS[method] || TAXAS.pix;
+  const fee = t.tipo === 'fixo' ? t.valor : price * t.valor;
+  return {
+    base: price,
+    fee,
+    total: price + fee,
+    feeLabel: t.label,
+    feeHint: t.tipo === 'percent' ? '4%' : `R$ ${fee.toFixed(2)}`,
+  };
+}
+
+// Linha de breakdown visual: base + taxa = total (sempre visível)
+function PriceBreakdownLines({ price, method = 'pix', compact = false }) {
+  const t = calcTaxa(price, method);
+  const fontSize = compact ? 11 : 12;
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 3, marginTop: 4 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: T.font, fontSize, color: T.c.n800 }}>
+        <span>Valor do evento</span>
+        <span>R$ {t.base.toFixed(2)}</span>
+      </div>
+      {t.fee > 0 && (
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: T.font, fontSize, color: T.c.n600 }}>
+          <span>{t.feeLabel} <span style={{ color: T.c.n400 }}>({t.feeHint})</span></span>
+          <span>+ R$ {t.fee.toFixed(2)}</span>
+        </div>
+      )}
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: T.font, fontSize: fontSize + 1, fontWeight: 700, color: T.c.n950, paddingTop: 4, borderTop: `1px dashed ${T.c.n200}`, marginTop: 2 }}>
+        <span>Total a pagar</span>
+        <span>R$ {t.total.toFixed(2)}</span>
+      </div>
+    </div>
+  );
+}
+
 // ─── Banner contextual de pagamento ──────────────────────────
 function PaymentBanner({ kind, label, sub, ctaLabel, onCta }) {
   const map = {
@@ -108,11 +154,17 @@ function ParticiparSheet({ privacy = 'publica', paid = false, price = 80, evento
         )}
       </div>
       {paid && !isPriv && (
-        <div style={{ padding: '12px 14px', background: T.c.a100, border: `1px solid ${T.c.a700}`, borderRadius: T.r.md, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Icon name="payments" size={18} color={T.c.a700}/>
-          <div style={{ flex: 1 }}>
-            <div style={{ ...T.t.bodyB, color: T.c.n950, fontSize: 14 }}>Evento pago · R$ {price.toFixed(2)} por pessoa</div>
-            <div style={{ ...T.t.caption, color: T.c.n800, fontSize: 11.5 }}>Escolha o método no próximo passo. Vaga reservada por 2h.</div>
+        <div style={{ padding: '12px 14px', background: T.c.a100, border: `1px solid ${T.c.a700}`, borderRadius: T.r.md, marginBottom: 14 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+            <Icon name="payments" size={18} color={T.c.a700}/>
+            <div style={{ flex: 1 }}>
+              <div style={{ ...T.t.bodyB, color: T.c.n950, fontSize: 14 }}>Evento pago · R$ {price.toFixed(2)} por pessoa</div>
+              <div style={{ ...T.t.caption, color: T.c.n800, fontSize: 11.5 }}>+ taxa Tchin Tchin no próximo passo · vaga reservada por 2h</div>
+            </div>
+          </div>
+          <div style={{ ...T.t.caption, color: T.c.n600, fontSize: 11, marginTop: 4, lineHeight: 1.4 }}>
+            <Icon name="info" size={11} color={T.c.n600} style={{ verticalAlign: 'middle', marginRight: 4 }}/>
+            PIX: + R$ 1,20 fixo · Cartão: + 4%. Sempre visível e separado.
           </div>
         </div>
       )}
@@ -120,7 +172,7 @@ function ParticiparSheet({ privacy = 'publica', paid = false, price = 80, evento
         <div style={{ background: T.c.i100, padding: '10px 12px', borderRadius: T.r.md, marginBottom: 12, display: 'flex', gap: 8 }}>
           <Icon name="info" size={14} color={T.c.i700} style={{ flexShrink: 0, marginTop: 1 }}/>
           <div style={{ ...T.t.caption, color: T.c.n800, lineHeight: 1.45, fontSize: 12 }}>
-            O pagamento (R$ {price.toFixed(2)}) só rola <strong>depois que o admin aprovar</strong>. A gente nunca cobra antes da aprovação.
+            O pagamento (R$ {price.toFixed(2)} <em>+ taxa</em>) só rola <strong>depois que o admin aprovar</strong>. A gente nunca cobra antes da aprovação.
           </div>
         </div>
       )}
@@ -167,6 +219,7 @@ function ParticiparSheet({ privacy = 'publica', paid = false, price = 80, evento
 // ─── EscolherMetodoSheet ─────────────────────────────────────
 function EscolherMetodoSheet({ price = 80, modality = 'presencial', onClose, onPickLaci, onPickFora }) {
   const allowNoLocal = modality !== 'online';
+  const tPix = calcTaxa(price, 'pix');
   return (
     <Sheet onClose={onClose}>
       <div style={{ ...T.t.overline, color: T.c.p700, fontWeight: 700, fontSize: 11, marginBottom: 6 }}>2/2 · PAGAMENTO</div>
@@ -179,10 +232,12 @@ function EscolherMetodoSheet({ price = 80, modality = 'presencial', onClose, onP
           </div>
           <div style={{ flex: 1 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <div style={{ ...T.t.bodyB, color: T.c.n950, fontSize: 14 }}>Pagar agora via LACI</div>
+              <div style={{ ...T.t.bodyB, color: T.c.n950, fontSize: 14 }}>Pagar agora via LACI (PIX)</div>
               <span style={{ padding: '2px 7px', background: T.c.p700, color: T.c.n0, borderRadius: T.r.full, fontSize: 10, fontWeight: 800 }}>RECOMENDADO</span>
             </div>
-            <div style={{ ...T.t.caption, color: T.c.n800, lineHeight: 1.45, marginTop: 3, fontSize: 12 }}>PIX instantâneo · confirmação automática · vaga garantida na hora</div>
+            <div style={{ ...T.t.caption, color: T.c.n800, lineHeight: 1.45, marginTop: 3, fontSize: 12 }}>Confirmação automática · vaga garantida na hora</div>
+            {/* Breakdown da taxa — sempre visível (Gabriel jun/2026) */}
+            <PriceBreakdownLines price={price} method="pix" compact/>
           </div>
           <Icon name="radio_button_checked" size={20} color={T.c.p700}/>
         </div>
@@ -193,15 +248,24 @@ function EscolherMetodoSheet({ price = 80, modality = 'presencial', onClose, onP
             <Icon name="handshake" size={20} color={T.c.n800}/>
           </div>
           <div style={{ flex: 1 }}>
-            <div style={{ ...T.t.bodyB, color: T.c.n950, fontSize: 14 }}>Combinar com o admin</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div style={{ ...T.t.bodyB, color: T.c.n950, fontSize: 14 }}>Combinar com o admin</div>
+              <span style={{ padding: '2px 7px', background: T.c.s100, color: T.c.s700, borderRadius: T.r.full, fontSize: 10, fontWeight: 800 }}>SEM TAXA</span>
+            </div>
             <div style={{ ...T.t.caption, color: T.c.n600, lineHeight: 1.45, marginTop: 3, fontSize: 12 }}>
               {allowNoLocal ? 'PIX em outra conta · dinheiro no local · etc.' : 'PIX em outra conta do admin.'} O admin marca como pago quando receber.
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: T.font, fontSize: 11, fontWeight: 700, color: T.c.n950, marginTop: 6, paddingTop: 4, borderTop: `1px dashed ${T.c.n200}` }}>
+              <span>Total</span>
+              <span>R$ {price.toFixed(2)}</span>
             </div>
           </div>
           <Icon name="radio_button_unchecked" size={20} color={T.c.n400}/>
         </div>
       </div>
-      <Button variant="primary" size="md" fullWidth trailing={<Icon name="arrow_forward" size={16}/>} onClick={onPickLaci}>Continuar com LACI</Button>
+      <Button variant="primary" size="md" fullWidth trailing={<Icon name="arrow_forward" size={16}/>} onClick={onPickLaci}>
+        Continuar com LACI · R$ {tPix.total.toFixed(2)}
+      </Button>
       <div style={{ height: 6 }}/>
       <Button variant="ghost" size="sm" fullWidth onClick={onClose}>Voltar</Button>
     </Sheet>
@@ -210,6 +274,7 @@ function EscolherMetodoSheet({ price = 80, modality = 'presencial', onClose, onP
 
 // ─── PixLaciSheet (estados: aguardando | confirmado) ─────────
 function PixLaciSheet({ status = 'aguardando', price = 80, evento = 'Degustação de Malbecs', onClose, onAlreadyPaid, onSeeEvent }) {
+  const t = calcTaxa(price, 'pix');
   if (status === 'confirmado') {
     return (
       <Sheet onClose={onClose}>
@@ -220,7 +285,7 @@ function PixLaciSheet({ status = 'aguardando', price = 80, evento = 'Degustaçã
           <div style={{ ...T.t.overline, color: T.c.s700, marginBottom: 4, letterSpacing: 1.4 }}>PAGAMENTO CONFIRMADO</div>
           <div style={{ ...T.t.h2, color: T.c.n950, fontFamily: '"Fraunces", Georgia, serif', marginBottom: 8 }}>Sua vaga está garantida</div>
           <div style={{ ...T.t.body, color: T.c.n600, lineHeight: 1.5, marginBottom: 18, fontSize: 14 }}>
-            <strong>R$ {price.toFixed(2)}</strong> recebidos via LACI · vaga em <strong>{evento}</strong> consolidada.
+            <strong>R$ {t.total.toFixed(2)}</strong> recebidos via LACI <span style={{ color: T.c.n400 }}>(R$ {t.base.toFixed(2)} + R$ {t.fee.toFixed(2)} taxa)</span> · vaga em <strong>{evento}</strong> consolidada.
           </div>
         </div>
         <div style={{ background: T.c.s100, padding: '10px 12px', borderRadius: T.r.md, marginBottom: 14, display: 'flex', gap: 8 }}>
@@ -236,7 +301,10 @@ function PixLaciSheet({ status = 'aguardando', price = 80, evento = 'Degustaçã
   return (
     <Sheet onClose={onClose}>
       <div style={{ ...T.t.overline, color: T.c.p700, fontWeight: 700, fontSize: 11, marginBottom: 4 }}>LACI · PAGUE COM PIX</div>
-      <div style={{ ...T.t.h2, color: T.c.n950, fontFamily: '"Fraunces", Georgia, serif', marginBottom: 12 }}>R$ {price.toFixed(2)}</div>
+      <div style={{ ...T.t.h2, color: T.c.n950, fontFamily: '"Fraunces", Georgia, serif', marginBottom: 4 }}>R$ {t.total.toFixed(2)}</div>
+      <div style={{ ...T.t.caption, color: T.c.n600, fontSize: 12, marginBottom: 12 }}>
+        R$ {t.base.toFixed(2)} <span style={{ color: T.c.n400 }}>do evento</span> + R$ {t.fee.toFixed(2)} <span style={{ color: T.c.n400 }}>taxa Tchin Tchin</span>
+      </div>
       <div style={{ background: T.c.n0, border: `2px dashed ${T.c.n300}`, borderRadius: T.r.lg, padding: 16, marginBottom: 12, display: 'flex', justifyContent: 'center' }}>
         <div style={{ width: 180, height: 180, background: '#000', backgroundImage: 'repeating-conic-gradient(#000 0 90deg, #fff 0 180deg)', backgroundSize: '14px 14px', borderRadius: 6 }}/>
       </div>

@@ -818,7 +818,46 @@ function pontosToBRL(p) {
 function PontosScreen({ go, ctx, params }) {
   const saldo = (params && params.saldo != null) ? params.saldo
     : (ctx && ctx.user && ctx.user.points != null) ? ctx.user.points : 340;
-  const [tab, setTab] = React.useState('resgatar'); // 'resgatar' | 'ganhar' | 'extrato'
+  const [tab, setTab] = React.useState('resgatar'); // 'resgatar' | 'ganhar' | 'extrato' | 'como-funcionam'
+  // Tabela mestra de ganho (Gabriel jun/2026 — 4ª aba explícita)
+  const PONTOS_TABELA = [
+    { grupo: 'Registro de vinho', items: [
+      { acao: 'Registrar nome do vinho', pts: 5, cap: '3/dia', ref: 'M07' },
+      { acao: '+ nota (1-5 estrelas)', pts: 8, cap: '3/dia', ref: 'M07' },
+      { acao: '+ foto do rótulo', pts: 10, cap: '3/dia', ref: 'M07' },
+      { acao: '+ harmonização', pts: 15, cap: '3/dia', ref: 'M07' },
+      { acao: 'Registro completo (todos campos)', pts: 20, cap: '3/dia', ref: 'M07' },
+      { acao: 'Contribuir vinho novo (base)', pts: 15, cap: '5/dia', ref: 'M06' },
+    ]},
+    { grupo: 'Treine seu Paladar', items: [
+      { acao: 'Lição concluída', pts: 15, cap: 'sem limite', ref: 'M08' },
+      { acao: 'Streak diário (a cada 7d)', pts: 50, cap: 'semanal', ref: 'M08' },
+      { acao: 'Subir de divisão na liga', pts: 100, cap: 'por divisão', ref: 'M08' },
+    ]},
+    { grupo: 'Confrarias & Eventos', items: [
+      { acao: 'Participar de evento (check-in)', pts: 30, cap: 'por evento', ref: 'M12' },
+      { acao: 'Avaliar evento depois', pts: 20, cap: 'por evento', ref: 'M12' },
+      { acao: 'Organizar evento', pts: 50, cap: 'por evento', ref: 'M12' },
+      { acao: 'Criar confraria', pts: 100, cap: '1x', ref: 'M11' },
+    ]},
+    { grupo: 'Comunidade & Social', items: [
+      { acao: 'Post no feed', pts: 5, cap: '3/dia', ref: 'M13' },
+      { acao: 'Receber 10 curtidas num post', pts: 10, cap: 'por post', ref: 'M13' },
+      { acao: 'Comentário relevante (com curtidas)', pts: 3, cap: '5/dia', ref: 'M13' },
+      { acao: 'Seguir alguém', pts: 2, cap: '10/sem', ref: 'M14' },
+    ]},
+    { grupo: 'Aprenda & Q&A', items: [
+      { acao: 'Artigo lido até o fim', pts: 5, cap: '3/dia', ref: 'M09' },
+      { acao: 'Pergunta no Q&A', pts: 3, cap: '5/sem', ref: 'M15' },
+      { acao: 'Resposta de expert (curtidas)', pts: 10, cap: 'por resposta', ref: 'M15' },
+    ]},
+    { grupo: 'Marcos e Indicação', items: [
+      { acao: 'Marco: criou conta', pts: 50, cap: '1x', ref: 'M19' },
+      { acao: 'Marco: primeiro vinho registrado', pts: 25, cap: '1x', ref: 'M19' },
+      { acao: 'Amigo aceitou seu convite', pts: 100, cap: 'até 25', ref: 'M16' },
+      { acao: 'Desafio da semana', pts: 50, cap: 'semanal', ref: 'M19' },
+    ]},
+  ];
   const E = POINTS_ECONOMY;
 
   // Faixas de crédito no marketplace
@@ -860,10 +899,10 @@ function PontosScreen({ go, ctx, params }) {
 
       {/* Tabs */}
       <div style={{ display: 'flex', background: T.c.n0, borderBottom: `1px solid ${T.c.n200}`, position: 'sticky', top: 0, zIndex: 2 }}>
-        {[['resgatar', 'Resgatar'], ['ganhar', 'Como ganhar'], ['extrato', 'Extrato']].map(([k, l]) => (
+        {[['resgatar', 'Resgatar'], ['ganhar', 'Ganhar'], ['extrato', 'Extrato'], ['como-funcionam', 'Como funcionam']].map(([k, l]) => (
           <button key={k} onClick={() => setTab(k)} style={{
             flex: 1, padding: '12px 0', background: 'none', border: 'none', cursor: 'pointer',
-            fontFamily: T.font, fontSize: 14, fontWeight: tab === k ? 700 : 500,
+            fontFamily: T.font, fontSize: 13, fontWeight: tab === k ? 700 : 500,
             color: tab === k ? T.c.p700 : T.c.n600,
             borderBottom: `2px solid ${tab === k ? T.c.p700 : 'transparent'}`,
           }}>{l}</button>
@@ -979,6 +1018,62 @@ function PontosScreen({ go, ctx, params }) {
                 <div style={{ ...T.t.bodyB, color: m.pts > 0 ? T.c.s700 : T.c.e700, fontFamily: T.mono, fontWeight: 800 }}>{m.pts > 0 ? '+' : ''}{m.pts}</div>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* Como funcionam — 4ª aba (Gabriel jun/2026) — tabela mestra + regras */}
+      {tab === 'como-funcionam' && (
+        <div style={{ padding: '8px 16px 24px' }}>
+          {/* Regras gerais */}
+          <div style={{ background: T.c.p50, border: `1px solid ${T.c.p100}`, borderRadius: T.r.md, padding: '14px 16px', marginTop: 8, marginBottom: 16 }}>
+            <div style={{ ...T.t.h3, color: T.c.n950, marginBottom: 6, fontFamily: '"Fraunces", Georgia, serif' }}>Como funcionam os Pontos Tchin</div>
+            <div style={{ ...T.t.body, color: T.c.n800, fontSize: 13.5, lineHeight: 1.5 }}>
+              É uma moeda única. Você ganha por <strong>ações reais</strong> dentro do app e troca por <strong>crédito</strong> no marketplace, <strong>vinhos de entrada</strong> (custeados pela Tchin) ou <strong>experiências</strong> (vinícolas, kits, etc.).
+            </div>
+            <div style={{ display: 'flex', gap: 16, marginTop: 12, padding: '10px 0 0', borderTop: `1px dashed ${T.c.p100}`, ...T.t.caption, color: T.c.n800, fontSize: 12 }}>
+              <div><strong style={{ color: T.c.p700, fontFamily: T.mono }}>10 pts</strong> = R$ 1,00</div>
+              <div><strong style={{ color: T.c.p700, fontFamily: T.mono }}>300 pts</strong> = R$ 30 crédito</div>
+              <div><strong style={{ color: T.c.p700, fontFamily: T.mono }}>1000 pts</strong> = R$ 100</div>
+            </div>
+          </div>
+
+          {/* Tabela mestra */}
+          <div style={{ ...T.t.overline, color: T.c.n600, padding: '4px 4px 8px' }}>── TABELA MESTRA DE GANHO ──</div>
+          {PONTOS_TABELA.map(grupo => (
+            <div key={grupo.grupo} style={{ marginBottom: 16 }}>
+              <div style={{ ...T.t.bodyB, color: T.c.p700, padding: '8px 4px', fontSize: 13, textTransform: 'uppercase', letterSpacing: 0.5 }}>{grupo.grupo}</div>
+              <div style={{ background: T.c.n0, border: `1px solid ${T.c.n200}`, borderRadius: T.r.md, overflow: 'hidden' }}>
+                {grupo.items.map((it, i) => (
+                  <div key={i} style={{
+                    display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px',
+                    borderBottom: i < grupo.items.length - 1 ? `1px solid ${T.c.n100}` : 'none',
+                  }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ ...T.t.body, color: T.c.n950, fontSize: 13.5 }}>{it.acao}</div>
+                      <div style={{ ...T.t.caption, color: T.c.n600, fontSize: 11 }}>cap {it.cap} · {it.ref}</div>
+                    </div>
+                    <div style={{
+                      padding: '4px 10px', borderRadius: T.r.full,
+                      background: T.c.s100, color: T.c.s700,
+                      fontFamily: T.mono, fontSize: 12, fontWeight: 800,
+                      whiteSpace: 'nowrap',
+                    }}>+{it.pts}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          {/* Regras anti-abuso */}
+          <div style={{ background: T.c.n0, border: `1px solid ${T.c.n200}`, borderRadius: T.r.md, padding: '14px 16px', marginTop: 8 }}>
+            <div style={{ ...T.t.bodyB, color: T.c.n950, fontSize: 13.5, marginBottom: 6 }}>Regras importantes</div>
+            <ul style={{ margin: 0, paddingLeft: 18, ...T.t.caption, color: T.c.n800, fontSize: 12.5, lineHeight: 1.6 }}>
+              <li>Validação <strong>server-side</strong> + dedup por ação/dia (sem farming).</li>
+              <li>Cada ação tem <strong>cap diário ou por evento</strong> (ver coluna direita).</li>
+              <li>Pontos <strong>expiram em 12 meses</strong> de inatividade (extrato avisa antes).</li>
+              <li>Resgate é <strong>imediato</strong> · saldo atualizado em tempo real.</li>
+            </ul>
           </div>
         </div>
       )}

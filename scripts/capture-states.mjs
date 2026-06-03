@@ -154,9 +154,12 @@ const SEQ = [
   // Pontos — carteira + loja de resgate (3 abas)
   { url: '?screen=pontos', ops: [
     { wait: 500 }, { shot: 'pontos-resgatar' },
-    { click: 'Como ganhar' }, { wait: 300 }, { shot: 'pontos-ganhar' },
+    { click: 'Ganhar' }, { wait: 300 }, { shot: 'pontos-ganhar' },
     { click: 'Extrato' }, { wait: 300 }, { shot: 'pontos-extrato' },
+    { click: 'Como funcionam' }, { wait: 300 }, { shot: 'pontos-como-funcionam' },
   ]},
+  // M14 — Perfil próprio (rota dedicada — Gabriel jun/2026)
+  { url: '?screen=perfil-eu', ops: [ { wait: 500 }, { shot: 'perfil-eu' } ]},
   // Celebração — todas as variações (kind)
   { url: '?screen=jornada-celebrar&kind=milestone', ops: [ { wait: 600 }, { shot: 'jornada-celebrar-marco' } ]},
   { url: '?screen=jornada-celebrar&kind=challenge', ops: [ { wait: 600 }, { shot: 'jornada-celebrar-desafio' } ]},
@@ -256,6 +259,12 @@ const SEQ = [
 
   // ── Módulo 11 — Confrarias ──────────────────────────────
   // Detalhe (4 abas: Eventos/Publicações/Membros/Adega)
+  // M07 — Adega taxonomia (recapturar com banner + chips + multi-garrafa)
+  // Já existe em '?screen=home&tab=adega' — sem mudança necessária
+  // M11 — Marketplace de Experiência (nova aba)
+  { url: '?screen=confraria-detalhe', ops: [
+    { wait: 500 }, { click: 'Experiência' }, { wait: 400 }, { shot: 'confraria-detalhe-experiencia' },
+  ]},
   { url: '?screen=confraria-detalhe', ops: [
     { wait: 700 },
     { shot: 'confraria-detalhe-eventos' },

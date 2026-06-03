@@ -198,6 +198,17 @@ function EventDetalheScreen({ event, brotherhood, go }) {
               </div>
             </div>
           </EvDtDetailRow>
+          {/* Valor + taxa — sempre visível antes do CTA (Gabriel jun/2026) */}
+          {(ev.paid !== false) && (
+            <EvDtDetailRow icon="payments" label="Valor">
+              <div style={{ ...T.t.body, color: T.c.n950, fontWeight: 500 }}>
+                R$ {(ev.price || 80).toFixed(2)} <span style={{ ...T.t.caption, color: T.c.n600, fontWeight: 400 }}>por pessoa</span>
+              </div>
+              <div style={{ ...T.t.caption, color: T.c.n600, marginTop: 2 }}>
+                + taxa Tchin Tchin: PIX <strong>R$ 1,20</strong> · Cartão <strong>4%</strong> · Combinar com admin <strong>sem taxa</strong>
+              </div>
+            </EvDtDetailRow>
+          )}
         </EvDtSection>
 
         {/* Quem vai */}

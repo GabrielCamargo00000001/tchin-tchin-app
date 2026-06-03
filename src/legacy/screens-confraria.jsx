@@ -20,6 +20,8 @@ const CONFRARIA_TABS = [
   { id: 'publicacoes', label: 'Publicações' },
   { id: 'membros', label: 'Membros' },
   { id: 'adega', label: 'Adega' },
+  // 🆕 Marketplace de Experiência (Gabriel jun/2026) — sub-feature de Confraria
+  { id: 'experiencia', label: 'Experiência', icon: 'storefront' },
 ];
 
 function ConfrariaDetalheScreen({ go, params }) {
@@ -175,6 +177,7 @@ function ConfrariaDetalheScreen({ go, params }) {
           {tab === 'eventos'     && <EventosTab confraria={confraria} joined={joined} isAdmin={isAdmin} onJoin={handleJoinToggle} go={go} onCreateEvent={() => go('event-wizard-1', { brotherhoodId: confraria.id, brotherhoodName: confraria.name })}/>}
           {tab === 'adega'       && <AdegaConfTab confraria={confraria} go={go}/>}
           {tab === 'publicacoes' && <PublicacoesConfTab confraria={confraria} joined={joined}/>}
+          {tab === 'experiencia' && <ExperienciaTab confraria={confraria} isAdmin={isAdmin} go={go}/>}
         </div>
       </div>
 
@@ -519,6 +522,128 @@ function AdegaConfTab({ confraria, go }) {
           </div>
         </div>
       ))}
+    </div>
+  );
+}
+
+// ─── Marketplace de Experiência Tab (Gabriel jun/2026) ─────
+// Sub-feature: produtos pagos + gratuitos pra organizar/enriquecer
+// confrarias e eventos. Categorias: vinícolas/locais/kits/conteúdo/
+// equipamentos/serviços. Pagamento em R$ ou em Cristais (M08).
+function ExperienciaTab({ confraria, isAdmin, go }) {
+  const CATEGORIAS = [
+    { id: 'vinicolas',    icon: 'wine_bar',      label: 'Vinícolas',    count: 12, descr: 'Visitas guiadas, degustações, passeios' },
+    { id: 'locais',       icon: 'location_on',   label: 'Locais',       count: 8,  descr: 'Salas, restaurantes, espaços pra alugar' },
+    { id: 'kits',         icon: 'card_giftcard', label: 'Kits',         count: 24, descr: 'Kits do organizador, taças, decanters' },
+    { id: 'conteudo',     icon: 'auto_stories',  label: 'Conteúdo',     count: 6,  descr: 'Aulas, e-books, masterclasses' },
+    { id: 'equipamentos', icon: 'kitchen',       label: 'Equipamentos', count: 15, descr: 'Saca-rolhas, climatizadores, decanters' },
+    { id: 'servicos',     icon: 'handshake',     label: 'Serviços',     count: 9,  descr: 'Sommelier, fotógrafo, social media' },
+  ];
+
+  // Produtos em destaque (mock — pagos e gratuitos)
+  const destaques = [
+    { id: 1, titulo: 'Visita guiada Vinícola Aurora', cat: 'Vinícolas', preco: 80, pontos: 800, free: false, badge: 'PARCEIRO' },
+    { id: 2, titulo: 'Kit Brindar — taças + decanter', cat: 'Kits', preco: 240, pontos: 2400, free: false, badge: null },
+    { id: 3, titulo: 'Guia: como organizar degustação', cat: 'Conteúdo', preco: 0, pontos: 0, free: true, badge: 'GRÁTIS' },
+    { id: 4, titulo: 'Sommelier pro evento (Brasília)', cat: 'Serviços', preco: 350, pontos: null, free: false, badge: null },
+  ];
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      {/* Intro */}
+      <div style={{ padding: '12px 14px', background: T.c.p50, border: `1px solid ${T.c.p100}`, borderRadius: T.r.md }}>
+        <div style={{ ...T.t.bodyB, color: T.c.n950, fontSize: 13.5, marginBottom: 4 }}>
+          🆕 Marketplace de Experiência
+        </div>
+        <div style={{ ...T.t.caption, color: T.c.n800, fontSize: 12, lineHeight: 1.5 }}>
+          Tudo que ajuda a organizar um encontro melhor. Produtos pagos (em <strong>R$</strong> ou <strong>cristais</strong> do Treino) + conteúdo grátis.
+        </div>
+      </div>
+
+      {/* CTA Admin: organizar kit do evento */}
+      {isAdmin && (
+        <button onClick={() => go('toast', { kind: 'info', message: 'Em breve: monte o kit do organizador do próximo evento.' })} style={{
+          padding: '12px 14px', background: T.c.n0, border: `1.5px solid ${T.c.p700}`, borderRadius: T.r.md,
+          display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', textAlign: 'left',
+        }}>
+          <div style={{ width: 36, height: 36, borderRadius: T.r.md, background: T.c.p700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Icon name="auto_awesome" size={18} color={T.c.n0}/>
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{ ...T.t.bodyB, color: T.c.n950, fontSize: 13.5 }}>Montar kit pro próximo evento</div>
+            <div style={{ ...T.t.caption, color: T.c.n600, fontSize: 11.5 }}>Combine local + kit + serviços num pacote</div>
+          </div>
+          <Icon name="chevron_right" size={18} color={T.c.n400}/>
+        </button>
+      )}
+
+      {/* Categorias */}
+      <div>
+        <div style={{ ...T.t.overline, color: T.c.n600, marginBottom: 8 }}>── CATEGORIAS ──</div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+          {CATEGORIAS.map(c => (
+            <button key={c.id} onClick={() => go('toast', { kind: 'info', message: `Em breve: ${c.label.toLowerCase()}.` })} style={{
+              padding: '10px 12px', background: T.c.n0, border: `1px solid ${T.c.n200}`, borderRadius: T.r.md,
+              display: 'flex', alignItems: 'flex-start', gap: 8, cursor: 'pointer', textAlign: 'left',
+            }}>
+              <Icon name={c.icon} size={18} color={T.c.p700}/>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ ...T.t.bodyB, color: T.c.n950, fontSize: 13 }}>{c.label}</div>
+                <div style={{ ...T.t.caption, color: T.c.n600, fontSize: 11 }}>{c.count} ofertas</div>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Destaques */}
+      <div>
+        <div style={{ ...T.t.overline, color: T.c.n600, marginBottom: 8 }}>── DESTAQUES ──</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {destaques.map(p => (
+            <button key={p.id} onClick={() => go('toast', { kind: 'info', message: `Em breve: ${p.titulo}.` })} style={{
+              padding: '12px 14px', background: T.c.n0, border: `1px solid ${T.c.n200}`, borderRadius: T.r.md,
+              display: 'flex', gap: 12, cursor: 'pointer', textAlign: 'left', alignItems: 'center',
+            }}>
+              <div style={{ width: 48, height: 48, borderRadius: T.r.md, background: T.c.p50, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <Icon name={p.free ? 'auto_stories' : 'storefront'} size={22} color={T.c.p700}/>
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+                  {p.badge && (
+                    <span style={{
+                      padding: '2px 7px', borderRadius: T.r.full, fontSize: 9, fontWeight: 800,
+                      background: p.free ? T.c.s100 : T.c.a100,
+                      color: p.free ? T.c.s700 : T.c.a700,
+                    }}>{p.badge}</span>
+                  )}
+                  <span style={{ ...T.t.caption, color: T.c.n600, fontSize: 11 }}>{p.cat}</span>
+                </div>
+                <div style={{ ...T.t.bodyB, color: T.c.n950, fontSize: 13.5, lineHeight: 1.3 }}>{p.titulo}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
+                  {p.free
+                    ? <span style={{ ...T.t.bodyB, color: T.c.s700, fontSize: 13 }}>Grátis</span>
+                    : <>
+                        <span style={{ ...T.t.bodyB, color: T.c.n950, fontSize: 13 }}>R$ {p.preco.toFixed(2)}</span>
+                        {p.pontos != null && (
+                          <span style={{ ...T.t.caption, color: T.c.p700, fontFamily: T.mono, fontSize: 11 }}>
+                            ou {p.pontos} pts
+                          </span>
+                        )}
+                      </>}
+                </div>
+              </div>
+              <Icon name="chevron_right" size={18} color={T.c.n400}/>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Footer nota */}
+      <div style={{ padding: '12px 14px', background: T.c.n50, borderRadius: T.r.md, ...T.t.caption, color: T.c.n800, fontSize: 11.5, lineHeight: 1.5 }}>
+        <Icon name="info" size={12} color={T.c.n600} style={{ verticalAlign: 'middle', marginRight: 4 }}/>
+        Marketplace integrado com <strong>Cristais</strong> do Treine seu Paladar (M08) · pagamentos via LACI · taxa Tchin Tchin transparente.
+      </div>
     </div>
   );
 }

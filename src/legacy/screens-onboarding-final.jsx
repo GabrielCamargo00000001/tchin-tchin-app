@@ -151,7 +151,20 @@ function WelcomeFinalScreen({ go, ctx, setCtx, startTour }) {
           {subtitle}
         </p>
 
-        <div style={{ height: 32 }}/>
+        <div style={{ height: 18 }}/>
+
+        {/* Menção sutil aos Pontos (Gabriel jun/2026 — 1 linha, não massivo) */}
+        <button onClick={() => go('pontos', { saldo: 50 })} style={{
+          display: 'inline-flex', alignItems: 'center', gap: 6,
+          padding: '6px 12px', background: 'rgba(255,255,255,0.6)',
+          border: `1px solid ${T.c.p100}`, borderRadius: T.r.full,
+          cursor: 'pointer', fontFamily: T.font, fontSize: 12, color: T.c.p700, fontWeight: 600,
+        }}>
+          <Icon name="redeem" size={14} color={T.c.p700}/>
+          Você ganha pontos por usar o app · entenda
+        </button>
+
+        <div style={{ height: 22 }}/>
 
         {/* 4 dot indicators — all neutral/300 (preview, not progress yet) */}
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }} aria-label="Tour preview · 4 etapas">

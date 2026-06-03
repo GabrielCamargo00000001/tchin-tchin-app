@@ -16,10 +16,29 @@ import { MultiSelectWinesModal } from './multi-select-wines.jsx';
 
 // Tchin Tchin — Adega, Comunidade, Confrarias screens
 
+// ─── Taxonomia da Adega (Gabriel decidiu — junho/2026) ─────
+// Os 4 conceitos canônicos. Usado no header (banner explicativo)
+// e nas mini-pílulas inline de cada aba. Fonte da verdade.
+const ADEGA_TAXONOMIA = {
+  estante:    { icon: 'inventory_2',    label: 'Estante',   def: 'O que TENHO na minha garrafeira física' },
+  diario:     { icon: 'menu_book',       label: 'Diário',    def: 'O que JÁ PROVEI — meu histórico' },
+  favoritos:  { icon: 'favorite',        label: 'Favoritos', def: 'O que CURTI pra guardar de referência' },
+  wishlist:   { icon: 'bookmark_added',  label: 'Wishlist',  def: 'O que QUERO comprar' },
+};
+
 // ─── Adega Dashboard ──────────────────────────────────────
 function AdegaScreen({ go, ctx }) {
   const [tab, setTab] = React.useState('estante'); // Estante é a aba principal
   const [multiOpen, setMultiOpen] = React.useState(false); // #9 — adicionar vários à adega
+  // Banner "Onde fica o quê" — dispensável; persiste em window flag.
+  const [showTaxBanner, setShowTaxBanner] = React.useState(() => {
+    if (typeof window === 'undefined') return true;
+    return !window.__tcAdegaTaxonomiaDismissed;
+  });
+  const dismissTaxBanner = () => {
+    setShowTaxBanner(false);
+    if (typeof window !== 'undefined') window.__tcAdegaTaxonomiaDismissed = true;
+  };
   // Old diary tour (SVG mask) — superseded by the new TchinTutor system.
   const [diarioTourStep, setDiarioTourStep] = React.useState(null);
   const subtitleByTab = {
@@ -67,6 +86,34 @@ function AdegaScreen({ go, ctx }) {
           )}
         </button>
       </div>
+
+      {/* Atalhos pras outras 2 rotas da taxonomia (Favoritos e Wishlist moram fora das tabs) */}
+      <div style={{ padding: '0 16px 12px', display: 'flex', gap: 8 }}>
+        <button onClick={() => go('favoritos')} style={{
+          flex: 1, display: 'flex', alignItems: 'center', gap: 6,
+          padding: '8px 10px', background: T.c.n0, border: `1px solid ${T.c.n200}`,
+          borderRadius: T.r.md, cursor: 'pointer', fontFamily: T.font,
+        }}>
+          <Icon name="favorite" size={16} color={T.c.p700}/>
+          <span style={{ fontSize: 12, fontWeight: 600, color: T.c.n950 }}>Favoritos</span>
+          <span style={{ fontSize: 11, color: T.c.n600, marginLeft: 'auto' }}>{ctx.favorites.length}</span>
+        </button>
+        <button onClick={() => go('lista-desejos')} style={{
+          flex: 1, display: 'flex', alignItems: 'center', gap: 6,
+          padding: '8px 10px', background: T.c.n0, border: `1px solid ${T.c.n200}`,
+          borderRadius: T.r.md, cursor: 'pointer', fontFamily: T.font,
+        }}>
+          <Icon name="bookmark_added" size={16} color={T.c.p700}/>
+          <span style={{ fontSize: 12, fontWeight: 600, color: T.c.n950 }}>Wishlist</span>
+          <span style={{ fontSize: 11, color: T.c.n600, marginLeft: 'auto' }}>quero comprar</span>
+        </button>
+      </div>
+
+      {/* Banner taxonomia — explica os 4 conceitos da Adega (Gabriel jun/2026) */}
+      {showTaxBanner && (
+        <TaxonomiaAdegaBanner onDismiss={dismissTaxBanner} go={go}/>
+      )}
+
       <div style={{ display: 'flex', padding: '0 16px', borderBottom: `1px solid ${T.c.n200}`, gap: 4 }}>
         {[
           { id: 'estante', label: 'Estante' },
@@ -120,9 +167,88 @@ function AdegaScreen({ go, ctx }) {
   );
 }
 
+// ─── TaxonomiaAdegaBanner — explica os 4 conceitos da Adega ──
+// Banner educacional dispensável que aparece no topo da Adega
+// na primeira visita. Define os 4 conceitos canônicos (Gabriel jun/2026).
+function TaxonomiaAdegaBanner({ onDismiss, go }) {
+  const items = [
+    { ...ADEGA_TAXONOMIA.estante,   to: null },
+    { ...ADEGA_TAXONOMIA.diario,    to: null },
+    { ...ADEGA_TAXONOMIA.favoritos, to: 'favoritos' },
+    { ...ADEGA_TAXONOMIA.wishlist,  to: 'lista-desejos' },
+  ];
+  return (
+    <div style={{
+      margin: '0 16px 12px', padding: '12px 14px',
+      background: T.c.p50, border: `1px solid ${T.c.p100}`, borderRadius: T.r.md,
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+        <div style={{ fontFamily: T.font, fontSize: 12, fontWeight: 700, color: T.c.p700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+          Onde fica o quê
+        </div>
+        <button onClick={onDismiss} aria-label="Dispensar" style={{
+          background: 'none', border: 'none', cursor: 'pointer', padding: 4, display: 'flex',
+        }}>
+          <Icon name="close" size={16} color={T.c.n600}/>
+        </button>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+        {items.map((it) => (
+          <button key={it.label} onClick={() => it.to && go(it.to)}
+            disabled={!it.to}
+            style={{
+              display: 'flex', alignItems: 'flex-start', gap: 8, padding: '8px 10px',
+              background: T.c.n0, border: `1px solid ${T.c.p100}`, borderRadius: T.r.sm,
+              cursor: it.to ? 'pointer' : 'default', textAlign: 'left',
+            }}>
+            <Icon name={it.icon} size={16} color={T.c.p700}/>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontFamily: T.font, fontSize: 12, fontWeight: 700, color: T.c.n950 }}>{it.label}</div>
+              <div style={{ fontFamily: T.font, fontSize: 11, color: T.c.n600, lineHeight: 1.3 }}>{it.def}</div>
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── DefinicaoInlinePill — mini-explicação da aba atual ───
+// Pílula curta no topo de cada aba (Estante/Diário) reforçando o conceito.
+function DefinicaoInlinePill({ tipo }) {
+  const t = ADEGA_TAXONOMIA[tipo];
+  if (!t) return null;
+  return (
+    <div style={{
+      display: 'inline-flex', alignItems: 'center', gap: 6,
+      padding: '4px 10px', marginBottom: 12,
+      background: T.c.p50, border: `1px solid ${T.c.p100}`, borderRadius: T.r.full,
+      fontFamily: T.font, fontSize: 11, color: T.c.p700, fontWeight: 600,
+    }}>
+      <Icon name={t.icon} size={12} color={T.c.p700}/>
+      <span>{t.def}</span>
+    </div>
+  );
+}
+
 // ─── Estante (adega visual) — matriz de slots ──────────────
 // Cada vinho registrado ocupa um quadradinho; slots vazios abrem o seletor
 // de vinho. Persiste em window.__tcCellar durante a sessão.
+// Item do slot pode ser: null (vazio) | wine (compat) | { wine, quantity, addedAt }
+// Helpers do slot multi-garrafa (Gabriel jun/2026)
+// Formatos aceitos do cell: null | wineObj (legado) | { wine, quantity, addedAt }
+function getCellWine(cell) { return cell == null ? null : (cell.wine || cell); }
+function getCellQty(cell) {
+  if (cell == null) return 0;
+  if (typeof cell.quantity === 'number') return cell.quantity;
+  return 1; // legado: 1 garrafa
+}
+function normalizeCell(cell, qty) {
+  const w = getCellWine(cell);
+  if (!w) return null;
+  return { wine: w, quantity: Math.max(0, qty), addedAt: cell?.addedAt || new Date().toISOString() };
+}
+
 function EstanteTab({ ctx, go }) {
   const diaryWines = React.useMemo(
     () => (ctx.diary || []).map((e) => e && e.wine).filter(Boolean),
@@ -134,14 +260,14 @@ function EstanteTab({ ctx, go }) {
     let base = (typeof window !== 'undefined' && Array.isArray(window.__tcCellar))
       ? window.__tcCellar.slice() : null;
     if (!base) {
-      base = Array.from({ length: SLOTS }, (_, i) => diaryWines[i] || null);
+      base = Array.from({ length: SLOTS }, (_, i) => diaryWines[i] ? normalizeCell(diaryWines[i], 1) : null);
     } else {
       if (base.length < SLOTS) base = base.concat(Array.from({ length: SLOTS - base.length }, () => null));
-      const present = new Set(base.filter(Boolean).map((w) => w.id));
+      const present = new Set(base.filter(Boolean).map((c) => getCellWine(c)?.id));
       diaryWines.forEach((w) => {
         if (!present.has(w.id)) {
           const empty = base.indexOf(null);
-          if (empty >= 0) { base[empty] = w; present.add(w.id); }
+          if (empty >= 0) { base[empty] = normalizeCell(w, 1); present.add(w.id); }
         }
       });
     }
@@ -152,23 +278,36 @@ function EstanteTab({ ctx, go }) {
 
   const persist = (next) => { setCells(next); if (typeof window !== 'undefined') window.__tcCellar = next; };
   const filled = cells.filter(Boolean).length;
+  const totalBottles = cells.reduce((sum, c) => sum + getCellQty(c), 0);
 
   const fillFrom = (startIdx, wines) => {
     const next = cells.slice();
     let wi = 0;
     for (let i = startIdx; i < next.length && wi < wines.length; i++) {
-      if (!next[i]) next[i] = wines[wi++];
+      if (!next[i]) next[i] = normalizeCell(wines[wi++], 1);
     }
-    while (wi < wines.length) next.push(wines[wi++]);
+    while (wi < wines.length) next.push(normalizeCell(wines[wi++], 1));
     persist(next);
   };
   const removeAt = (idx) => { const next = cells.slice(); next[idx] = null; persist(next); };
+  const changeQty = (idx, delta) => {
+    const next = cells.slice();
+    const newQty = getCellQty(next[idx]) + delta;
+    if (newQty <= 0) {
+      next[idx] = null;
+    } else {
+      next[idx] = normalizeCell(next[idx], newQty);
+    }
+    persist(next);
+  };
 
   return (
     <div style={{ padding: '16px 16px 96px' }}>
+      <DefinicaoInlinePill tipo="estante"/>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
         <div style={{ ...T.t.caption, color: T.c.n600 }}>
-          <strong style={{ color: T.c.n950 }}>{filled}</strong> de {cells.length} espaços ocupados
+          <strong style={{ color: T.c.n950 }}>{filled}</strong> de {cells.length} espaços
+          {totalBottles !== filled && <span style={{ color: T.c.n600 }}> · {totalBottles} garrafas</span>}
         </div>
         <button onClick={() => { const i = cells.indexOf(null); setPickFor(i >= 0 ? i : cells.length); }} style={{
           display: 'flex', alignItems: 'center', gap: 6, padding: '6px 10px',
@@ -202,10 +341,17 @@ function EstanteTab({ ctx, go }) {
         boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.4), 0 2px 6px rgba(0,0,0,0.12)',
         border: '1px solid #46301B',
       }}>
-        {cells.map((w, i) => w
-          ? <FilledSlot key={i} wine={w} onOpen={() => go('wine', { wine: w })} onRemove={() => removeAt(i)}/>
-          : <EmptySlot key={i} onAdd={() => setPickFor(i)} highlight={filled === 0 && i === 0}/>
-        )}
+        {cells.map((c, i) => {
+          const w = getCellWine(c);
+          const qty = getCellQty(c);
+          return w
+            ? <FilledSlot key={i} wine={w} quantity={qty}
+                onOpen={() => go('wine', { wine: w })}
+                onRemove={() => removeAt(i)}
+                onInc={() => changeQty(i, +1)}
+                onDec={() => changeQty(i, -1)}/>
+            : <EmptySlot key={i} onAdd={() => setPickFor(i)} highlight={filled === 0 && i === 0}/>;
+        })}
       </div>
 
       {pickFor != null && (
@@ -242,22 +388,31 @@ function EmptySlot({ onAdd, highlight }) {
   );
 }
 
-function FilledSlot({ wine, onOpen, onRemove }) {
+function FilledSlot({ wine, quantity = 1, onOpen, onRemove, onInc, onDec }) {
+  const qty = Math.max(1, quantity);
   return (
     <div style={{
       position: 'relative', aspectRatio: '3 / 4', borderRadius: 6, overflow: 'hidden',
       background: 'rgba(0,0,0,0.20)', boxShadow: 'inset 0 3px 8px rgba(0,0,0,0.45)',
       border: '1px solid rgba(0,0,0,0.28)',
     }}>
-      <button onClick={onOpen} aria-label={wine.name} style={{
+      <button onClick={onOpen} aria-label={`${wine.name}${qty > 1 ? ` (${qty} garrafas)` : ''}`} style={{
         width: '100%', height: '100%', padding: 0, border: 'none', cursor: 'pointer',
         position: 'relative', background: 'transparent',
         display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
       }}>
-        {/* garrafa em pé no cubículo */}
-        <div style={{ position: 'absolute', top: '13%', left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div style={{ width: 4, height: 10, background: '#3A1116', borderRadius: '2px 2px 0 0' }}/>
-          <div style={{ width: 18, height: 34, background: 'linear-gradient(165deg, #9A4350 0%, #6E2A33 50%, #4A1F24 100%)', borderRadius: '4px 4px 5px 5px', boxShadow: '0 1px 3px rgba(0,0,0,0.45)' }}/>
+        {/* várias garrafinhas no cubículo — sobreposição lateral pra dar sensação de quantidade */}
+        <div style={{ position: 'absolute', top: '13%', left: '50%', transform: 'translateX(-50%)', display: 'flex', alignItems: 'flex-end', gap: -2 }}>
+          {Array.from({ length: Math.min(qty, 3) }).map((_, i) => (
+            <div key={i} style={{
+              display: 'flex', flexDirection: 'column', alignItems: 'center',
+              marginLeft: i === 0 ? 0 : -6,
+              opacity: 1 - i * 0.12,
+            }}>
+              <div style={{ width: 4, height: 10, background: '#3A1116', borderRadius: '2px 2px 0 0' }}/>
+              <div style={{ width: 18, height: 34, background: 'linear-gradient(165deg, #9A4350 0%, #6E2A33 50%, #4A1F24 100%)', borderRadius: '4px 4px 5px 5px', boxShadow: '0 1px 3px rgba(0,0,0,0.45)' }}/>
+            </div>
+          ))}
         </div>
         <div style={{
           width: '100%', padding: '3px 3px 5px', background: 'rgba(0,0,0,0.45)',
@@ -265,6 +420,36 @@ function FilledSlot({ wine, onOpen, onRemove }) {
           textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
         }}>{wine.name}</div>
       </button>
+      {/* Badge × N — quantidade no canto sup. esq. (só aparece se >1) */}
+      {qty > 1 && (
+        <div style={{
+          position: 'absolute', top: 3, left: 3,
+          minWidth: 22, height: 18, padding: '0 5px',
+          background: '#E2B86B', color: '#3A1116', borderRadius: 9,
+          fontFamily: 'JetBrains Mono, monospace', fontSize: 10, fontWeight: 700,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: '0 1px 2px rgba(0,0,0,0.4)',
+        }}>×{qty}</div>
+      )}
+      {/* Botões +/− (Gabriel jun/2026: multi-garrafa por slot) */}
+      {onInc && (
+        <button onClick={(e) => { e.stopPropagation(); onInc(); }} aria-label="Adicionar uma garrafa" style={{
+          position: 'absolute', bottom: 22, right: 3, width: 16, height: 16, borderRadius: '50%',
+          background: 'rgba(0,0,0,0.55)', border: 'none', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <Icon name="add" size={10} color="#fff"/>
+        </button>
+      )}
+      {onDec && qty > 1 && (
+        <button onClick={(e) => { e.stopPropagation(); onDec(); }} aria-label="Tirar uma garrafa" style={{
+          position: 'absolute', bottom: 22, left: 3, width: 16, height: 16, borderRadius: '50%',
+          background: 'rgba(0,0,0,0.55)', border: 'none', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <Icon name="remove" size={10} color="#fff"/>
+        </button>
+      )}
       <button onClick={onRemove} aria-label="Tirar da estante" style={{
         position: 'absolute', top: 3, right: 3, width: 18, height: 18, borderRadius: '50%',
         background: 'rgba(0,0,0,0.55)', border: 'none', cursor: 'pointer',
@@ -317,6 +502,7 @@ function DiarioTab({ ctx, go }) {
   });
   return (
     <div style={{ padding: '12px 16px 96px' }}>
+      <DefinicaoInlinePill tipo="diario"/>
       {/* Stats summary card — anchored as data-tour-anchor="diario-stats" */}
       <DiarioStatsCard diary={ctx.diary}/>
 

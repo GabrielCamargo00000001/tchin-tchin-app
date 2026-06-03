@@ -58,6 +58,7 @@ import { LoginSocialScreen } from './screens-onboarding-alt.jsx';
 import { CelebrationToast, TOUR_STEPS, TutorialTooltip, WelcomeFinalScreen, readTourState, writeTourState } from './screens-onboarding-final.jsx';
 import { EventoEditarScreen, EventoPosAtaScreen, EventoPosAvaliarScreen, EventoPresencaScreen } from './screens-organizador.jsx';
 import { PerfilAtividadePublicaScreen, PerfilCompararPaladarScreen, PerfilSeguidoresScreen, PerfilSeguindoScreen, PerfilSugestoesScreen, PerfilVinhosProvadosScreen } from './screens-perfil-publico.jsx';
+import { PerfilEuScreen } from './screens-perfil-eu.jsx';
 import { PlusOneScreen } from './screens-plus-one.jsx';
 import { InteressesScreen, QuizNivelScreen } from './screens-quiz-nivel.jsx';
 import { GpsNegadoScreen, GpsPrimerScreen, QuizResultScreen, QuizScreen, TelaIntencaoScreen } from './screens-quiz.jsx';
@@ -341,6 +342,8 @@ function TchinApp({ initialScreen = 'onboarding' }) {
     // Perfil avançado (38.x)
     'perfil-seguidores', 'perfil-seguindo', 'perfil-atividade-publica',
     'perfil-vinhos-provados', 'perfil-sugestoes', 'perfil-comparar-paladar',
+    // Perfil próprio — rota dedicada (Gabriel jun/2026)
+    'perfil-eu',
     // Indicação (39.x)
     'indicacao-landing', 'indicacao-compartilhar', 'indicacao-meus-convites',
     'indicacao-recompensas', 'convite-recebido',
@@ -537,6 +540,8 @@ function TchinApp({ initialScreen = 'onboarding' }) {
       case 'perfil-vinhos-provados': return <PerfilVinhosProvadosScreen go={go} params={current.params}/>;
       case 'perfil-sugestoes':       return <PerfilSugestoesScreen go={go}/>;
       case 'perfil-comparar-paladar': return <PerfilCompararPaladarScreen go={go} params={current.params}/>;
+      // ── Perfil próprio — rota dedicada (Gabriel jun/2026) ──
+      case 'perfil-eu':              return <PerfilEuScreen go={go} ctx={ctx}/>;
       // ── Indicação (39.x) ────────────────────────────────────
       case 'indicacao-landing':       return <IndicacaoLandingScreen go={go} ctx={ctx}/>;
       case 'indicacao-compartilhar':  return <IndicacaoCompartilharScreen go={go} ctx={ctx}/>;
@@ -836,9 +841,15 @@ function ProfileDrawer({ ctx, onClose, go, onToggleOnline }) {
         background: T.c.n0, display: 'flex', flexDirection: 'column',
         animation: 'tcSlideLeft 260ms cubic-bezier(0.2, 0.8, 0.2, 1)',
       }}>
-        {/* Top: close */}
+        {/* Top: close + atalho pra rota dedicada (Gabriel jun/2026) */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px 4px' }}>
-          <span style={{ ...T.t.h3, color: T.c.n950 }}>Você</span>
+          <button onClick={() => go('perfil-eu')} style={{
+            display: 'inline-flex', alignItems: 'center', gap: 4,
+            background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+            color: T.c.n950, fontFamily: T.font, fontSize: T.t.h3.fontSize, fontWeight: 700,
+          }}>
+            Você <Icon name="open_in_new" size={16} color={T.c.p700}/>
+          </button>
           <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 8 }}>
             <Icon name="close" size={22} color={T.c.n800}/>
           </button>

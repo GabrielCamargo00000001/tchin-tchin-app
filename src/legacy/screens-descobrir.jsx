@@ -104,6 +104,30 @@ function DescobrirHome({ go, ctx }) {
         </div>
       </div>
 
+      {/* 🆕 Marketplace de Experiência (Gabriel jun/2026) */}
+      <div style={{ padding: '16px 16px 0' }}>
+        <button onClick={() => go('confraria-detalhe', { confraria: { name: 'Brindar em Brasília', _experienciaTab: true } })} style={{
+          width: '100%', display: 'flex', alignItems: 'center', gap: 14, padding: 14,
+          background: `linear-gradient(135deg, ${T.c.a100} 0%, ${T.c.p50} 100%)`,
+          border: `1px solid ${T.c.a700}`, borderRadius: T.r.lg, cursor: 'pointer',
+          textAlign: 'left', boxShadow: T.shadow?.e1 || '0 1px 2px rgba(0,0,0,0.04)',
+        }}>
+          <div style={{ width: 52, height: 52, borderRadius: T.r.md, background: T.c.a700, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Icon name="storefront" size={28} color="#fff"/>
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+              <span style={{ padding: '2px 7px', background: T.c.a700, color: T.c.n0, borderRadius: T.r.full, fontSize: 9, fontWeight: 800 }}>NOVO</span>
+              <span style={{ fontSize: 15, fontWeight: 700, color: T.c.n950 }}>Marketplace de Experiência</span>
+            </div>
+            <div style={{ fontSize: 12.5, color: T.c.n800, lineHeight: 1.4 }}>
+              Vinícolas, kits, locais, conteúdo. Em R$ ou em cristais do Treino.
+            </div>
+          </div>
+          <Icon name="arrow_forward_ios" size={16} color={T.c.n600}/>
+        </button>
+      </div>
+
       {/* Categorias */}
       <div style={{ padding: '24px 16px 0' }}>
         <div style={{ ...T.t.h2, color: T.c.n950, marginBottom: 12 }}>Categorias</div>
