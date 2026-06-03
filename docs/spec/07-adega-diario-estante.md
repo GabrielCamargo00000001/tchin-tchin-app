@@ -12,7 +12,7 @@
 
 ### ✅ IMPLEMENTADO NO PROTÓTIPO (jun/2026)
 Decisões 7.0.1, 7.0.2, 7.0.5 já estão **no código** (`screens-app.jsx`). Comportamento:
-- **Banner "Onde fica o quê"** explica os 4 conceitos no topo da Adega (dispensável via `window.__tcAdegaTaxonomiaDismissed`).
+- **Banner "Onde fica o quê"** explica os 4 conceitos no topo da Adega — dispensável; persiste em `localStorage['tc.adega.tax.dismissed']` (não volta entre sessões).
 - **Chips de atalho** Favoritos e Wishlist sempre visíveis no header (antes só ♡).
 - **Pílula de definição inline** em cada aba ("O que TENHO na minha garrafeira física" / "O que JÁ PROVEI").
 - **Slot multi-garrafa**: cada slot aceita `{ wine, quantity, addedAt }`. Badge `×N` no canto + botões +/− pra ajustar. Contador "X de Y espaços · Z garrafas".
@@ -78,6 +78,10 @@ relatorio-mensal (Wrapped) ─ scroll storytelling → "Compartilhar nas redes"
 _Estante 🆕 · Diário · Indicadores · Paladar:_
 
 <img src="shots/home-adega-estante.png" width="190"/> <img src="shots/home-adega-diario.png" width="190"/> <img src="shots/home-adega-indicadores.png" width="190"/> <img src="shots/home-adega-paladar.png" width="190"/>
+
+_Estado de uso recorrente (banner "Onde fica o quê" dispensado — chave `tc.adega.tax.dismissed` em localStorage):_
+
+<img src="shots/home-adega-estante-limpa.png" width="190"/> <img src="shots/home-adega-diario-limpa.png" width="190"/>
 
 **Propósito:** acervo pessoal de vinhos com 4 visões. **Estante é a aba default** (decisão de produto Fase 3). **US-ADEGA-01.**
 **Entradas:** bottom nav "Adega"; pós-registro (`registro-confirmacao` → "Continuar"). **Saídas:** `register-consumo`, `favoritos`, `wine`, `quiz` (refazer paladar), `descobrir`.

@@ -30,14 +30,19 @@ const ADEGA_TAXONOMIA = {
 function AdegaScreen({ go, ctx }) {
   const [tab, setTab] = React.useState('estante'); // Estante é a aba principal
   const [multiOpen, setMultiOpen] = React.useState(false); // #9 — adicionar vários à adega
-  // Banner "Onde fica o quê" — dispensável; persiste em window flag.
+  // Banner "Onde fica o quê" — dispensável; persiste em localStorage
+  // (chave `tc.adega.tax.dismissed`) pra não voltar entre sessões.
   const [showTaxBanner, setShowTaxBanner] = React.useState(() => {
     if (typeof window === 'undefined') return true;
+    try { if (window.localStorage.getItem('tc.adega.tax.dismissed') === '1') return false; } catch (e) {}
     return !window.__tcAdegaTaxonomiaDismissed;
   });
   const dismissTaxBanner = () => {
     setShowTaxBanner(false);
-    if (typeof window !== 'undefined') window.__tcAdegaTaxonomiaDismissed = true;
+    if (typeof window !== 'undefined') {
+      window.__tcAdegaTaxonomiaDismissed = true;
+      try { window.localStorage.setItem('tc.adega.tax.dismissed', '1'); } catch (e) {}
+    }
   };
   // Old diary tour (SVG mask) — superseded by the new TchinTutor system.
   const [diarioTourStep, setDiarioTourStep] = React.useState(null);
