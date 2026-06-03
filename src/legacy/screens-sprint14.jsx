@@ -603,6 +603,34 @@ const SPRINT14_ITEMS = [
     ],
     telas: ['erro-404 (Garrafa não encontrada)', 'erro-permissao (Conteúdo restrito)', 'erro-sessao (3 reasons: atualizacao, seguranca, inatividade)', 'vinho-indisponivel', 'erro-servidor', 'toast (overlay transversal)'],
   },
+  { id: 'R22', kind: 'refator', title: 'Refatoração v2 de Onboarding e Tutoriais conversacionais', owner: 'time design + Bruno', module: 'transversal', status: 'definido', urgent: false,
+    summary: 'Refatoração v2 de 40 telas e overlays do sistema de onboarding e tutoriais com mascote. Cobre as 4 famílias: pre auth, pos auth, tour bottom nav, e tutoriais conversacionais por feature (scanner, restaurante, confraria, treino paladar).',
+    rule: 'Mascote no canto inferior direito com pulse 1.8s. Balão de fala fade in 200ms. Spotlight escurece tela fora da zona alvo. Coachmark com seta ou círculo pulsante. Pular sempre disponível canto superior direito. Persistência em localStorage tc.tutor.done JSON id timestamp. Cada tutorial dispara 1 vez automático.',
+    fix: 'Unificar identidade do mascote, padronizar balão de fala, spotlight e coachmark. Migrar TourDiario SVG legado pro TchinTutor moderno. confraria-usar deixa de disparar automático e fica opcional via menu (Gabriel jun 2026, M11 § 11.A.1).',
+    accept: [
+      'Cada tutorial dispara 1 vez e não volta sozinho.',
+      'Hub /tutoriais lista 7 famílias + tour de 4 passos com status Concluído ou Pendente.',
+      'Pular fecha tutorial e marca como feito.',
+      'Mascote, balão, spotlight e coachmark seguem padrão v2 nas 7 famílias.',
+      'Reset pelos debug tools volta tutorial pra Pendente.',
+    ],
+    telas: [
+      'Onboarding pre auth: onboarding slide 1, slide 2, slide 3.',
+      'Onboarding pos auth: quiz-nivel, quiz-interesses (mínimo 3), tela-intencao.',
+      'GPS primer com 7 variantes: discover, diario, aprender, treino, confraria, wizard, skip.',
+      'gps-negado, welcome-final (3 highlights + pílula Pontos sutil).',
+      'Tour 4 passos: tour-passo-1-comunidade, tour-passo-2-confrarias, tour-passo-3-descobrir, tour-passo-4-adega, tour-celebracao.',
+      'Hub: tutoriais (rota /tutoriais, acessível por perfil-eu seção Suporte).',
+      'Tutor scanner: tutor-scanner-intro, step-1, step-2, step-3.',
+      'Tutor restaurante: tutor-restaurante-intro, step-1, step-2, step-3, step-4.',
+      'Tutor confraria: tutor-confraria-intro, step-1, step-2, step-3.',
+      'Tutor opcional: confraria-usar (deixa de disparar automático).',
+      'Tutor treino paladar com mascote: treino-onb-intro, say1, objetivo, goal, say2, streakgoal, gems, final.',
+      'Modal pós criação confraria (F7).',
+      'Modal boas vindas novo membro confraria (F9, com 3 highlights).',
+      'TourDiario legado (SVG mask, deprecar nesta Sprint).',
+    ],
+  },
 ];
 
 const KIND_LABEL = {
@@ -672,7 +700,7 @@ function Sprint14HubScreen({ go }) {
           Plano de execução completo
         </div>
         <div style={{ fontFamily: T.font, fontSize: 13, lineHeight: 1.45, opacity: 0.92 }}>
-          49 itens organizados em 7 blocos. Versão alvo 1.7.0.
+          50 itens organizados em 7 blocos. Versão alvo 1.7.0.
         </div>
         <div style={{ marginTop: 12, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <span style={{ padding: '4px 10px', background: 'rgba(255,255,255,0.18)', borderRadius: T.r.full, fontSize: 11, fontWeight: 600 }}>

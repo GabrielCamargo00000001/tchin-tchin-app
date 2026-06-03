@@ -22,9 +22,11 @@ Bugs urgentes herdados: 8 itens (B1 a B8).
 Alterações de UX e label herdadas: 5 itens (A1 a A5).
 Features novas e itens do backlog que ganham definição nesta Sprint: 12 itens (F1 a F12).
 Pushes em produção desde Sprint 13 que precisam de revisão de copy: 3 itens (P1 a P3).
-Refatoração visual v2 de todas as telas existentes: 21 blocos (R1 a R21), um por módulo da super doc.
+Refatoração visual v2 de todas as telas existentes: 22 blocos (R1 a R22). R1 a R21
+cobrem um módulo da super doc cada. R22 cobre o sistema transversal de tutoriais
+conversacionais com mascote e tours guiados (40 telas e overlays).
 
-Total de 49 itens organizados em 7 blocos sequenciais.
+Total de 50 itens organizados em 7 blocos sequenciais.
 
 Princípio da refatoração visual: as telas que já existem no app são repensadas com
 o design system v2 e as decisões de produto fechadas em junho de 2026. Não é só
@@ -1613,6 +1615,115 @@ Regras aplicadas:
 1. erro-sessao só em 3 cenários raros (F2).
 2. Status page interna (não pública), conforme M21 § 21.0.1.
 3. Toasts empilham, até 3 visíveis, M21 § 21.0.2.
+
+### R22. Onboarding visual e Tutoriais conversacionais com mascote
+
+Princípio: o app já tem 4 famílias distintas de orientação ao usuário (pre auth,
+pos auth, tour de 4 passos da bottom nav, tutoriais conversacionais com mascote em
+features específicas). A v2 unifica a identidade do mascote, padroniza balão de
+fala, spotlight e coachmark, e mantém a regra de "ver 1 vez e marca como feito"
+(localStorage tc.tutor.done JSON id timestamp).
+
+Telas afetadas em ordem:
+
+Onboarding pre auth (já em R1):
+1. onboarding slide 1 (identidade da marca).
+2. onboarding slide 2 (dor 1, incerteza de compra).
+3. onboarding slide 3 (dor 3, memória fragmentada).
+
+Onboarding pos auth (já em R2):
+4. quiz-nivel.
+5. quiz-interesses (mínimo 3).
+6. tela-intencao.
+7. gps-primer e variantes (discover, diario, aprender, treino, confraria, wizard,
+   skip).
+8. gps-negado.
+9. welcome-final (3 highlights mais pílula sutil de Pontos, M19 § 19.0.2).
+
+Tour guiado de 4 passos da bottom nav (cross M02):
+10. tour-passo-1-comunidade.
+11. tour-passo-2-confrarias.
+12. tour-passo-3-descobrir.
+13. tour-passo-4-adega.
+14. tour-celebracao (após completar os 4 passos).
+
+Hub de tutoriais (cross M20 Suporte):
+15. tutoriais (rota /tutoriais, lista de todos os tutoriais com status de
+    completo ou pendente, acessível por perfil-eu seção Suporte ou por
+    config-conta).
+
+Tutorial conversacional do scanner (M06):
+16. tutor-scanner-intro (mascote no canto, balão de fala).
+17. tutor-scanner-step-1.
+18. tutor-scanner-step-2.
+19. tutor-scanner-step-3.
+
+Tutorial conversacional do modo restaurante (M06):
+20. tutor-restaurante-intro.
+21. tutor-restaurante-step-1.
+22. tutor-restaurante-step-2.
+23. tutor-restaurante-step-3.
+24. tutor-restaurante-step-4.
+
+Tutorial conversacional de confraria (M11):
+25. tutor-confraria-intro.
+26. tutor-confraria-step-1.
+27. tutor-confraria-step-2.
+28. tutor-confraria-step-3.
+
+Tutorial conversacional alternativo confraria-usar (M11):
+29. confraria-usar (tutorial conversacional opcional via menu, decisão Gabriel
+    junho 2026, M11 § 11.A.1, deixa de disparar automaticamente).
+
+Onboarding gamificado do Treino seu Paladar com mascote (M08):
+30. treino-onb-intro.
+31. treino-onb-say1.
+32. treino-onb-objetivo.
+33. treino-onb-goal.
+34. treino-onb-say2.
+35. treino-onb-streakgoal.
+36. treino-onb-gems.
+37. treino-onb-final.
+
+Modais e overlays:
+38. Modal pós criação de confraria (F7).
+39. Modal de boas vindas pra novo membro de confraria (F9, com 3 highlights).
+40. TourDiario legado (SVG mask, substituído oficialmente pelo TchinTutor
+    moderno; deprecar a versão SVG nesta Sprint).
+
+Regras gerais da v2 dos tutoriais:
+1. Mascote no canto inferior direito com pulse suave de 1.8 segundos.
+2. Balão de fala com fade in de 200 ms, máximo 2 linhas de texto, fonte Inter.
+3. Spotlight escurece a tela inteira fora da zona alvo com gradiente radial.
+4. Coachmark com seta ou círculo pulsante apontando pra zona alvo.
+5. Botão Pular sempre disponível, canto superior direito.
+6. Botão Próximo no rodapé (Voltar quando aplicável a partir do passo 2).
+7. Ao completar tutorial inteiro: confete suave de 800 ms mais toast "Tutorial
+   concluído. Você ganhou 10 pts" (depende da reativação do épico Pontos em
+   Sprint 16 ou na decisão Gabriel da Sprint 15 R6).
+8. Persistência: cada tutorial guarda done em localStorage tc.tutor.done JSON
+   id timestamp. Reset via debug ou via config-conta seção Tutoriais.
+
+Regras de disparo automático (resumo):
+1. Onboarding pre auth: primeira abertura após instalar.
+2. Onboarding pos auth: imediatamente após primeiro cadastro.
+3. Tour de 4 passos: ao concluir welcome-final, se o usuário escolher Começar
+   tour. Se pular, fica disponível pelo hub /tutoriais.
+4. Tutor scanner: primeira vez que abrir scanner-v2.
+5. Tutor restaurante: primeira vez que abrir modo-restaurante.
+6. Tutor confraria: primeira vez que entrar em confraria-detalhe sendo membro.
+7. Tutor treino: primeira vez que abrir treino-paladar.
+8. confraria-usar: NÃO dispara mais automaticamente, fica opcional via menu.
+
+Aceite:
+1. Cada tutorial dispara 1 vez e não volta sozinho.
+2. Hub /tutoriais lista os 7 tutoriais conversacionais mais o tour de 4 passos
+   com status Concluído ou Pendente.
+3. Tutorial concluído manualmente pelo hub também marca como feito.
+4. Pular fecha o tutorial e marca como feito.
+5. Mascote, balão, spotlight e coachmark seguem o padrão v2 nas 7 famílias de
+   tutorial.
+6. Reset pelos debug tools volta tutorial pra Pendente.
 
 ## 8. Critérios gerais de aceite da Sprint 14
 
