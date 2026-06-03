@@ -1,0 +1,626 @@
+/* eslint-disable */
+// @ts-nocheck
+// Hub navegável da Sprint 14 (jun 2026)
+// Listagem completa dos 28 itens descritos em docs/spec/sprint-14.md com
+// cards filtráveis por tipo e responsável. Cada card abre uma tela
+// detalhada com sintoma, UX correta, regra de negócio e aceite.
+//
+// Acessível em ?screen=sprint14-hub
+import React from 'react';
+import { Button } from './components.jsx';
+import { Icon, T } from './tokens.jsx';
+
+// Catálogo dos 28 itens da Sprint 14
+const SPRINT14_ITEMS = [
+  // Bugs urgentes herdados da 1.6.1
+  { id: 'B1', kind: 'bug', title: 'Teclado iOS permanece aberto após primeiro acesso', owner: 'Otavio', module: 'M01', status: 'iniciado', urgent: true,
+    summary: 'Em iOS, no primeiro fluxo de cadastro ou login, o teclado nativo permanece aberto sobre a tela ao tocar fora dos campos.',
+    cause: 'Os campos têm onFocus que reabre o teclado no ciclo de render seguinte ao toque no botão. O blur disputa frame com o click.',
+    fix: 'Remover handlers de onFocus dos campos. Aplicar blur explícito ao detectar toque fora da área de input. Dismiss via UIResponder no iOS.',
+    accept: [
+      'iOS, primeiro cadastro: tocar fora do campo fecha o teclado.',
+      'iOS, login: tocar em Entrar dispara a ação na primeira tentativa e o teclado fecha.',
+      'iOS, retomar app via swipe: nenhum teclado abre sozinho.',
+      'Android: comportamento atual permanece sem regressão.',
+      'Tela de comentário no feed: toque fora fecha o teclado.',
+    ],
+  },
+  { id: 'B2', kind: 'alteracao', title: 'Botão Comprar na tela de detalhe do vinho', owner: 'Guilherme', module: 'M04', status: 'iniciado', urgent: true,
+    summary: 'Botão Comprar tenta levar a checkout incompleto sem banco de produtos ligado nem comissão definida.',
+    rule: 'Marketplace de vinhos vende parceiros externos. Tchin não estoca. Até a base de produtos estar pronta e a regra de taxa do marketplace definida, remover o botão.',
+    fix: 'Remover Comprar de WineDetailScreen. Manter Salvar na Wishlist, Adicionar à Estante e Ver onde encontrar. Adicionar faixa Em breve no rodapé.',
+    accept: [
+      'Detalhe de vinho não exibe botão Comprar.',
+      'Faixa Em breve visível abaixo dos botões.',
+      'Botão Salvar na Wishlist continua funcional.',
+      'Botão Adicionar à Estante continua funcional.',
+      'Nenhuma rota de checkout dispara a partir do detalhe do vinho.',
+    ],
+  },
+  { id: 'B3', kind: 'bug', title: 'Valor obrigatório para evento gratuito', owner: 'Mauricio', module: 'M12', status: 'iniciado', urgent: true,
+    summary: 'No wizard de criação de evento, ao selecionar tipo Gratuito, o campo Valor continua marcando como obrigatório.',
+    cause: 'Validador aplica required em Valor sem condicional pelo flag paid.',
+    fix: 'Tornar Valor obrigatório apenas se o evento for Pago. Em Gratuito, ocultar o campo. Valor enviado pro backend é zero ou null.',
+    accept: [
+      'Criar evento Gratuito: avançar sem preencher Valor.',
+      'Criar evento Pago: Valor obrigatório, mensagem clara em vermelho.',
+      'Editar evento existente: trocar de Pago pra Gratuito limpa Valor.',
+      'Validação client e server consistentes.',
+    ],
+  },
+  { id: 'B4', kind: 'bug', title: 'Contador de comentários não atualiza ao excluir', owner: 'Mateus', module: 'M13', status: 'iniciado', urgent: false,
+    summary: 'No post detail, excluir um comentário próprio deixa o contador inalterado até sair e voltar.',
+    cause: 'Handler de delete remove item da lista mas não decrementa o contador exibido no cabeçalho do post.',
+    fix: 'Ao deletar comentário, decrementar contador na mesma ação. Contador deriva do array de comentários, sem state duplicado.',
+    accept: [
+      'Deletar comentário próprio: contador cai em 1 imediatamente.',
+      'Dono do post deletar comentário de terceiro: contador cai em 1 imediatamente.',
+      'Adicionar comentário: contador sobe em 1 imediatamente.',
+      'Recarregar a tela: contador permanece consistente.',
+    ],
+  },
+  { id: 'B5', kind: 'bug', title: 'Deixar de seguir usuário sem ação visível', owner: 'Otavio', module: 'M14', status: 'investigar', urgent: false,
+    summary: 'Tocar em Deixando de seguir no perfil de outro usuário não muda o estado do botão.',
+    cause: 'Não reproduzido nos testes internos. Hipóteses: race condition, cache de seguidos com TTL longo, mismatch entre estado local e backend.',
+    fix: 'Garantir que o botão sempre reflete a resposta do backend. Erro: toast de falha. Sucesso: atualiza state e invalida cache.',
+    accept: [
+      'Seguir usuário: botão muda pra Seguindo imediatamente.',
+      'Deixar de seguir: botão muda pra Seguir imediatamente.',
+      'Sair do perfil e voltar: estado consistente.',
+      'Lista de Seguindo reflete a mudança ao reabrir.',
+    ],
+  },
+  { id: 'B6', kind: 'bug', title: 'Modal cancelar evento gratuito não fecha', owner: 'Guilherme', module: 'M12', status: 'iniciado', urgent: false,
+    summary: 'Em evento Gratuito, ao confirmar o cancelamento, a modal permanece visível.',
+    cause: 'Callback de confirmação não chama setOpen(false) antes da navegação.',
+    fix: 'Fechar a modal antes de disparar navegação ou animação. Garantir que modal não fica aberta após qualquer ação do CTA.',
+    accept: [
+      'Evento Gratuito: cancelar fecha a modal e atualiza o RSVP.',
+      'Evento Pago >24h: cancelar abre fluxo de reembolso.',
+      'Evento Pago 24h a 2h: cancelar abre fluxo de crédito em Pontos.',
+      'Evento Pago <2h: opção desabilitada com explicação.',
+    ],
+  },
+  { id: 'B7', kind: 'bug', title: 'Compartilhar aparece pra não-membros da confraria', owner: 'Mauricio', module: 'M11', status: 'iniciado', urgent: true,
+    summary: 'Usuário não-membro vê o botão Compartilhar no menu da confraria, permitindo vazamento do link de convite.',
+    rule: 'Compartilhar e Convidar só aparecem pra membros e admins. Não-membros veem apenas Reportar e voltar.',
+    fix: 'Condicionar exibição à flag isMember. Membro: Compartilhar. Admin: Compartilhar + Convidar amigos. Convite mantém autoria do emissor.',
+    accept: [
+      'Não-membro: menu sem Compartilhar.',
+      'Membro: menu com Compartilhar.',
+      'Admin: menu com Compartilhar e Convidar amigos.',
+    ],
+  },
+  { id: 'B8', kind: 'alteracao', title: 'Botão flutuante em telas de detalhamento', owner: 'Mateus', module: 'transversal', status: 'iniciado', urgent: false,
+    summary: 'FAB visível em quase todas as telas, inclusive em detalhamentos onde polui leitura ou sobrepõe CTAs principais.',
+    rule: 'Whitelist: aparecer apenas em home/descobrir, home/comunidade, home/confrarias, home/adega, busca, marketplace, favoritos, lista-desejos, chat-lista. Ocultar em detalhamentos, wizards, onboardings, edge cases, configurações, sheets, telas modais.',
+    fix: 'Implementar whitelist. Ação do FAB parametrizada por rota.',
+    accept: [
+      'Abrir wine: nenhum FAB.',
+      'Abrir home/descobrir: FAB de Scanner.',
+      'Abrir event-detalhe: nenhum FAB.',
+      'Abrir chat-lista: FAB de Nova conversa.',
+      'Voltar de detalhada pra home: FAB volta a aparecer.',
+    ],
+  },
+  // Alterações de UX e label
+  { id: 'A1', kind: 'feature', title: 'Tela Descobri', owner: 'Guilherme', module: 'M04', status: 'definir', urgent: false,
+    summary: 'Hub editorial e algorítmico do app, ponto de entrada da aba esquerda. Substitui home/descobrir.',
+    rule: 'Algoritmo de Pra você: 50% paladar, 30% popularidade, 20% editorial. Sem login vira Editorial top picks. Sem registros usa só paladar. Com registros usa fórmula completa.',
+    fix: 'Bloco 1: Hero do dia editorial. Bloco 2: Pra você algorítmico. Bloco 3: Confrarias da região. Bloco 4: Eventos próximos. Bloco 5: Marketplace de Experiência. Bloco 6: Curiosidades editoriais. Sticky bottom: FAB de Scanner.',
+    accept: [
+      'Abrir Descobri: hero visível em 700ms.',
+      'Bloco Pra você carrega progressivamente.',
+      'Sem GPS: mostra capital do estado do usuário.',
+      'Tap em qualquer item navega pra detail correto.',
+      'Pull to refresh atualiza editorial e algorítmico.',
+    ],
+  },
+  { id: 'A2', kind: 'alteracao', title: 'Label Adega não Estoque', owner: 'Gustavo', module: 'M07', status: 'definido', urgent: false,
+    summary: 'Sprint 13 trocou label de Adega pra Estoque. Decisão Gabriel jun 2026 reverteu pra Adega.',
+    rule: 'Adega é parte da identidade da marca. Estoque é jargão de comerciante. Reverter em todos os pontos. Taxonomia interna usa Estante, Diário, Favoritos, Wishlist.',
+    fix: 'Bottom nav: tab Adega. Header: Minha Adega. ProfileDrawer e perfil-eu: linha Adega. Push 4h: copy continua vinho, destino é Adega.',
+    accept: [
+      'Nenhuma string visível usa Estoque.',
+      'Telas internas usam Estante, Diário, Favoritos, Wishlist.',
+    ],
+  },
+  { id: 'A3', kind: 'feature', title: 'Match do paladar com vinhos', owner: 'Mateus', module: 'M04', status: 'pausado', urgent: false,
+    summary: 'Fórmula de match score por vinho. Pausado por falta de banco de produtos e cálculo do percentual.',
+    rule: 'score = 0.50 * cosineSim(paladarUsuario, perfilVinho) + 0.30 * popularityBoost + 0.20 * editorialBoost. Pesos calibráveis server side.',
+    fix: 'Estados: sem paladar não exibe. Paladar sem registros: só w1. Paladar e registros: fórmula completa. Faixas: <50% Combina pouco. 50-70% cinza. 70-85% burgundy. >85% chip Alto match.',
+    accept: [
+      'Usuário sem paladar: nenhum percentual.',
+      'Usuário com paladar: percentual em todos os cards de vinho.',
+      'Mudança de paladar: scores recalculados na próxima abertura.',
+    ],
+  },
+  { id: 'A4', kind: 'feature', title: 'Login Google em conta com senha', owner: 'João', module: 'M01', status: 'producao', urgent: true,
+    summary: 'Sprint 12 1.6.2. Usuário cadastrado com email e senha pode logar via Google se o email bater.',
+    rule: 'Vínculo automático se email do Google bater. Senha continua válida em paralelo (duas formas de entrar na mesma conta). Email Google diferente cria conta nova.',
+    fix: 'Login: botão Entrar com Google funciona pra contas com senha. Cadastro: igual. config-conta: linha Vincular Google com status.',
+    accept: [
+      'Conta antiga com senha, primeiro login com Google: cai na conta correta.',
+      'Conta antiga, Google com email diferente: cria conta nova.',
+      'config-conta mostra vínculos ativos.',
+    ],
+  },
+  { id: 'A5', kind: 'alteracao', title: 'Migração Apple Store e Google Play', owner: 'Mauricio', module: 'infra', status: 'producao', urgent: false,
+    summary: 'Sprint 13. App migrado de LIVI pra TchinTchin oficial nas duas lojas. Bundle id preservado.',
+    rule: 'Push tokens FCM continuam válidos. AppsFlyer SDK manteve o link. In App Reviews resetam contador.',
+    fix: 'Pendência menor: atualizar screenshot da loja com novos shots da Adega e do Descobri após A1.',
+    accept: [
+      'Migração concluída.',
+      'Screenshots atualizados após A1.',
+    ],
+  },
+  // Features e backlog priorizados
+  { id: 'F1', kind: 'feature', title: 'Importação banco de vinhos do marketplace', owner: 'LAPM', module: 'M04', status: 'andamento', urgent: false,
+    summary: 'Importar 200 mil vinhos seed, normalizar campos, gerar perfil sensorial estimado, disponibilizar endpoints.',
+    rule: 'Campos: nome, produtor, país, região, uva principal, uvas secundárias, safra, tipo, teor alcoólico, preço sugerido, foto. Perfil sensorial por uva + região + estilo alimenta o match (A3).',
+    fix: 'Importar, normalizar, gerar perfil, disponibilizar endpoints. Thumbnails randômicas reusam Sprint 13.',
+    accept: [
+      'Marketplace lista sem campos null.',
+      'Detalhe mostra todas as informações.',
+      'Match score consegue calcular pra qualquer vinho.',
+      'Busca por nome retorna em <1s pra 95% das queries.',
+    ],
+  },
+  { id: 'F2', kind: 'feature', title: 'Token Keycloak e regra de logout', owner: 'Bruno', module: 'M01 e M21', status: 'producao', urgent: false,
+    summary: 'Usuário permanece logado indefinidamente em condições normais. Refresh token renova em background.',
+    rule: 'Logout só dispara em 3 cenários: atualização grande, segurança (atividade suspeita), inatividade (>30 dias sem abrir).',
+    fix: 'Refresh token expira em 30 dias e renova a cada uso. Erro-sessao com reason claro em cada caso.',
+    accept: [
+      'Abrir diariamente: nunca cai em erro-sessao.',
+      '7 dias sem abrir: entra direto.',
+      '60 dias sem abrir: erro-sessao reason inatividade.',
+    ],
+  },
+  { id: 'F3', kind: 'alteracao', title: 'Reverter Estoque pra Adega', owner: 'Gustavo', module: 'M07', status: 'definido', urgent: false,
+    summary: 'Ver A2.',
+    rule: 'Idem A2.',
+    fix: 'Idem A2.',
+    accept: [],
+  },
+  { id: 'F4', kind: 'feature', title: 'Onboarding com 3 slides MKT', owner: 'Bruno', module: 'M02', status: 'producao', urgent: false,
+    summary: 'Sprint 13. 3 slides editoriais pre auth: identidade, dor 1 (incerteza), dor 3 (memória).',
+    rule: 'Layout novo do MKT. Transição horizontal sem fade. Dots fixos. Avançar nos 2 primeiros, Começar no terceiro. Pular no topo direito.',
+    fix: 'Aplicar layout novo sem mudar estrutura.',
+    accept: [
+      'Primeira abertura: 3 slides com layout novo.',
+      'Pular: vai direto pro welcome.',
+      'Completar: vai direto pro welcome.',
+      'Reinstall: vê os slides de novo.',
+      'Login do mesmo dispositivo: pula slides.',
+    ],
+  },
+  { id: 'F5', kind: 'feature', title: 'Templates para criação de eventos', owner: 'alocar', module: 'M12', status: 'definido', urgent: false,
+    summary: '5 templates prontos no wizard de evento.',
+    rule: 'T1 Vinhos por país (default Brasil). T2 Degustação às cegas. T3 Comparativo de uvas. T4 Tema livre social. T5 Vinho e harmonização.',
+    fix: 'No passo Tema do wizard, linha Use um template com 5 cards. Tap preenche tema, descrição, quantidade sugerida, checklist. Editar depois mantém vínculo como Personalizado.',
+    accept: [
+      'Wizard mostra 5 templates.',
+      'Tap em T1 com país Brasil preenche campos.',
+      'Trocar de template substitui sem confirmação dupla.',
+      'Editar campo após template marca como Personalizado.',
+    ],
+  },
+  { id: 'F6', kind: 'feature', title: 'Correlação confraria template', owner: 'alocar', module: 'M12', status: 'definido', urgent: false,
+    summary: 'Sugere template mais coerente com estilo da confraria ao abrir wizard.',
+    rule: 'Brasil/Iniciantes: T1. Velho Mundo/Estudo: T3. Variedade/Eclético: T2. Social: T4. Gastronomia: T5. Sem estilo: nenhum sugerido.',
+    fix: 'Card sugerido aparece primeiro com badge Sugerido pra esta confraria. Outros 4 em ordem normal. Tocar em outro mostra confirmação rápida.',
+    accept: [
+      'Confraria Velho Mundo: T3 com badge.',
+      'Confraria Social: T4 com badge.',
+      'Confraria sem estilo: lista normal sem badge.',
+    ],
+  },
+  { id: 'F7', kind: 'feature', title: 'Modal tutorial pós criação de confraria', owner: 'alocar', module: 'M11', status: 'definido', urgent: false,
+    summary: 'Modal de boas vindas ao concluir wizard de confraria, com 3 passos sugeridos.',
+    rule: '3 passos: Convide o pessoal, Crie o primeiro evento (com template sugerido), Compartilhe nas redes.',
+    fix: 'Header Sua confraria está pronta. Subheader Próximo passo: marca o primeiro evento. Footer Começar agora abre passo 2. Link Vou fazer depois fecha. Não dispara de novo após fechar.',
+    accept: [
+      'Criar confraria e concluir wizard: modal aparece.',
+      'Fechar: vai pro detalhe sem regressão.',
+      'Reabrir detalhe: modal não aparece de novo.',
+      'CTA do passo 2 leva pro wizard com template sugerido.',
+    ],
+  },
+  { id: 'F8', kind: 'push', title: 'Push D+3 sem evento criado', owner: 'alocar', module: 'M11 e M18', status: 'definido', urgent: false,
+    summary: 'Push lembrete 3 dias após criação da confraria sem evento. Banner sticky no detalhe pra admin.',
+    rule: 'Disparo: 10h do D+3. Quiet hours 22h-8h. Cap: 1 vez. Repetir em D+7 e D+14.',
+    fix: 'Push: Sua confraria está esperando. Marca o primeiro encontro de {nome} pra começar bem. Banner sticky pra admin: Sua confraria não tem evento ainda. Crie o primeiro evento.',
+    accept: [
+      'Confraria sem evento por 3 dias: push às 10h.',
+      'Evento criado antes do D+3: push não dispara.',
+      'Admin vê banner sticky.',
+      'Não admin não vê banner.',
+    ],
+  },
+  { id: 'F9', kind: 'feature', title: 'Onboarding novo membro em confraria', owner: 'alocar', module: 'M11', status: 'definido', urgent: false,
+    summary: 'Modal de boas vindas ao entrar pela primeira vez. 3 highlights: próximo evento, conversa ativa, adega coletiva.',
+    rule: 'Conversa ativa = publicação no feed da confraria com menos de 7 dias. Adega coletiva = banco de vinhos da confraria (US-179).',
+    fix: 'Header com avatar grande + nome. Texto Bem vindo à {nome}. 3 highlights. CTA Apresenta você leva pro confraria-apresentar. CTA Mais tarde fecha e vai pro detalhe.',
+    accept: [
+      'Primeiro acesso pós entrada: modal aparece.',
+      'Acessos subsequentes: não aparece.',
+      'Highlights renderizam mesmo sem dados (vazias claras).',
+    ],
+  },
+  { id: 'F10', kind: 'feature', title: 'Feed da confraria com contadores', owner: 'alocar', module: 'M11', status: 'definido', urgent: false,
+    summary: 'Barra com 3 contadores abaixo do header da confraria.',
+    rule: 'Eventos próximos: próximos 30 dias. Publicações: últimos 7 dias. Novos vinhos: últimos 30 dias. Se tudo zero: barra some.',
+    fix: '3 chips iguais lado a lado, número grande no topo + label em caps. Tap muda de aba (Eventos com filtro Próximos, Publicações, Adega).',
+    accept: [
+      'Confraria ativa: barra com 3 contadores corretos.',
+      'Confraria apagada (tudo zero): barra não aparece.',
+      'Tap em chip muda de aba.',
+    ],
+  },
+  { id: 'F11', kind: 'feature', title: 'Cutuca o organizador', owner: 'Otavio', module: 'M11 e M18', status: 'definido', urgent: false,
+    summary: 'Card no feed da confraria quando inativa há 14 dias sem publicação ou 21 dias sem evento.',
+    rule: 'Cooldown 7 dias entre cutucadas. Push pros admins com cooldown próprio. Card some após nova publicação ou evento criado.',
+    fix: 'Card: Tá quieto por aqui. {Cutuca os admins}. Push pro admin: Cutucada da confraria. {nome do usuário} sente falta de movimento em {confraria}. Que tal um evento?',
+    accept: [
+      'Sem publicação há 15 dias: card aparece pra qualquer membro.',
+      'Membro cutuca: push chega pros admins.',
+      'Após cutucada: 7 dias sem nova cutucada possível.',
+      'Após nova atividade: card some.',
+    ],
+  },
+  { id: 'F12', kind: 'push', title: 'Push de evento D-3 D-1 dia', owner: 'Otavio', module: 'M12 e M18', status: 'definido', urgent: false,
+    summary: 'Cadência de push pré evento com banner em destaque no detalhe da confraria.',
+    rule: 'D-3 às 19h. D-1 às 19h. Dia às 9h. Quiet 22h-8h. Cap 1 por push. Evento confirmado + gratuito: D-3 não dispara. Cancelado: nenhum push.',
+    fix: 'D-3 Daqui a 3 dias. {nome} é em 3 dias. D-1 Amanhã: {nome}. Dia Hoje às {hora}. Banner sticky aba Eventos quando próximo evento a 3 dias ou menos.',
+    accept: [
+      'Evento daqui 3 dias: push D-3 às 19h.',
+      'Confirmado em evento gratuito: D-3 não dispara.',
+      'Cancelado: nenhum push.',
+      'Banner sticky pra eventos a 3 dias ou menos.',
+    ],
+  },
+  // Pushes em produção (revisão de copy)
+  { id: 'P1', kind: 'push', title: 'Push 4h após cadastro sem registrar', owner: 'Otavio', module: 'M18', status: 'producao', urgent: false,
+    summary: 'Sprint 13. Dispara 4h após criação da conta se usuário não tem registro no diário.',
+    rule: 'Cap 1 vez. Quiet 22h-8h, posterga pras 9h se cai em quiet.',
+    fix: 'Copy ajustada: Vamos começar sua adega? Registra o primeiro vinho em 1 minuto.',
+    accept: [
+      '4h após cadastro sem registro: push dispara.',
+      'Registrou antes das 4h: push não dispara.',
+      'Quiet hours: posterga pra 9h.',
+    ],
+  },
+  { id: 'P2', kind: 'push', title: 'Push 3º dia 9h sobre quiz paladar', owner: 'Otavio', module: 'M18', status: 'producao', urgent: false,
+    summary: 'Sprint 13. Dispara no 3º dia após cadastro às 9h se usuário não fez quiz.',
+    rule: 'Cap 1 vez.',
+    fix: 'Copy ajustada: Calibrou seu paladar? Em 2 minutos a gente descobre.',
+    accept: [
+      '3º dia 9h sem quiz: push dispara.',
+      'Fez quiz antes: não dispara.',
+    ],
+  },
+  { id: 'P3', kind: 'push', title: 'Push 7º dia 18h sentiu sua falta', owner: 'Otavio', module: 'M18', status: 'producao', urgent: false,
+    summary: 'Sprint 13. Dispara no 7º dia após cadastro às 18h se usuário não abriu nos últimos 3 dias.',
+    rule: 'Cap 1 vez.',
+    fix: 'Copy ajustada: {Nome}, sentimos sua falta. Tem confraria nova na sua região.',
+    accept: [
+      '7º dia 18h sem abrir nos últimos 3: push dispara.',
+      'Abriu nos últimos 3 dias: não dispara.',
+    ],
+  },
+];
+
+const KIND_LABEL = {
+  bug: 'Bug',
+  alteracao: 'Alteração',
+  feature: 'Feature',
+  push: 'Push',
+};
+const KIND_COLOR = {
+  bug: { bg: T.c.e100, fg: T.c.e700 },
+  alteracao: { bg: T.c.w100, fg: T.c.w700 },
+  feature: { bg: T.c.i100, fg: T.c.i700 },
+  push: { bg: T.c.a100, fg: T.c.a700 },
+};
+const STATUS_LABEL = {
+  iniciado: 'Iniciado',
+  investigar: 'Investigar',
+  pausado: 'Pausado',
+  definir: 'Definir',
+  definido: 'Definido',
+  andamento: 'Em andamento',
+  producao: 'Em produção',
+};
+const STATUS_COLOR = {
+  iniciado: T.c.w700,
+  investigar: T.c.e700,
+  pausado: T.c.n600,
+  definir: T.c.n800,
+  definido: T.c.i700,
+  andamento: T.c.p700,
+  producao: T.c.s700,
+};
+
+function Sprint14HubScreen({ go }) {
+  const [filter, setFilter] = React.useState('all'); // all | bug | alteracao | feature | push | urgent
+
+  const filtered = SPRINT14_ITEMS.filter(it => {
+    if (filter === 'all') return true;
+    if (filter === 'urgent') return it.urgent === true;
+    return it.kind === filter;
+  });
+
+  const counts = {
+    all: SPRINT14_ITEMS.length,
+    bug: SPRINT14_ITEMS.filter(i => i.kind === 'bug').length,
+    alteracao: SPRINT14_ITEMS.filter(i => i.kind === 'alteracao').length,
+    feature: SPRINT14_ITEMS.filter(i => i.kind === 'feature').length,
+    push: SPRINT14_ITEMS.filter(i => i.kind === 'push').length,
+    urgent: SPRINT14_ITEMS.filter(i => i.urgent).length,
+  };
+
+  return (
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: T.c.n50, overflow: 'hidden' }}>
+      {/* Header */}
+      <div style={{
+        padding: '18px 16px 14px',
+        background: `linear-gradient(160deg, ${T.c.p900} 0%, ${T.c.p700} 60%, ${T.c.a700} 100%)`,
+        color: T.c.n0,
+      }}>
+        <div style={{ fontFamily: T.font, fontSize: 11, fontWeight: 700, letterSpacing: 1.2, textTransform: 'uppercase', opacity: 0.85, marginBottom: 6 }}>
+          Sprint 14 · 01 a 12 de junho de 2026
+        </div>
+        <div style={{ fontFamily: '"Fraunces", Georgia, serif', fontSize: 26, fontWeight: 600, lineHeight: 1.1, marginBottom: 8 }}>
+          Plano de execução completo
+        </div>
+        <div style={{ fontFamily: T.font, fontSize: 13, lineHeight: 1.45, opacity: 0.92 }}>
+          28 itens organizados em 6 blocos. Versão alvo 1.7.0.
+        </div>
+        <div style={{ marginTop: 12, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <span style={{ padding: '4px 10px', background: 'rgba(255,255,255,0.18)', borderRadius: T.r.full, fontSize: 11, fontWeight: 600 }}>
+            {counts.bug} bugs
+          </span>
+          <span style={{ padding: '4px 10px', background: 'rgba(255,255,255,0.18)', borderRadius: T.r.full, fontSize: 11, fontWeight: 600 }}>
+            {counts.alteracao} alterações
+          </span>
+          <span style={{ padding: '4px 10px', background: 'rgba(255,255,255,0.18)', borderRadius: T.r.full, fontSize: 11, fontWeight: 600 }}>
+            {counts.feature} features
+          </span>
+          <span style={{ padding: '4px 10px', background: 'rgba(255,255,255,0.18)', borderRadius: T.r.full, fontSize: 11, fontWeight: 600 }}>
+            {counts.push} pushes
+          </span>
+        </div>
+      </div>
+
+      {/* Filtros */}
+      <div style={{ display: 'flex', gap: 6, padding: '12px 12px 8px', overflow: 'auto', background: T.c.n0, borderBottom: `1px solid ${T.c.n200}` }}>
+        {[
+          { id: 'all', label: `Todos (${counts.all})` },
+          { id: 'urgent', label: `Urgentes (${counts.urgent})` },
+          { id: 'bug', label: `Bugs (${counts.bug})` },
+          { id: 'alteracao', label: `Alterações (${counts.alteracao})` },
+          { id: 'feature', label: `Features (${counts.feature})` },
+          { id: 'push', label: `Pushes (${counts.push})` },
+        ].map(f => (
+          <button key={f.id} onClick={() => setFilter(f.id)} style={{
+            padding: '6px 12px', borderRadius: T.r.full, whiteSpace: 'nowrap',
+            background: filter === f.id ? T.c.p700 : T.c.n0,
+            border: `1px solid ${filter === f.id ? T.c.p700 : T.c.n200}`,
+            color: filter === f.id ? T.c.n0 : T.c.n800,
+            fontFamily: T.font, fontSize: 12, fontWeight: 600, cursor: 'pointer',
+          }}>{f.label}</button>
+        ))}
+      </div>
+
+      {/* Lista */}
+      <div style={{ flex: 1, overflow: 'auto', padding: '12px 12px 24px' }}>
+        {filtered.map(item => {
+          const kc = KIND_COLOR[item.kind];
+          const statusColor = STATUS_COLOR[item.status] || T.c.n600;
+          return (
+            <button key={item.id} onClick={() => go('sprint14-item', { item })} style={{
+              width: '100%', display: 'flex', flexDirection: 'column', gap: 8,
+              padding: '12px 14px', marginBottom: 10,
+              background: T.c.n0, border: `1px solid ${T.c.n200}`, borderRadius: T.r.md,
+              cursor: 'pointer', textAlign: 'left',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{
+                  padding: '3px 8px', borderRadius: T.r.full,
+                  background: kc.bg, color: kc.fg,
+                  fontFamily: 'JetBrains Mono, monospace', fontSize: 10, fontWeight: 800,
+                }}>{item.id} · {KIND_LABEL[item.kind]}</span>
+                {item.urgent && (
+                  <span style={{
+                    padding: '3px 8px', borderRadius: T.r.full,
+                    background: T.c.e700, color: T.c.n0,
+                    fontSize: 9, fontWeight: 800, letterSpacing: 0.5,
+                  }}>URGENTE</span>
+                )}
+                <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: statusColor }}/>
+                  <span style={{ fontFamily: T.font, fontSize: 10, color: statusColor, fontWeight: 700 }}>
+                    {STATUS_LABEL[item.status]}
+                  </span>
+                </span>
+              </div>
+              <div style={{ fontFamily: T.font, fontSize: 14, fontWeight: 600, color: T.c.n950, lineHeight: 1.3 }}>
+                {item.title}
+              </div>
+              <div style={{ fontFamily: T.font, fontSize: 12, color: T.c.n600, lineHeight: 1.45 }}>
+                {item.summary}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 2 }}>
+                <span style={{ fontFamily: T.font, fontSize: 11, color: T.c.n800 }}>
+                  {item.owner}
+                </span>
+                <span style={{ fontFamily: T.font, fontSize: 11, color: T.c.n400 }}>·</span>
+                <span style={{ fontFamily: T.font, fontSize: 11, color: T.c.n600 }}>
+                  {item.module}
+                </span>
+                <Icon name="chevron_right" size={16} color={T.c.n400} style={{ marginLeft: 'auto' }}/>
+              </div>
+            </button>
+          );
+        })}
+
+        <div style={{
+          marginTop: 16, padding: '14px 16px',
+          background: T.c.p50, border: `1px solid ${T.c.p100}`, borderRadius: T.r.md,
+        }}>
+          <div style={{ fontFamily: T.font, fontSize: 12, fontWeight: 700, color: T.c.p700, marginBottom: 6 }}>
+            Doc completo
+          </div>
+          <div style={{ fontFamily: T.font, fontSize: 12, color: T.c.n800, lineHeight: 1.5 }}>
+            Cada item tem critérios de aceite, edge cases e testes regressivos detalhados em
+            docs/spec/sprint-14.md. Sprints 15 e 16 já têm encadeamento próprio em
+            sprint-15.md e sprint-16.md.
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Detalhe de um item da Sprint 14
+function Sprint14ItemScreen({ go, params }) {
+  const item = params?.item || SPRINT14_ITEMS[0];
+  const kc = KIND_COLOR[item.kind];
+  const statusColor = STATUS_COLOR[item.status] || T.c.n600;
+
+  return (
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: T.c.n0, overflow: 'hidden' }}>
+      {/* Header */}
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 4, padding: '8px 12px 8px 4px',
+        background: T.c.n0, borderBottom: `1px solid ${T.c.n200}`, flexShrink: 0,
+      }}>
+        <button onClick={() => go('back')} aria-label="Voltar" style={{
+          width: 44, height: 44, background: 'none', border: 'none', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}><Icon name="arrow_back" size={24} color={T.c.n950}/></button>
+        <div style={{ ...T.t.h3, color: T.c.n950, flex: 1 }}>{item.id}</div>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, marginRight: 12 }}>
+          <span style={{ width: 6, height: 6, borderRadius: '50%', background: statusColor }}/>
+          <span style={{ fontFamily: T.font, fontSize: 11, color: statusColor, fontWeight: 700 }}>
+            {STATUS_LABEL[item.status]}
+          </span>
+        </span>
+      </div>
+
+      <div style={{ flex: 1, overflow: 'auto', padding: '16px 20px 32px' }}>
+        {/* Tag de tipo */}
+        <div style={{ display: 'flex', gap: 6, marginBottom: 10 }}>
+          <span style={{
+            padding: '4px 10px', borderRadius: T.r.full,
+            background: kc.bg, color: kc.fg,
+            fontFamily: 'JetBrains Mono, monospace', fontSize: 10, fontWeight: 800,
+          }}>{KIND_LABEL[item.kind]}</span>
+          {item.urgent && (
+            <span style={{
+              padding: '4px 10px', borderRadius: T.r.full,
+              background: T.c.e700, color: T.c.n0,
+              fontSize: 10, fontWeight: 800, letterSpacing: 0.5,
+            }}>URGENTE</span>
+          )}
+        </div>
+
+        {/* Título */}
+        <h1 style={{
+          margin: 0, marginBottom: 14,
+          fontFamily: '"Fraunces", Georgia, serif',
+          fontSize: 22, fontWeight: 600, lineHeight: 1.2, color: T.c.n950,
+        }}>{item.title}</h1>
+
+        {/* Metadata */}
+        <div style={{
+          display: 'flex', flexDirection: 'column', gap: 6,
+          padding: '12px 14px', background: T.c.n50,
+          border: `1px solid ${T.c.n200}`, borderRadius: T.r.md,
+          marginBottom: 20,
+        }}>
+          <Row label="Responsável" value={item.owner}/>
+          <Row label="Módulo" value={item.module}/>
+          <Row label="Status" value={STATUS_LABEL[item.status]} valueColor={statusColor}/>
+        </div>
+
+        {/* Sumário */}
+        <Section title="Comportamento atual ou contexto">
+          <p style={{ ...textStyle }}>{item.summary}</p>
+        </Section>
+
+        {item.cause && (
+          <Section title="Causa raiz identificada">
+            <p style={{ ...textStyle }}>{item.cause}</p>
+          </Section>
+        )}
+
+        {item.rule && (
+          <Section title="Regra de negócio">
+            <p style={{ ...textStyle }}>{item.rule}</p>
+          </Section>
+        )}
+
+        {item.fix && (
+          <Section title="UX correta">
+            <p style={{ ...textStyle }}>{item.fix}</p>
+          </Section>
+        )}
+
+        {item.accept && item.accept.length > 0 && (
+          <Section title="Critérios de aceite">
+            <ol style={{ margin: 0, paddingLeft: 18 }}>
+              {item.accept.map((a, i) => (
+                <li key={i} style={{ ...textStyle, marginBottom: 6 }}>{a}</li>
+              ))}
+            </ol>
+          </Section>
+        )}
+
+        <div style={{ marginTop: 20 }}>
+          <Button variant="ghost" size="md" fullWidth leading={<Icon name="arrow_back" size={16}/>} onClick={() => go('sprint14-hub')}>
+            Voltar à lista
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Row({ label, value, valueColor }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      <span style={{
+        fontFamily: T.font, fontSize: 10, fontWeight: 700, letterSpacing: 0.5,
+        color: T.c.n600, textTransform: 'uppercase', minWidth: 88,
+      }}>{label}</span>
+      <span style={{
+        fontFamily: T.font, fontSize: 13, fontWeight: 600,
+        color: valueColor || T.c.n950, flex: 1,
+      }}>{value}</span>
+    </div>
+  );
+}
+
+function Section({ title, children }) {
+  return (
+    <div style={{ marginBottom: 18 }}>
+      <h3 style={{
+        margin: 0, marginBottom: 8,
+        fontFamily: T.font, fontSize: 11, fontWeight: 700,
+        color: T.c.p700, letterSpacing: 0.8, textTransform: 'uppercase',
+      }}>{title}</h3>
+      {children}
+    </div>
+  );
+}
+
+const textStyle = {
+  margin: 0,
+  fontFamily: T.font,
+  fontSize: 13.5,
+  lineHeight: 1.55,
+  color: T.c.n800,
+};
+
+export { Sprint14HubScreen, Sprint14ItemScreen };

@@ -59,6 +59,7 @@ import { CelebrationToast, TOUR_STEPS, TutorialTooltip, WelcomeFinalScreen, read
 import { EventoEditarScreen, EventoPosAtaScreen, EventoPosAvaliarScreen, EventoPresencaScreen } from './screens-organizador.jsx';
 import { PerfilAtividadePublicaScreen, PerfilCompararPaladarScreen, PerfilSeguidoresScreen, PerfilSeguindoScreen, PerfilSugestoesScreen, PerfilVinhosProvadosScreen } from './screens-perfil-publico.jsx';
 import { PerfilEuScreen } from './screens-perfil-eu.jsx';
+import { Sprint14HubScreen, Sprint14ItemScreen } from './screens-sprint14.jsx';
 import { PlusOneScreen } from './screens-plus-one.jsx';
 import { InteressesScreen, QuizNivelScreen } from './screens-quiz-nivel.jsx';
 import { GpsNegadoScreen, GpsPrimerScreen, QuizResultScreen, QuizScreen, TelaIntencaoScreen } from './screens-quiz.jsx';
@@ -344,6 +345,8 @@ function TchinApp({ initialScreen = 'onboarding' }) {
     'perfil-vinhos-provados', 'perfil-sugestoes', 'perfil-comparar-paladar',
     // Perfil próprio — rota dedicada (Gabriel jun/2026)
     'perfil-eu',
+    // Sprint 14 — hub navegável do plano (jun/2026)
+    'sprint14-hub', 'sprint14-item',
     // Indicação (39.x)
     'indicacao-landing', 'indicacao-compartilhar', 'indicacao-meus-convites',
     'indicacao-recompensas', 'convite-recebido',
@@ -542,6 +545,9 @@ function TchinApp({ initialScreen = 'onboarding' }) {
       case 'perfil-comparar-paladar': return <PerfilCompararPaladarScreen go={go} params={current.params}/>;
       // ── Perfil próprio — rota dedicada (Gabriel jun/2026) ──
       case 'perfil-eu':              return <PerfilEuScreen go={go} ctx={ctx}/>;
+      // ── Sprint 14 — hub navegável do plano (jun/2026) ────
+      case 'sprint14-hub':           return <Sprint14HubScreen go={go}/>;
+      case 'sprint14-item':          return <Sprint14ItemScreen go={go} params={current.params}/>;
       // ── Indicação (39.x) ────────────────────────────────────
       case 'indicacao-landing':       return <IndicacaoLandingScreen go={go} ctx={ctx}/>;
       case 'indicacao-compartilhar':  return <IndicacaoCompartilharScreen go={go} ctx={ctx}/>;

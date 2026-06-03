@@ -262,3 +262,6 @@ Código/telas: `tchin-tchin-app/src/legacy/*` (rotas em `prototype.jsx`); contex
 - `02`…`21` — em produção
 - `99-backlog.md` — Apêndice A detalhado
 - `99-gaps-produto.md` — 🆕 **Gaps de UX/produto das 5 features** prontas no protótipo (M07/M12/M14/M19/M04+M11), ligando cada uma às **USs reais** da planilha de validação por épico (Gabriel jun/2026). Sem código/schema — só o que falta pro app real ficar com a experiência prometida. Mapeia: o que já está ✅ entregue · o que está ⚠️ parcial · o que está 🚫 adiado pelo time de produto · o que cada gap precisa pra fechar.
+- `sprint-14.md` — 🆕 **Plano completo de execução da Sprint 14** (01 a 12 jun 2026, alvo 1.7.0). 28 itens em 6 blocos: 8 bugs urgentes herdados, 5 alterações, 12 features e backlog priorizado, 3 pushes em revisão. Cada item com sintoma/contexto, causa raiz, UX correta, regra de negócio fechada e critérios de aceite. Hub navegável em `?screen=sprint14-hub`.
+- `sprint-15.md` — 🆕 Plano preliminar Sprint 15 (17 jun a 02 jul, alvo 1.7.5): vazados da 14, continuação v2 visual (Listagem/Detalhe/Adega v2), refinamentos da super doc.
+- `sprint-16.md` — 🆕 Plano preliminar Sprint 16 (06 a 20 jul, alvo 1.8.0): épico Pontos (se reativado), Marketplace de Experiência, Q&A com Expert verificado, finos da v2.
