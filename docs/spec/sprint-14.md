@@ -478,9 +478,10 @@ Responsável: Guilherme.
 Origem: backlog Sprint 13, marcado "Falta definir funcionalidade das telas e figma".
 Status: indefinido nesta Sprint, vira definição agora.
 
-Definição: a tela Descobri é o hub editorial e algorítmico do app, que substitui
-a antiga home/descobrir como ponto de entrada da aba esquerda. A arquitetura está
-documentada em M04 § 4.0.
+Definição: a tela Descobri é o hub editorial e algorítmico que substitui a antiga
+tela marketplace. A home/descobrir (tab esquerda do bottom nav) continua sendo o
+hub editorial principal e ganha um CTA destacado pra abrir a Descobri (que herda
+o lugar do antigo marketplace). A arquitetura está documentada em M04 § 4.0.
 
 Estrutura completa da tela Descobri:
 
@@ -539,53 +540,46 @@ Dependência: importação do banco de vinhos (LAPM, F1) precisa estar concluíd
 Pra você ter dataset.
 
 Telas afetadas em ordem:
-1. home/descobrir (substitui o layout inteiro pelo novo Descobri).
-2. wine (cards do bloco Pra você abrem detalhe normal).
-3. confraria-detalhe (entrada via bloco Confrarias da região).
-4. event-detalhe (entrada via bloco Eventos próximos).
-5. confraria-detalhe aba Experiência (entrada via bloco Marketplace de
+1. marketplace (substituído pelo novo Descobri com os 6 blocos descritos
+   acima). A rota interna continua se chamando marketplace ou passa a se
+   chamar descobri, decisão técnica do dev.
+2. home/descobrir (mantém papel de hub editorial, ganha CTA destacado "Abrir
+   Descobri" que leva pro novo hub).
+3. wine (cards do bloco Pra você abrem detalhe normal).
+4. confraria-detalhe (entrada via bloco Confrarias da região).
+5. event-detalhe (entrada via bloco Eventos próximos).
+6. confraria-detalhe aba Experiência (entrada via bloco Marketplace de
    Experiência).
-6. scanner (entry via FAB do bloco home).
-7. marketplace (entrada via CTA Ver tudo do bloco Pra você).
+7. scanner (entry via FAB do hub Descobri).
 8. quiz (rota de calibração de paladar se vier do estado "Sem paladar").
 
-### A2. Label "Adega" continua "Adega de vinhos" e não "Estoque"
+### A2. Sub aba "Adega" dentro da confraria volta a se chamar "Adega" e não "Estoque"
 
-Origem: backlog Sprint 13, item entregue por Gustavo na Sprint 13 com label
+Origem: backlog Sprint 13, Gustavo trocou a quarta aba do confraria-detalhe
+(que mostra os vinhos catalogados pela confraria como coletivo) de "Adega" pra
 "Estoque".
 
-Decisão Gabriel revisão jun 2026: reverter pra "Adega". O termo Adega é parte da
-identidade da marca e da experiência prometida ao usuário ("guarde sua adega
-pessoal"). Estoque é jargão de comerciante e quebra a poesia.
+Decisão Gabriel revisão jun 2026: reverter pra "Adega". A poesia da marca pede
+"Adega" mesmo no contexto coletivo da confraria. "Estoque" é jargão de
+comerciante e quebra o tom.
 
 Correção:
-1. Reverter label "Estoque" pra "Adega" em todos os pontos onde foi trocado na
-   Sprint 13.
-2. Na sub aba interna (M07 § 7.0.1), usar "Estante" pra slot físico, "Diário"
-   pra histórico, "Favoritos" pra referência, "Wishlist" pra intent de compra.
-3. Banner "Onde fica o quê" (M07 § 7.0) reforça a taxonomia.
-
-Pontos a corrigir:
-1. Bottom nav: tab "Adega" (não "Estoque").
-2. Header da tela: "Minha Adega".
-3. ProfileDrawer e perfil-eu: linha "Meu diário (N)" e "Adega" (não Estoque).
-4. Push 4h pós cadastro: copy continua "vinho" mas o destino é "Adega".
+1. Reverter a label da quarta sub aba do confraria-detalhe de "Estoque" pra
+   "Adega".
+2. Manter inalteradas todas as outras telas (bottom nav, home/adega individual,
+   perfil-eu, ProfileDrawer, favoritos, lista-desejos, register-consumo).
+3. A taxonomia interna do M07 (Estante, Diário, Favoritos, Wishlist) é da Adega
+   individual e segue inalterada.
 
 Aceite:
-1. Nenhuma string visível ao usuário usa Estoque.
-2. Telas internas usam Estante, Diário, Favoritos, Wishlist como taxonomia
-   canônica (M07 § 7.0.1).
+1. confraria-detalhe: a quarta aba chama "Adega" e não "Estoque".
+2. Nenhuma outra tela do app foi tocada por esta correção.
 
 Telas afetadas em ordem:
-1. Bottom nav global (label da tab esquerda direita Adega).
-2. home/adega (header Minha Adega, banner Onde fica o quê).
-3. perfil-eu seção Atividade (linha Meu diário (N) e Adega).
-4. ProfileDrawer (compat) seção Atividade.
-5. Push 4h (P1) copy refeita: destino Adega, não Estoque.
-6. favoritos (header continua Favoritos, sub label esclarece "Curti pra
-   referência" da taxonomia M07 § 7.0.1).
-7. lista-desejos (header continua Wishlist com label "Quero comprar").
-8. register-consumo passo 2 (CTA "Salvar no diário e na adega").
+1. confraria-detalhe header de abas (rótulo da quarta aba muda de "Estoque" pra
+   "Adega").
+2. AdegaConfTab (componente que renderiza a aba): manter conteúdo, só ajustar
+   header.
 
 ### A3. Match do paladar com vinhos (PAUSADO)
 
@@ -783,9 +777,9 @@ Telas afetadas em ordem:
 3. erro-sessao com 3 reasons: atualizacao, seguranca, inatividade.
 4. recuperar-email (rota disparada por erro-sessao reason seguranca).
 
-### F3. Reverter label Estoque para Adega
+### F3. Reverter label Estoque para Adega (sub aba da confraria)
 
-Fechado em A2.
+Fechado em A2. Escopo: apenas a quarta aba do confraria-detalhe.
 
 ### F4. Onboarding inicial com imagens guias antes de logar
 
@@ -1724,6 +1718,966 @@ Aceite:
 5. Mascote, balão, spotlight e coachmark seguem o padrão v2 nas 7 famílias de
    tutorial.
 6. Reset pelos debug tools volta tutorial pra Pendente.
+
+## 7C. Inventário completo das telas afetadas na Sprint 14, fluxo a fluxo
+
+Esta seção lista uma a uma todas as telas existentes do app, em ordem dentro de
+cada módulo, com a indicação de quais itens da Sprint 14 (B/A/F/P/R) tocam
+cada tela. Use como checklist final do QA da Sprint.
+
+Notação:
+- Tela: nome da rota no roteador do app.
+- Estados: variantes capturadas em produção (empty, loading, populated, erro, etc).
+- Entra de: telas anteriores que levam ao destino.
+- Sai pra: telas seguintes a partir daqui.
+- Toca: lista de itens da Sprint 14 que mexem nesta tela.
+
+### Módulo 01, Auth e Acesso (13 telas)
+
+1. welcome
+   - Estados: padrão.
+   - Entra de: cold start sem sessão; logout.
+   - Sai pra: login, cadastro, login-social Google, login-social Apple, recuperar.
+   - Toca: B1 (teclado iOS), A4 (login Google em conta com senha), F2 (token
+     Keycloak), R1, R22.
+
+2. onboarding (3 slides pre auth)
+   - Estados: slide 1, slide 2, slide 3.
+   - Entra de: primeira abertura após install.
+   - Sai pra: welcome (Pular ou Começar).
+   - Toca: F4 (3 slides MKT), R1, R22.
+
+3. login
+   - Estados: padrão, erro de senha, loading.
+   - Entra de: welcome.
+   - Sai pra: home/comunidade após sucesso; recuperar.
+   - Toca: B1, A4, F2, R1, R22.
+
+4. cadastro
+   - Estados: passo 1 (email e senha), passo 2 (nome e termos), erro.
+   - Entra de: welcome.
+   - Sai pra: quiz-nivel após sucesso.
+   - Toca: B1, A4, R1, R22.
+
+5. login-social
+   - Estados: Google, Apple.
+   - Entra de: welcome botões SSO.
+   - Sai pra: quiz-nivel se conta nova, home/comunidade se conta existente.
+   - Toca: A4, R1.
+
+6. recuperar
+   - Estados: padrão.
+   - Entra de: login link "Esqueci senha".
+   - Sai pra: recuperar-email.
+   - Toca: B1, R1.
+
+7. recuperar-email
+   - Estados: input, validando, enviado.
+   - Entra de: recuperar.
+   - Sai pra: recuperar-enviado.
+   - Toca: B1, F2 (entry point pós erro-sessao reason seguranca), R1.
+
+8. recuperar-enviado
+   - Estados: padrão.
+   - Entra de: recuperar-email.
+   - Sai pra: recuperar-otp.
+   - Toca: R1.
+
+9. recuperar-otp
+   - Estados: input, validando, erro.
+   - Entra de: recuperar-enviado.
+   - Sai pra: recuperar-redefinir.
+   - Toca: B1, R1.
+
+10. recuperar-redefinir
+    - Estados: input, validando, sucesso.
+    - Entra de: recuperar-otp.
+    - Sai pra: recuperar-sucesso.
+    - Toca: B1, R1.
+
+11. recuperar-sucesso
+    - Estados: padrão.
+    - Entra de: recuperar-redefinir.
+    - Sai pra: login.
+    - Toca: R1.
+
+12. termos
+    - Estados: rolável.
+    - Entra de: cadastro link Termos; perfil-eu seção Configurações.
+    - Sai pra: back.
+    - Toca: R1.
+
+13. politica-privacidade
+    - Estados: rolável.
+    - Entra de: cadastro link Privacidade; perfil-eu seção Configurações.
+    - Sai pra: back.
+    - Toca: R1.
+
+### Módulo 02, Onboarding educacional e Roteamento (7 telas + variantes)
+
+1. quiz-nivel
+   - Estados: padrão, selecionado, default.
+   - Entra de: cadastro ou login-social conta nova.
+   - Sai pra: quiz-interesses.
+   - Toca: R2, R22.
+
+2. quiz-interesses
+   - Estados: default, min (menos de 3), max, overflow (mais de N), selecionado.
+   - Entra de: quiz-nivel.
+   - Sai pra: tela-intencao.
+   - Toca: R2 (validação mínimo 3), R22.
+
+3. tela-intencao
+   - Estados: default, skip-modal.
+   - Entra de: quiz-interesses.
+   - Sai pra: gps-primer com intent escolhido, ou skip pro welcome-final.
+   - Toca: R2, R22.
+
+4. gps-primer (7 variantes por intent)
+   - Estados: discover, diario, aprender, treino, confraria, wizard, skip; mais
+     o dialog do sistema.
+   - Entra de: tela-intencao.
+   - Sai pra: welcome-final (sucesso ou negado).
+   - Toca: R2, R22.
+
+5. gps-negado
+   - Estados: padrão.
+   - Entra de: gps-primer recusado.
+   - Sai pra: welcome-final.
+   - Toca: R2, R22.
+
+6. welcome-final
+   - Estados: default, confraria (quando intent = confraria).
+   - Entra de: gps-primer ou gps-negado.
+   - Sai pra: home da bottom nav escolhido pelo intent; tour-passo-1.
+   - Toca: R2 (3 highlights, pílula sutil de Pontos M19), R22.
+
+7. tutoriais (hub)
+   - Estados: lista com 7 famílias de tutorial mais o tour de 4 passos.
+   - Entra de: perfil-eu seção Suporte; config-conta seção Tutoriais.
+   - Sai pra: cada tutorial individualmente.
+   - Toca: R22.
+
+8. Tour 4 passos (sub fluxo do welcome-final)
+   - tour-passo-1-comunidade, tour-passo-2-confrarias, tour-passo-3-descobrir,
+     tour-passo-4-adega, tour-celebracao.
+   - Entra de: welcome-final CTA "Começar tour".
+   - Sai pra: home/comunidade ao concluir.
+   - Toca: R22.
+
+### Módulo 03, Meu Paladar (2 telas)
+
+1. quiz
+   - Estados: q1, q1-selected, q2, q3, q4, q5.
+   - Entra de: home/descobrir card "Quer recomendações?"; perfil-eu CTA Refazer
+     paladar; A1 estado sem paladar.
+   - Sai pra: quiz-result.
+   - Toca: R3.
+
+2. quiz-result
+   - Estados: padrão com radar.
+   - Entra de: quiz.
+   - Sai pra: home/descobrir bloco Pra você (A1 ativa).
+   - Toca: R3.
+
+### Módulo 04, Descobrir e Marketplace (7 telas)
+
+1. home/descobrir
+   - Estados: default (com paladar), first-time sem paladar.
+   - Entra de: bottom nav tab Descobrir; deep link.
+   - Sai pra: Descobri (CTA Abrir Descobri), wine, scanner, marketplace
+     (continua existindo internamente), categorias.
+   - Toca: B8 (FAB Scanner visível), A1 (ganha CTA Abrir Descobri), R4.
+
+2. marketplace (substituído pelo novo Descobri, A1)
+   - Estados antes da Sprint: default, filtersheet, search, multi-select.
+   - Estados após A1: 6 blocos do novo Descobri (Hero do dia, Pra você,
+     Confrarias da região, Eventos próximos, Marketplace de Experiência,
+     Curiosidades editoriais).
+   - Entra de: home/descobrir CTA Abrir Descobri; deep link.
+   - Sai pra: wine, confraria-detalhe, event-detalhe, scanner, quiz.
+   - Toca: A1 (substituição), A3 (match score nos cards), B2 (sem botão Comprar
+     inline), F1 (dataset novo), R4, B8 (FAB Scanner).
+
+3. wine
+   - Estados: default.
+   - Entra de: marketplace, home/descobrir bloco Pra você, busca, scanner-result,
+     comparar-vinhos, carta-matches, lista-desejos, favoritos, register-consumo
+     passo 1.
+   - Sai pra: comparar-vinhos, harmoniza, perfil-outro (autor), back.
+   - Toca: B2 (sem botão Comprar), A3 (chip de match score abaixo do nome), F1
+     (dataset novo), R4, B8 (sem FAB).
+
+4. busca
+   - Estados: empty, results.
+   - Entra de: home/descobrir ícone busca; bottom nav.
+   - Sai pra: wine, perfil-outro.
+   - Toca: B8 (FAB Scanner), F1 (dataset novo), R4.
+
+5. filtros-avancados
+   - Estados: default, applied.
+   - Entra de: marketplace long press no ícone tune.
+   - Sai pra: marketplace com filtros aplicados.
+   - Toca: F1 (filtros sobre novo dataset), R4, B8 (sem FAB).
+
+6. lista-desejos
+   - Estados: default, selecting.
+   - Entra de: home/adega chip Wishlist; perfil-eu seção Atividade; profile
+     drawer Marketplace.
+   - Sai pra: wine.
+   - Toca: B2 (sem botão Comprar inline), F1 (dataset novo), R4, B8 (FAB
+     Adicionar vinho).
+
+7. comparar-vinhos
+   - Estados: default.
+   - Entra de: wine CTA Comparar; lista-desejos seleção múltipla.
+   - Sai pra: wine, harmoniza.
+   - Toca: A3 (match comparativo), F1, R4, B8 (sem FAB).
+
+### Módulo 05, Carrinho e Checkout (4 telas)
+
+1. carrinho
+   - Estados: default, cupom-ok.
+   - Entra de: marketplace ícone carrinho; perfil-eu seção Marketplace.
+   - Sai pra: endereco.
+   - Toca: R5, B8 (sem FAB).
+
+2. endereco
+   - Estados: default, novo.
+   - Entra de: carrinho.
+   - Sai pra: pagamento.
+   - Toca: R5, B8 (sem FAB).
+
+3. pagamento
+   - Estados: cartao, pix, boleto.
+   - Entra de: endereco.
+   - Sai pra: pedido-confirmado.
+   - Toca: R5, B8 (sem FAB).
+
+4. pedido-confirmado
+   - Estados: default.
+   - Entra de: pagamento.
+   - Sai pra: home (sem back, M05 § 5.0).
+   - Toca: R5 (bloqueio de back), B8 (sem FAB).
+
+### Módulo 06, Scanner e Aprenda Bebendo (8 telas)
+
+1. scanner (legado v1)
+   - Estados: tooltip, default, help.
+   - Entra de: home/descobrir card scanner; FAB de Scanner (B8); perfil-eu.
+   - Sai pra: scanner-result.
+   - Toca: R6 (aviso de aposentadoria), B8.
+
+2. scanner-result (legado v1)
+   - Estados: fail.
+   - Entra de: scanner.
+   - Sai pra: wine, scanner-fallback.
+   - Toca: R6.
+
+3. scanner-v2
+   - Estados: default.
+   - Entra de: substituirá scanner v1 após aposentadoria; FAB.
+   - Sai pra: scanner-result-v2.
+   - Toca: R6, R22 (tutor scanner dispara primeira vez).
+
+4. scanner-result-v2
+   - Estados: default.
+   - Entra de: scanner-v2.
+   - Sai pra: wine, porque-combina.
+   - Toca: A3 (match destacado), R6.
+
+5. scanner-fallback
+   - Estados: default.
+   - Entra de: scanner-result quando match falha.
+   - Sai pra: wine via busca manual.
+   - Toca: R6.
+
+6. modo-restaurante
+   - Estados: default.
+   - Entra de: perfil-eu seção Aprender; deep link.
+   - Sai pra: carta-matches.
+   - Toca: R6, R22 (tutor restaurante 5 passos dispara primeira vez).
+
+7. carta-matches
+   - Estados: default, por-preco, por-tipo.
+   - Entra de: modo-restaurante.
+   - Sai pra: wine, porque-combina.
+   - Toca: A3 (ordenação por match), F1, R6.
+
+8. porque-combina
+   - Estados: default.
+   - Entra de: carta-matches; scanner-result-v2; harmoniza-resultados.
+   - Sai pra: back.
+   - Toca: A3, R6.
+
+### Módulo 07, Adega, Diário e Estante (7 telas)
+
+1. home/adega (rota da tab da bottom nav)
+   - Estados: estante, diario, indicadores, paladar.
+   - Entra de: bottom nav tab Adega.
+   - Sai pra: register-consumo, wine, favoritos, lista-desejos, quiz, descobrir.
+   - Toca: R7 (banner taxonomia, chips, pílula inline), B8 (FAB Registrar
+     consumo).
+
+2. register-consumo
+   - Estados: passo 1 (escolher vinho), passo 1 busca, passo 2 (avaliar).
+   - Entra de: home/adega CTA Adicionar; FAB; empty state do Diário.
+   - Sai pra: home/adega após salvar; scanner-v2.
+   - Toca: B1 (teclado), B8 (sem FAB), R7.
+
+3. registro-rapido
+   - Estados: default.
+   - Entra de: home/adega CTA atalho; FAB.
+   - Sai pra: registro-confirmacao após salvar; registro-completo (Modo
+     completo).
+   - Toca: B1, B8 (sem FAB), R7.
+
+4. registro-completo
+   - Estados: default.
+   - Entra de: registro-rapido link Modo completo.
+   - Sai pra: registro-confirmacao.
+   - Toca: B1, B8 (sem FAB), R7.
+
+5. registro-confirmacao
+   - Estados: default.
+   - Entra de: register-consumo passo 2 sucesso; registro-rapido sucesso;
+     registro-completo sucesso.
+   - Sai pra: home/adega.
+   - Toca: R7.
+
+6. relatorio-mensal
+   - Estados: default (storytelling vertical).
+   - Entra de: home/adega Indicadores; push nudge mensal.
+   - Sai pra: back, share nativo (gera imagem 1080x1920 pra Stories).
+   - Toca: R7.
+
+7. favoritos
+   - Estados: default.
+   - Entra de: home/adega chip Favoritos; perfil-eu seção Atividade.
+   - Sai pra: wine.
+   - Toca: B2 (sem Comprar inline nos cards), B8 (FAB Adicionar vinho), R7.
+
+### Módulo 08, Treine seu Paladar (4 telas + 8 passos do onboarding)
+
+1. treino-paladar (home do Treino)
+   - Estados: home; 8 passos do onboarding do mascote (intro, say1, objetivo,
+     goal, say2, streakgoal, gems, final).
+   - Entra de: perfil-eu seção Aprender; tela-intencao intent treino.
+   - Sai pra: treino-licao, treino-liga, treino-aprender.
+   - Toca: R8, R22 (tutor treino paladar com mascote).
+
+2. treino-licao
+   - Estados: conceito, exercicio, feedback, completa.
+   - Entra de: treino-paladar.
+   - Sai pra: treino-paladar.
+   - Toca: R8.
+
+3. treino-liga
+   - Estados: default.
+   - Entra de: treino-paladar.
+   - Sai pra: back.
+   - Toca: R8.
+
+4. treino-aprender
+   - Estados: default.
+   - Entra de: treino-paladar.
+   - Sai pra: back.
+   - Toca: R8.
+
+### Módulo 09, Aprenda (3 telas)
+
+1. aprender
+   - Estados: default.
+   - Entra de: bottom nav ou rota direta.
+   - Sai pra: aprenda; aprenda-detalhe.
+   - Toca: R9 (unificar com M06).
+
+2. aprenda
+   - Estados: default.
+   - Entra de: aprender; perfil-eu seção Aprender.
+   - Sai pra: aprenda-detalhe.
+   - Toca: R9.
+
+3. aprenda-detalhe
+   - Estados: default.
+   - Entra de: aprenda.
+   - Sai pra: back.
+   - Toca: R9.
+
+### Módulo 10, Harmoniza (2 telas)
+
+1. harmoniza
+   - Estados: default, autocomplete.
+   - Entra de: perfil-eu seção Aprender; wine CTA Harmonizar; comparar-vinhos.
+   - Sai pra: harmoniza-resultados.
+   - Toca: R10 (bidirecional, contexto).
+
+2. harmoniza-resultados
+   - Estados: default.
+   - Entra de: harmoniza.
+   - Sai pra: wine; porque-combina.
+   - Toca: A3 (match individual), R10.
+
+### Módulo 11, Confrarias (21 telas)
+
+1. home/confrarias
+   - Estados: aba Confrarias, aba Eventos com segmented Meus | Descobrir e chips
+     Próximos | Andamento | Finalizados.
+   - Entra de: bottom nav tab Confrarias.
+   - Sai pra: confraria-detalhe; wizard-confraria-1; event-detalhe.
+   - Toca: R11, B8 (FAB Criar confraria).
+
+2. confraria-detalhe
+   - Estados: 5 abas (Eventos, Publicações, Membros, Adega, Experiência);
+     diferentes por papel (admin, membro, não-membro); just-created (modal F7);
+     empty por aba.
+   - Entra de: home/confrarias; cards de sugestão; convite-recebido aprovado.
+   - Sai pra: 5 abas; event-detalhe; wizard-confraria-1; confraria-config;
+     confraria-convidar; confraria-regras; confraria-sair; confraria-transferir;
+     perfil-outro membros.
+   - Toca: B7 (compartilhar oculto pra não membro), F7 (modal pós criação), F8
+     (banner sticky D+3 pro admin), F9 (modal boas vindas novo membro), F10
+     (barra 3 contadores), F11 (card Cutuca os admins), F12 (banner sticky pra
+     próximo evento <3 dias), A2 (aba 4 volta de Estoque pra Adega), R11.
+
+3. wizard-confraria-1
+   - Estados: passo 1 info básica.
+   - Entra de: home/confrarias CTA Criar; FAB; confraria-detalhe vazio.
+   - Sai pra: wizard-confraria-2.
+   - Toca: B1, R11, B8 (sem FAB).
+
+4. wizard-confraria-2
+   - Estados: passo 2 estilo e perfil.
+   - Entra de: wizard-confraria-1.
+   - Sai pra: wizard-confraria-3.
+   - Toca: B1, R11, B8 (sem FAB).
+
+5. wizard-confraria-3
+   - Estados: passo 3 privacidade (Pública vs Privada).
+   - Entra de: wizard-confraria-2.
+   - Sai pra: wizard-confraria-4.
+   - Toca: B1, R11, B8 (sem FAB).
+
+6. wizard-confraria-4
+   - Estados: passo 4 cidade e localização.
+   - Entra de: wizard-confraria-3.
+   - Sai pra: wizard-confraria-5.
+   - Toca: B1, R11, B8 (sem FAB).
+
+7. wizard-confraria-5
+   - Estados: passo 5 capa e ícone.
+   - Entra de: wizard-confraria-4.
+   - Sai pra: wizard-confraria-6.
+   - Toca: B1, R11, B8 (sem FAB).
+
+8. wizard-confraria-6
+   - Estados: passo 6 revisão e CTA Criar.
+   - Entra de: wizard-confraria-5.
+   - Sai pra: confraria-welcome (após criar).
+   - Toca: F6 (captura estilo pra correlação template), F7 (dispara modal),
+     R11, B8 (sem FAB).
+
+9. confraria-config
+   - Estados: padrão (admin).
+   - Entra de: confraria-detalhe menu 3 pontos.
+   - Sai pra: editar campos, confraria-transferir, sair.
+   - Toca: R11, B8 (sem FAB).
+
+10. confraria-convidar
+    - Estados: lista de contatos, share.
+    - Entra de: confraria-detalhe menu (só membros e admins, B7); modal F7
+      passo Convide o pessoal.
+    - Sai pra: share nativo; back.
+    - Toca: B7 (gating), F7 (entrada), R11, B8 (sem FAB).
+
+11. confraria-sair
+    - Estados: modal de confirmação.
+    - Entra de: confraria-detalhe menu.
+    - Sai pra: home/confrarias após sair.
+    - Toca: R11.
+
+12. confraria-transferir
+    - Estados: lista de membros admin only.
+    - Entra de: confraria-config.
+    - Sai pra: confirmação e back.
+    - Toca: R11, B8 (sem FAB).
+
+13. confraria-regras
+    - Estados: lista de regras editáveis.
+    - Entra de: confraria-detalhe menu.
+    - Sai pra: back.
+    - Toca: B7 (Compartilhar oculto pra não-membro no menu), R11, B8 (sem FAB).
+
+14. confraria-welcome
+    - Estados: padrão pós criação ou pós aceite de convite.
+    - Entra de: wizard-confraria-6 sucesso; convite-recebido aprovado.
+    - Sai pra: confraria-apresentar.
+    - Toca: F7 (passo após criar), F9 (entrada novo membro), R11, R22.
+
+15. confraria-apresentar
+    - Estados: textarea.
+    - Entra de: confraria-welcome.
+    - Sai pra: confraria-tour-rapido; confraria-detalhe.
+    - Toca: B1 (teclado), F9 (CTA Apresenta você), R11, B8 (sem FAB).
+
+16. confraria-tour-rapido
+    - Estados: tour de 3 passos.
+    - Entra de: confraria-apresentar.
+    - Sai pra: confraria-detalhe.
+    - Toca: R11, R22.
+
+### Módulo 12, Eventos (11 telas)
+
+1. event-wizard-1
+   - Estados: tipo do evento (Gratuito ou Pago); tema com 5 templates F5;
+     correlação confraria template badge F6.
+   - Entra de: confraria-detalhe CTA Criar evento; modal F7 passo Crie o
+     primeiro evento; banner sticky F8.
+   - Sai pra: event-wizard-2.
+   - Toca: B1, B3 (Valor não obrigatório em Gratuito), F5 (5 templates), F6
+     (badge sugerido), R12, B8 (sem FAB).
+
+2. event-wizard-2
+   - Estados: descrição (preenchida por template).
+   - Entra de: event-wizard-1.
+   - Sai pra: event-wizard-3.
+   - Toca: B1, B3, F5, R12.
+
+3. event-wizard-3
+   - Estados: valor e pagamento (oculto se Gratuito).
+   - Entra de: event-wizard-2.
+   - Sai pra: event-wizard-4.
+   - Toca: B1, B3 (valor obrigatório só se Pago), R12.
+
+4. event-wizard-4
+   - Estados: capacidade sugerida por template.
+   - Entra de: event-wizard-3.
+   - Sai pra: event-wizard-5.
+   - Toca: B1, B3, F5, R12.
+
+5. event-wizard-5
+   - Estados: revisão. Resumo mostra Sem cobrança se Gratuito.
+   - Entra de: event-wizard-4.
+   - Sai pra: event-detalhe após criar.
+   - Toca: B1, B3, R12.
+
+6. event-detalhe
+   - Estados: confirmado, talvez, não vou, sem RSVP; pago vs gratuito; com vs
+     sem banner D-3 ou D-1 ou Dia (F12).
+   - Entra de: home/confrarias aba Eventos; confraria-detalhe aba Eventos;
+     event-wizard-5; push F12.
+   - Sai pra: ParticiparSheet (pago), modal Cancelar gratuito (B6),
+     evento-presenca, evento-pos-avaliar, evento-pos-ata.
+   - Toca: B3 (esconder row Valor se Gratuito), B6 (modal fecha após
+     cancelar), F12 (banner sticky), R12, B8 (sem FAB).
+
+7. evento-editar
+   - Estados: padrão (admin).
+   - Entra de: event-detalhe menu.
+   - Sai pra: back.
+   - Toca: B1, B3 (troca Pago pra Gratuito limpa Valor), F5 (templates
+     disponíveis), R12, B8 (sem FAB).
+
+8. evento-presenca
+   - Estados: aba Presença; aba Pagamentos.
+   - Entra de: event-detalhe menu Inscritos e pagamentos.
+   - Sai pra: back.
+   - Toca: B6 (atualiza contadores pós cancelamento), R12, B8 (sem FAB).
+
+9. evento-pos-avaliar
+   - Estados: padrão.
+   - Entra de: event-detalhe após finalização (V1 da Sprint 15 ou auto após
+     24h, decisão Sprint 13).
+   - Sai pra: back.
+   - Toca: R12, B8 (sem FAB).
+
+10. evento-pos-ata
+    - Estados: padrão.
+    - Entra de: event-detalhe após finalização.
+    - Sai pra: back.
+    - Toca: R12, B8 (sem FAB).
+
+11. Sheets de pagamento de evento (M12 event-pagamento)
+    - ParticiparSheet (público vs privado, pago vs gratuito).
+    - EscolherMetodoSheet (LACI vs Combinar com admin).
+    - PixLaciSheet (aguardando vs confirmado).
+    - PagarForaSheet.
+    - CancelarSheet (3 janelas: > 24h, 24h a 2h, < 2h).
+    - Entra de: event-detalhe; b6 modal de cancelamento de gratuito não usa
+      essas sheets.
+    - Sai pra: ConfirmadoBanner; back; event-detalhe atualizado.
+    - Toca: B3 (sem bloco de pagamento em Gratuito), B6 (3 janelas pra pago),
+      R12, B8 (sem FAB).
+
+### Módulo 13, Comunidade e Feed (5 telas)
+
+1. home/comunidade
+   - Estados: default com card sugestão de confraria e banner referral
+     interleaved.
+   - Entra de: bottom nav tab Comunidade; welcome-final intent skip_to_feed.
+   - Sai pra: post-detail, perfil-outro, criar-post, criar-momento.
+   - Toca: B4 (contador comentário em cards), B5 (autores), R13, B8 (FAB
+     Criar post).
+
+2. criar-post
+   - Estados: default, texto.
+   - Entra de: home/comunidade FAB; perfil-eu.
+   - Sai pra: home/comunidade após publicar.
+   - Toca: B1, R13, B8 (sem FAB).
+
+3. criar-momento (Stories)
+   - Estados: default.
+   - Entra de: home/comunidade régua de stories.
+   - Sai pra: home/comunidade.
+   - Toca: B1, R13, B8 (sem FAB).
+
+4. post-detail
+   - Estados: default com comentários inline.
+   - Entra de: home/comunidade tap em post.
+   - Sai pra: comentarios (rota dedicada), perfil-outro autor.
+   - Toca: B4 (contador), B5 (autor), R13, B8 (sem FAB).
+
+5. comentarios
+   - Estados: default.
+   - Entra de: post-detail tap em Ver todos os comentários.
+   - Sai pra: perfil-outro autor; back.
+   - Toca: B1 (teclado no input), B4 (contador), B5 (autores), R13, B8 (sem FAB).
+
+### Módulo 14, Perfil e Social (13 telas)
+
+1. perfil-outro
+   - Estados: loading skeleton, normal, following toggle, blocked.
+   - Entra de: home/comunidade autor; confraria-detalhe Membros; sugestoes;
+     resultados de busca.
+   - Sai pra: perfil-seguidores, perfil-seguindo, perfil-comparar-paladar,
+     chat-conversa, wine.
+   - Toca: B5 (Seguir e Deixar de seguir), R14, B8 (sem FAB).
+
+2. perfil-eu (rota dedicada)
+   - Estados: padrão; gestão de seções.
+   - Entra de: avatar do header (após R14 plugar); deep link.
+   - Sai pra: editar-perfil, badges-galeria, pontos, jornada, chat-lista, adega,
+     favoritos, lista-desejos, indicacao-landing, config-*.
+   - Toca: R14 (rota canônica), R22 (acesso ao hub tutoriais via Suporte), B8
+     (sem FAB).
+
+3. editar-perfil (hub)
+   - Estados: padrão.
+   - Entra de: perfil-eu chip Editar.
+   - Sai pra: editar-perfil-foto, editar-perfil-paladar,
+     editar-perfil-privacidade.
+   - Toca: R14, B8 (sem FAB).
+
+4. editar-perfil-foto
+   - Estados: padrão; modo trocar foto; trocar handle (cooldown).
+   - Entra de: editar-perfil.
+   - Sai pra: editar-perfil.
+   - Toca: B1, R14 (cooldown 30 dias no handle), B8 (sem FAB).
+
+5. editar-perfil-paladar
+   - Estados: padrão.
+   - Entra de: editar-perfil.
+   - Sai pra: quiz (refazer).
+   - Toca: R14.
+
+6. editar-perfil-privacidade
+   - Estados: padrão.
+   - Entra de: editar-perfil; perfil-eu Configurações.
+   - Sai pra: back.
+   - Toca: R14 (privacy granular), B8 (sem FAB).
+
+7. perfil-seguidores
+   - Estados: default, empty.
+   - Entra de: perfil-outro contador Seguidores; perfil-eu seção Atividade.
+   - Sai pra: perfil-outro.
+   - Toca: B5, R14, B8 (sem FAB).
+
+8. perfil-seguindo
+   - Estados: default, empty.
+   - Entra de: perfil-outro contador Seguindo; perfil-eu seção Atividade.
+   - Sai pra: perfil-outro.
+   - Toca: B5, R14, B8 (sem FAB).
+
+9. perfil-atividade-publica
+   - Estados: default, empty.
+   - Entra de: perfil-outro; perfil-eu.
+   - Sai pra: post-detail.
+   - Toca: B4 (contador em cards), R14, B8 (sem FAB).
+
+10. perfil-vinhos-provados
+    - Estados: default, empty.
+    - Entra de: perfil-outro; perfil-eu.
+    - Sai pra: wine.
+    - Toca: R14, B8 (sem FAB).
+
+11. perfil-sugestoes
+    - Estados: default.
+    - Entra de: perfil-eu; home/comunidade card sugestão.
+    - Sai pra: perfil-outro.
+    - Toca: B5, R14, B8 (sem FAB).
+
+12. perfil-comparar-paladar
+    - Estados: default.
+    - Entra de: perfil-outro CTA Comparar.
+    - Sai pra: back.
+    - Toca: R14, B8 (sem FAB).
+
+13. badges-galeria
+    - Estados: default, com badges, sem badges.
+    - Entra de: perfil-eu chip Conquistas; perfil-outro.
+    - Sai pra: back.
+    - Toca: R14 (depende de F4 reativar pra ter badges reais), B8 (sem FAB).
+
+### Módulo 15, Expert (6 telas)
+
+1. expert-virar
+   - Estados: padrão (requisitos N/5).
+   - Entra de: perfil-eu seção Aprender; perfil-outro de expert.
+   - Sai pra: expert-aplicar.
+   - Toca: R15, B8 (sem FAB).
+
+2. expert-aplicar
+   - Estados: form.
+   - Entra de: expert-virar.
+   - Sai pra: expert-pendente.
+   - Toca: B1, R15, B8 (sem FAB).
+
+3. expert-pendente
+   - Estados: padrão.
+   - Entra de: expert-aplicar enviar.
+   - Sai pra: voltar.
+   - Toca: R15, B8 (sem FAB).
+
+4. expert-q-a (inbox do expert)
+   - Estados: pendentes, respondidas.
+   - Entra de: perfil-eu Q&A; push de nova pergunta.
+   - Sai pra: expert-responder.
+   - Toca: R15, B8 (sem FAB).
+
+5. expert-responder
+   - Estados: composer.
+   - Entra de: expert-q-a.
+   - Sai pra: back.
+   - Toca: B1, R15, B8 (sem FAB).
+
+6. perguntar-expert
+   - Estados: composer.
+   - Entra de: comparar-vinhos CTA Perguntar pra um expert; wine; perfil de
+     expert.
+   - Sai pra: back.
+   - Toca: B1, R15, B8 (sem FAB).
+
+### Módulo 16, Indicação e Convites (5 telas)
+
+1. indicacao-landing
+   - Estados: padrão com stats.
+   - Entra de: feed banner referral; perfil-eu seção Convites.
+   - Sai pra: indicacao-compartilhar; indicacao-meus-convites;
+     indicacao-recompensas.
+   - Toca: R16, B8 (sem FAB).
+
+2. indicacao-compartilhar
+   - Estados: padrão com link e canais.
+   - Entra de: indicacao-landing; F7 modal pós criação confraria passo
+     Compartilhe nas redes.
+   - Sai pra: share nativo; back.
+   - Toca: F7 (entrada opcional), R16, B8 (sem FAB).
+
+3. indicacao-meus-convites
+   - Estados: lista com status.
+   - Entra de: indicacao-landing.
+   - Sai pra: back.
+   - Toca: R16, B8 (sem FAB).
+
+4. indicacao-recompensas
+   - Estados: créditos.
+   - Entra de: indicacao-landing.
+   - Sai pra: marketplace (usar crédito); back.
+   - Toca: R16, B8 (sem FAB).
+
+5. convite-recebido
+   - Estados: padrão.
+   - Entra de: deep link com ref.
+   - Sai pra: cadastro com ref atrelado.
+   - Toca: R16, B8 (sem FAB).
+
+### Módulo 17, Chat e DMs (2 telas)
+
+1. chat-lista
+   - Estados: tabs Todas, Pessoas, Grupos, Não lidas.
+   - Entra de: bottom nav (se houver); perfil-eu seção Atividade.
+   - Sai pra: chat-conversa.
+   - Toca: R17, B8 (FAB Nova conversa).
+
+2. chat-conversa
+   - Estados: padrão.
+   - Entra de: chat-lista; perfil-outro CTA Mensagem.
+   - Sai pra: perfil-outro do interlocutor; back.
+   - Toca: B1 (teclado no composer), R17, B8 (sem FAB).
+
+### Módulo 18, Notificações e Engajamento (10 telas)
+
+1. notificacoes
+   - Estados: padrão com agrupamento.
+   - Entra de: header sino; deep link.
+   - Sai pra: cada notificação leva pro destino próprio.
+   - Toca: B6 (notificar lista de espera), F8 (push D+3 registrado), F11 (push
+     Cutuca registrado), F12 (3 pushes de evento registrados), P1 P2 P3 (copy
+     ajustada), R18, B8 (sem FAB).
+
+2. push-primer
+   - Estados: padrão.
+   - Entra de: pós onboarding.
+   - Sai pra: dialog nativo; push-canais ou push-negado.
+   - Toca: R18, B8 (sem FAB).
+
+3. push-negado
+   - Estados: padrão.
+   - Entra de: usuário recusou no dialog.
+   - Sai pra: back.
+   - Toca: R18, B8 (sem FAB).
+
+4. push-canais
+   - Estados: padrão.
+   - Entra de: push-primer aceito; config-notif.
+   - Sai pra: back.
+   - Toca: R18, B8 (sem FAB).
+
+5. push-preview
+   - Estados: cada push novo preview pra QA.
+   - Entra de: tools internos.
+   - Sai pra: back.
+   - Toca: F8, F11, F12 (todos os novos pushes têm preview), R18, B8 (sem FAB).
+
+6-9. nudge-d1, nudge-d3, nudge-d7, nudge-d14
+   - Estados: cada um com copy próprio.
+   - Entra de: scheduler server side.
+   - Sai pra: tela target (home, registro, etc).
+   - Toca: P1, P2, P3 (copy ajustada cross), R18.
+
+10. plus-one
+    - Estados: default, link.
+    - Entra de: convite plus-one (M12 § 12.0.6).
+    - Sai pra: cadastro convidado.
+    - Toca: R18 (decisão Gabriel: retirada plus-one viral, validar copy).
+
+### Módulo 19, Jornada, Pontos e Desafios (5 telas)
+
+1. jornada
+   - Estados: marcos do usuário.
+   - Entra de: perfil-eu chip Jornada; profile drawer Atividade.
+   - Sai pra: jornada-celebrar; desafio-detalhe; pontos.
+   - Toca: R19, B8 (sem FAB).
+
+2. pontos
+   - Estados: 4 abas Resgatar, Ganhar, Extrato, Como funcionam.
+   - Entra de: perfil-eu chip Pontos; welcome-final pílula sutil.
+   - Sai pra: catálogo de resgate; marketplace.
+   - Toca: R19 (4 abas com tabela mestra completa), B8 (sem FAB).
+
+3. jornada-celebrar
+   - Estados: marco, desafio, nivel, streak, resgate.
+   - Entra de: gatilhos server side.
+   - Sai pra: back.
+   - Toca: R19, B8 (sem FAB).
+
+4. desafio-detalhe
+   - Estados: ativo, cumprido, encerrado (3 estados x 8 templates).
+   - Entra de: jornada; notificacoes.
+   - Sai pra: back.
+   - Toca: R19, B8 (sem FAB).
+
+5. badges (alias de badges-galeria, M14)
+   - Estados: ver M14.
+   - Toca: ver M14.
+
+### Módulo 20, Config e Suporte (8 telas)
+
+1. config-notif
+   - Estados: padrão.
+   - Entra de: perfil-eu seção Configurações.
+   - Sai pra: back.
+   - Toca: R20, B8 (sem FAB).
+
+2. config-privacidade
+   - Estados: padrão com 4 toggles granulares cross M07 e M17.
+   - Entra de: perfil-eu seção Configurações.
+   - Sai pra: back.
+   - Toca: R20 (plugar privacy granular com 4 toggles), B8 (sem FAB).
+
+3. config-conta
+   - Estados: padrão com linha Vincular Google.
+   - Entra de: perfil-eu seção Configurações; editar-perfil.
+   - Sai pra: conta-desativada, conta-excluida.
+   - Toca: B1 (teclado em campos), A4 (Vincular Google), R20, B8 (sem FAB).
+
+4. conta-desativada
+   - Estados: padrão.
+   - Entra de: config-conta.
+   - Sai pra: back.
+   - Toca: R20.
+
+5. conta-excluida
+   - Estados: padrão com soft delete 30 dias.
+   - Entra de: config-conta; perfil-eu link Excluir conta.
+   - Sai pra: welcome.
+   - Toca: R20.
+
+6. config-bloqueados
+   - Estados: lista, empty.
+   - Entra de: perfil-eu seção Configurações.
+   - Sai pra: back.
+   - Toca: R20, B8 (sem FAB).
+
+7. suporte-faq
+   - Estados: lista de perguntas.
+   - Entra de: perfil-eu seção Suporte.
+   - Sai pra: detalhe da pergunta; suporte-contato.
+   - Toca: R20, B8 (sem FAB).
+
+8. suporte-contato
+   - Estados: form.
+   - Entra de: suporte-faq; perfil-eu seção Suporte.
+   - Sai pra: back.
+   - Toca: B1 (teclado no textarea), R20, B8 (sem FAB).
+
+### Módulo 21, Estados de sistema (6 telas)
+
+1. erro-404
+   - Estados: padrão.
+   - Entra de: rota inválida.
+   - Sai pra: home; busca.
+   - Toca: R21, B8 (sem FAB).
+
+2. erro-permissao
+   - Estados: padrão.
+   - Entra de: tentativa de acesso a recurso restrito (ex.: confraria privada).
+   - Sai pra: pedir entrar; mandar mensagem; outras confrarias.
+   - Toca: R21, B8 (sem FAB).
+
+3. erro-sessao
+   - Estados: atualizacao, seguranca, inatividade.
+   - Entra de: gatilho server side raro (F2).
+   - Sai pra: login (Entrar de novo); recuperar-email.
+   - Toca: F2 (3 reasons), R21, B8 (sem FAB).
+
+4. vinho-indisponivel
+   - Estados: padrão com vinhos similares.
+   - Entra de: tentativa de abrir vinho removido.
+   - Sai pra: similares; back.
+   - Toca: R21, B8 (sem FAB).
+
+5. erro-servidor
+   - Estados: padrão.
+   - Entra de: falha 500.
+   - Sai pra: tentar de novo; voltar pro início.
+   - Toca: R21, B8 (sem FAB).
+
+6. toast (overlay transversal)
+   - Estados: success, info, warning, error; empilhamento até 3.
+   - Entra de: qualquer ação que dispara feedback.
+   - Sai pra: dismiss automático em 3s.
+   - Toca: R21 (empilhamento).
 
 ## 8. Critérios gerais de aceite da Sprint 14
 

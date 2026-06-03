@@ -313,6 +313,158 @@ Esta decisão fica pra começo da Sprint 15. Após decidida, distribui em Sprint
 
 Mesma estrutura da Sprint 14, seção 8.
 
+## 6B. Inventário das telas afetadas na Sprint 15, fluxo a fluxo
+
+Esta seção lista uma a uma todas as telas que sofrem mudança nesta Sprint, em
+ordem dentro de cada item. Use como checklist do QA da Sprint.
+
+### V1, admin finaliza evento manualmente
+
+1. event-detalhe header
+   - Estados: padrão, com badge Finalizado após confirmação.
+   - Mudança: menu 3 pontos do header ganha item Finalizar evento (apenas
+     admin). Tooltip Disponível 2h após o início quando desabilitado.
+   - Sai pra: modal de confirmação. Após confirmar: badge Finalizado + CTA
+     Registrar feedback.
+2. event-detalhe menu 3 pontos
+   - Item novo Finalizar evento visível só pra admin.
+3. evento-pos-avaliar
+   - Liberado após finalização manual.
+4. evento-pos-ata
+   - Liberado após finalização manual.
+5. notificacoes
+   - Push pros participantes quando admin finaliza: O evento foi finalizado,
+     registre seu feedback.
+
+### V2, destaque do próximo evento no feed da confraria
+
+1. confraria-detalhe aba Eventos
+   - Mudança: novo card 2x altura normal no topo da aba antes da listagem,
+     com gradient e countdown.
+   - Critério: próximo evento confirmado com pelo menos 1 confirmado.
+2. event-detalhe
+   - Entrada via tap no destaque.
+
+### V3, sticky de confirmação no detalhe do evento
+
+1. event-detalhe rodapé
+   - Mudança: botão sticky Confirmar presença quando o usuário ainda não
+     confirmou e o evento está confirmado pra acontecer.
+   - Toast top anchored: Presença confirmada.
+   - Animação: badge verde com check pulsa por 600ms.
+   - Sem som (acessibilidade).
+2. Os 3 botões pequenos (Vou, Talvez, Não vou) ficam logo acima do sticky e
+   se mantêm.
+3. CancelarSheet (M12) não afetado.
+
+### V4, badges em cards de confrarias
+
+1. home/confrarias cards
+   - Badge Em alta no canto superior direito quando crescimento >= 20 por
+     cento em 30 dias (mínimo 10 membros).
+   - Badge Nova quando criada há <= 14 dias (sobrepõe Em alta).
+   - Badge Verificada ao lado do nome quando admin verificado (cross US-117).
+   - Chip Sua confraria abaixo do nome quando o usuário é membro.
+2. confraria-detalhe header
+   - Badges replicam.
+3. Sugestões e listas de confraria em outras telas (home/comunidade card de
+   sugestão, perfil-sugestoes): badges replicam.
+
+### V5, plugar taxonomia da Adega
+
+1. home/adega
+   - Banner Onde fica o quê dispensável (localStorage tc.adega.tax.dismissed).
+   - Chips de atalho Favoritos e Wishlist no header (com contadores).
+   - Pílula de definição inline em cada aba: Estante "O que TENHO na minha
+     garrafeira física"; Diário "O que JÁ PROVEI meu histórico".
+2. Slot multi garrafa visível em cada item da estante:
+   - Badge ×N quando quantidade > 1.
+   - Botões + e − pra ajustar.
+3. favoritos
+   - Subtítulo do header reforça "Curti pra referência".
+4. lista-desejos
+   - Subtítulo do header reforça "Quero comprar".
+
+### v2.1, auditoria de estados vazios
+
+1. favoritos vazio.
+2. lista-desejos vazio.
+3. home/comunidade feed vazio.
+4. home/confrarias sem confrarias.
+5. chat-lista vazio.
+6. notificacoes vazio.
+7. perfil-seguidores e perfil-seguindo vazios.
+8. evento-presenca sem inscritos.
+9. perfil-vinhos-provados vazio.
+10. expert-q-a sem perguntas pendentes.
+
+Todos os 10 estados seguem o template canônico: ilustração + título + body +
+CTA primário (CTA ghost secundário opcional).
+
+### v2.2, animações e microinterações
+
+1. confraria-detalhe: transição de troca de aba.
+2. home/adega: transição de troca de aba.
+3. home/comunidade aba Eventos: transição.
+4. event-detalhe: animação de aparição do banner contextual (PaymentBanner M12).
+5. FAB transversal: pulse ao mudar de contexto (cross B8).
+6. treino-liga: reorder animado de posições.
+7. Ranking da confraria: reorder animado.
+8. jornada-celebrar variante marco: confete.
+9. jornada-celebrar variante desafio: confete.
+
+### v2.3, acessibilidade e fontes responsivas
+
+1. Todas as telas (transversal).
+2. Aumento de contraste WCAG AA em todas as labels de chip pequenas.
+3. Tamanho mínimo de toque 44 px em todos os CTAs.
+4. Suporte a Dynamic Type do iOS em headlines e corpo (até 200 por cento sem
+   quebrar layout).
+5. aria-label em todos os botões de ícone do app (cobertura completa).
+
+### R1, plugar display da taxa Tchin Tchin
+
+1. event-detalhe: nova row Valor na seção Detalhes com base + linha "+ taxa
+   Tchin Tchin: PIX R$ 1,20 · Cartão 4% · Combinar com admin sem taxa".
+2. ParticiparSheet: caixa de aviso "+ taxa Tchin Tchin no próximo passo".
+3. EscolherMetodoSheet: breakdown completo em cada opção; badge SEM TAXA em
+   Combinar com admin.
+4. PixLaciSheet: total com decomposição base + taxa.
+
+### R2, plugar rota perfil-eu dedicada
+
+1. Header global do app: avatar passa a abrir rota perfil-eu (não mais sheet).
+2. perfil-eu (rota dedicada): identity card destacado + 3 chips de ação +
+   seções completas + footer Sair e Excluir conta.
+3. ProfileDrawer continua existindo como atalho secundário.
+
+### R3, @handle com cooldown 30 dias
+
+1. editar-perfil-foto: validação cooldown 30 dias.
+2. editar-perfil-foto: mensagem "Você poderá trocar de novo em N dias".
+3. Lista de handles reservados: admin, tchin, sommelier, expert, tchin-oficial.
+
+### R4, privacy granular por seção
+
+1. config-privacidade: 4 toggles (Diário, Confrarias, Paladar, Adega Espelho)
+   com 3 valores cada (Público, Seguidores, Privado).
+2. DM (M17) com 5 opções: Qualquer um, Quem eu sigo, Mesma confraria, Misto,
+   Ninguém.
+3. Backend aplica policy: usuário não autorizado não vê a seção.
+
+### R5, cadastrar primeiros parceiros do Marketplace de Experiência
+
+1. Página admin de gestão de parceiros (admin only, fora do app do usuário).
+2. confraria-detalhe aba Experiência: oculta até ter pelo menos 5 parceiros
+   ativos na região do usuário; visível após 20 parceiros piloto cadastrados.
+3. home/descobrir (Descobri) bloco 5: link pra aba Experiência.
+
+### R6, decidir destino do épico Pontos
+
+1. Decisão Gabriel + produto no início da Sprint 15.
+2. Sem mudança de tela imediata. Implementação cai em Sprint 16 ou 17 conforme
+   decisão.
+
 ## 7. Encadeamento com Sprint 16
 
 Itens que naturalmente caem na Sprint 16:
