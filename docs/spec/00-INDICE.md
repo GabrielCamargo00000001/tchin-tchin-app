@@ -3,7 +3,7 @@
 > **Documento único, ultra-detalhado, para o time de Dev.** Reúne **todos os fluxos e telas** do app com suas histórias de usuário, regras de negócio, estados e comportamentos.
 > Gerado a partir de: (a) **as telas implementadas** no protótipo `tchin-tchin-app` e (b) os **11 documentos de épicos/MVPs/specs** em `…/duolingo do vinho/epicos`.
 >
-> **Última atualização:** 2026-06-03 · **Status:** ✅ **21/21 módulos documentados** · 🎯 **21/21 módulos com decisões TOTALMENTE FECHADAS** (sessão mega-decisões Gabriel, junho/2026). **318 PNGs** capturadas, **228 referenciadas** nos docs.
+> **Última atualização:** 2026-06-03 · **Status:** ✅ **21/21 módulos documentados** · 🎯 **21/21 módulos com decisões TOTALMENTE FECHADAS** (sessão mega-decisões Gabriel, junho/2026). **323 PNGs** capturadas, **233 referenciadas** nos docs. **5 implementações de protótipo concluídas** (M07 taxonomia, M12 taxa, M14 perfil-eu, M19 aba pontos, M04/M11 Marketplace Experiência).
 > **Protótipo navegável (fonte de verdade comportamental):** https://tchin-tchin-app.vercel.app
 
 ---
@@ -170,8 +170,8 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 **⛔ Faltam no app (épicos):** motor de matching real (prato→perfil→ranking), base de pratos, NLG da razão, harmonização reversa (vinho→pratos), foto do prato, ranking ciente do paladar.
 
 ### Módulo 11 — Confrarias [📄 doc completo](11-confrarias.md)
-`home/confrarias` (abas Confrarias|Eventos) ✅ · `confraria-detalhe` (4 abas) ✅ · `wizard-confraria-1…6` ✅ · `confraria-config` ⚠️ · `confraria-convidar` 🐛 · `confraria-sair` ✅ · `confraria-transferir` ✅ · `confraria-regras` ✅ · `confraria-welcome` ✅ · `confraria-apresentar` ✅ · `confraria-tour-rapido` ✅
-**Estados extra capturados:** `confraria-detalhe-{eventos,publicacoes,membros,adega}`, `wizard-confraria-1…6`, `confraria-{config,convidar,sair,transferir,regras}`, `confraria-{welcome,apresentar}`, `confraria-tour-{1,2,3}`, `tutor-confraria-{intro,step-1,step-2,step-3}`.
+`home/confrarias` (abas Confrarias|Eventos) ✅ · `confraria-detalhe` (**5 abas 🆕**) ✅ · `wizard-confraria-1…6` ✅ · `confraria-config` ⚠️ · `confraria-convidar` 🐛 · `confraria-sair` ✅ · `confraria-transferir` ✅ · `confraria-regras` ✅ · `confraria-welcome` ✅ · `confraria-apresentar` ✅ · `confraria-tour-rapido` ✅
+**Estados extra capturados:** `confraria-detalhe-{eventos,publicacoes,membros,adega,**experiencia** 🆕}`, `wizard-confraria-1…6`, `confraria-{config,convidar,sair,transferir,regras}`, `confraria-{welcome,apresentar}`, `confraria-tour-{1,2,3}`, `tutor-confraria-{intro,step-1,step-2,step-3}`.
 **🐛 Bug:** badge "no app" invertido em convidar (mostra em quem JÁ tem app).
 **⚠️ Divergências:** 2 onboardings sobrepostos (welcome→apresentar→tour vs tutorial confraria-usar); tudo mock.
 **⛔ Faltam no app (épicos):** CRUD real, feed/RSVP/membros reais, fila de aprovação, moderação, upload de capa, contatos do device, filtros avançados.
@@ -189,7 +189,7 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 **⛔ Faltam no app (épicos):** feed real (ranking/paginação), upload de foto, moderação, régua de stories, filtros do feed, menções @/hashtag autocomplete, respostas aninhadas.
 
 ### Módulo 14 — Perfil & Social [📄 doc completo](14-perfil-social.md)
-`perfil-outro` ✅ · `editar-perfil` ⚠️ · `editar-perfil-foto` ✅ · `editar-perfil-paladar` ✅ · `editar-perfil-privacidade` ✅ · `perfil-seguidores` ✅ · `perfil-seguindo` ✅ · `perfil-atividade-publica` ✅ · `perfil-vinhos-provados` ✅ · `perfil-sugestoes` ✅ · `perfil-comparar-paladar` ✅ · `badges-galeria` ✅
+`perfil-outro` ✅ · `perfil-eu` 🆕 ✅ (rota dedicada — Gabriel jun/2026) · `editar-perfil` ⚠️ · `editar-perfil-foto` ✅ · `editar-perfil-paladar` ✅ · `editar-perfil-privacidade` ✅ · `perfil-seguidores` ✅ · `perfil-seguindo` ✅ · `perfil-atividade-publica` ✅ · `perfil-vinhos-provados` ✅ · `perfil-sugestoes` ✅ · `perfil-comparar-paladar` ✅ · `badges-galeria` ✅
 **Estados extra capturados:** 12 telas (`perfil-outro`, `editar-perfil*`, `perfil-{seguidores,seguindo,atividade-publica,vinhos-provados,sugestoes,comparar-paladar}`, `badges-galeria`).
 **⚠️ Divergências:** privacidade não-enforced; @handle sem unicidade; badges fragmentadas (Treino+perfil+jornada); perfil próprio é sheet (sem rota).
 **⛔ Faltam no app (épicos):** grafo social real, edição/upload de foto reais, privacidade enforced, bloquear/denunciar reais, busca nas listas.
@@ -217,7 +217,7 @@ Cada tela é documentada com: **Rota/ID · Propósito · US relacionadas · Entr
 
 ### Módulo 19 — Jornada, Pontos & Desafios [📄 doc completo](19-jornada-desafios.md)
 `jornada` ✅ · `pontos` 🆕 ✅ · `jornada-celebrar` ✅ · `desafio-detalhe` ✅ · `badges` (= `badges-galeria`, M14) ✅
-**Estados extra capturados:** `jornada`, `pontos-{resgatar|ganhar|extrato}`, `jornada-celebrar-{marco|desafio|nivel|streak|resgate}`, `desafio-detalhe-{ativo|cumprido|encerrado}`.
+**Estados extra capturados:** `jornada`, `pontos-{resgatar|ganhar|extrato|**como-funcionam** 🆕}`, `jornada-celebrar-{marco|desafio|nivel|streak|resgate}`, `desafio-detalhe-{ativo|cumprido|encerrado}`.
 **✅ Pontos unificados (Gabriel decidiu):** moeda única **Pontos Tchin** (XP do Treino vira só placar da Liga); resgatável em crédito/vinhos/experiências com limites; vinhos grátis custeados pela Tchin.
 **⛔ Faltam no app (épicos):** estado real dos marcos + disparo da celebração, desafios reais (validação automática + ranking + recompensa), pontuação unificada, badges unificados.
 

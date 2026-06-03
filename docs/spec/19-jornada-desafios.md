@@ -12,6 +12,19 @@
 
 > **Princípio:** o sistema de pontos é o motor de retenção do app. Tem que ser **explícito, transparente e auditável** pra o usuário confiar (sem "pegadinha"). E **bem documentado pro time de dev** implementar uniforme.
 
+### ✅ IMPLEMENTADO NO PROTÓTIPO (jun/2026)
+Decisões 19.0.1 + 19.0.2 já estão no código:
+- **4ª aba "Como funcionam"** em `PontosScreen` (`screens-jornada-extras.jsx`) com:
+  - Card-resumo "Como funcionam os Pontos Tchin" (princípio + taxa 10pts=R$1 / 300pts=R$30 / 1000pts=R$100).
+  - **Tabela mestra** `PONTOS_TABELA` (constante local) com **24 linhas em 6 grupos**: Registro de vinho · Treine seu Paladar · Confrarias & Eventos · Comunidade & Social · Aprenda & Q&A · Marcos e Indicação. Cada linha: ação + pontos (badge verde) + cap + referência ao módulo.
+  - Box "Regras importantes": server-side, cap diário/por-evento, expiração 12m, resgate imediato.
+- **Onboarding sutil** em `welcome-final` (M02 § 2.6): pílula clicável "Você ganha pontos por usar o app · entenda" → leva pra `/pontos`. Não é tour, não é tela inteira.
+- Renomeado: "Como ganhar" → **"Ganhar"** (caber 4 abas no segmented).
+- URL direto: `?screen=pontos` → tap "Como funcionam".
+
+Falta: 19.0.3 (documentação dev — `POINTS_ECONOMY` espelhado no backend, dedup server-side).
+
+
 ### 19.0.1 Aba "Como funcionam os pontos" no Hub `/pontos`
 Adicionar **nova aba** dentro da `PontosScreen` (junto de "Resgatar / Como ganhar / Extrato"):
 - **4ª aba: "Como funcionam"** — explicação completa e categorizada de TODOS os jeitos de ganhar e gastar pontos em cada função do app. Linguagem clara, sem jargão.
@@ -207,9 +220,9 @@ O sistema **gera 1 desafio por semana** a partir de um template (rotação autom
 
 ## 19.4 🆕 `pontos` — Carteira + Loja de resgate (`PontosScreen`) ✅
 
-_Abas: **Resgatar** · **Como ganhar** · **Extrato**._
+_Abas: **Resgatar** · **Ganhar** · **Extrato** · **Como funcionam 🆕**._
 
-<img src="shots/pontos-resgatar.png" width="150"/> <img src="shots/pontos-ganhar.png" width="150"/> <img src="shots/pontos-extrato.png" width="150"/>
+<img src="shots/pontos-resgatar.png" width="140"/> <img src="shots/pontos-ganhar.png" width="140"/> <img src="shots/pontos-extrato.png" width="140"/> <img src="shots/pontos-como-funcionam.png" width="140"/>
 
 **Propósito:** carteira de Pontos + loja de resgate (a "lógica de resgate" pedida pelo Gabriel). **US-JOR-04.**
 **Entradas:** `jornada` ("Resgatar meus pontos"); menu/perfil ("Meus pontos"); celebração `challenge`/`redeem`. **Saídas:** resgate de crédito/vinho → toast/aplicação (crédito no checkout M05; vinho no carrinho M05); "Ver minha jornada" → `jornada`.

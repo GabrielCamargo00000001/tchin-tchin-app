@@ -10,6 +10,17 @@
 
 ## 🆕 § 12.A Decisões fechadas restantes (Gabriel, junho/2026)
 
+### ✅ IMPLEMENTADO NO PROTÓTIPO (jun/2026)
+Decisão 12.A.1 (taxa visível e separada) já está no código:
+- **Helper exportado** `calcTaxa(price, method)` em `event-pagamento.jsx` com tabela `TAXAS = { pix: R$1,20 fixo, cartao: 4%, fora: R$0 }`.
+- **Componente** `PriceBreakdownLines` mostra base + taxa + total (sempre visível).
+- **`event-detalhe`** ganhou nova row "Valor" na seção Detalhes — preço + linha completa "+ taxa Tchin Tchin: PIX **R$ 1,20** · Cartão **4%** · Combinar com admin **sem taxa**".
+- **`ParticiparSheet`** explica antes do método: "+ taxa Tchin Tchin no próximo passo · vaga reservada por 2h".
+- **`EscolherMetodoSheet`** mostra breakdown completo em cada opção; "Combinar com admin" ganha badge **SEM TAXA**; CTA exibe total ("Continuar com LACI · R$ 81,20").
+- **`PixLaciSheet`** mostra valor total no topo + decomposição: "R$ 80,00 do evento + R$ 1,20 taxa Tchin Tchin"; tela de "confirmado" mostra valor total recebido.
+
+Falta: 12.A.2 (split dinâmico — backlog), 12.A.3 (endereço já era regra fixa, ok).
+
 ### 12.A.1 Modelo de receita — repasse de taxa, sem comissão Tchin no MVP
 > **Princípio:** manter a base do app sustentável (BaaS) **sem cobrar a confraria/admin**. A taxa cobre custo bancário + uma pequena margem.
 

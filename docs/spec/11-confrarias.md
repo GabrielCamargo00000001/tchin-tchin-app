@@ -14,6 +14,19 @@
 - **11.3 Limite de membros — sem limite no momento.** Não impomos cap (admin pode arquivar se ficar grande demais). Backlog futuro: se aparecer abuso ou perda de qualidade, revisitar.
 - **11.5 🆕 Nova aba "Experiência"** no `confraria-detalhe` (5ª aba) — facilitador pro admin montar a experiência completa (locais, vinícolas, fornecedores). Ver M04 § 4.0.3 pra detalhes.
 
+### ✅ IMPLEMENTADO NO PROTÓTIPO (jun/2026)
+Decisão 11.5 já está no código (`screens-confraria.jsx`):
+- **Nova entrada** em `CONFRARIA_TABS`: `{ id: 'experiencia', label: 'Experiência', icon: 'storefront' }` → vira a **5ª aba** ao lado de Eventos / Publicações / Membros / Adega.
+- **Novo componente** `ExperienciaTab({ confraria, isAdmin, go })`:
+  - **Banner intro** "🆕 Marketplace de Experiência" + texto curto explicando.
+  - **CTA admin** "Montar kit pro próximo evento" (só pra `isAdmin`).
+  - **Grid de 6 categorias** com ícone + count: Vinícolas · Locais · Kits · Conteúdo · Equipamentos · Serviços.
+  - **Lista de destaques** (4 ofertas mock) com badges (PARCEIRO / GRÁTIS) + preço **R$** ou em **cristais** (cross M08).
+  - **Nota de rodapé**: "Marketplace integrado com Cristais do Treine seu Paladar (M08) · pagamentos via LACI · taxa Tchin Tchin transparente".
+- **Captura:** `shots/confraria-detalhe-experiencia.png`.
+
+Falta: backend de ofertas reais, telas de detalhe, integração checkout/cristais/comissão (épico cross-module).
+
 ---
 
 ## 11.0 🆕 Definições canônicas — Privacidade, Papéis e Visibilidade (✅ Gabriel definiu)
@@ -118,22 +131,23 @@ Cada card mostra **no máx. 2 badges de estado** (por prioridade) + **1 tier de 
 
 ---
 
-## 11.2 `confraria-detalhe` — Detalhe (4 abas) ✅
+## 11.2 `confraria-detalhe` — Detalhe (5 abas 🆕) ✅
 
-_Eventos · Publicações · Membros · Adega:_
+_Eventos · Publicações · Membros · Adega · **Experiência 🆕**:_
 
-<img src="shots/confraria-detalhe-eventos.png" width="190"/> <img src="shots/confraria-detalhe-publicacoes.png" width="190"/> <img src="shots/confraria-detalhe-membros.png" width="190"/> <img src="shots/confraria-detalhe-adega.png" width="190"/>
+<img src="shots/confraria-detalhe-eventos.png" width="155"/> <img src="shots/confraria-detalhe-publicacoes.png" width="155"/> <img src="shots/confraria-detalhe-membros.png" width="155"/> <img src="shots/confraria-detalhe-adega.png" width="155"/> <img src="shots/confraria-detalhe-experiencia.png" width="155"/>
 
-**Propósito:** tela central da confraria. Header (capa + nome + atividade + N membros + privacidade + cidade) + 4 abas + menu de ações. **US-CONF-03.**
+**Propósito:** tela central da confraria. Header (capa + nome + atividade + N membros + privacidade + cidade) + 5 abas + menu de ações. **US-CONF-03.**
 **Entradas:** card da home; fim do onboarding; pós-criação. **Saídas:** "Participar" (entrar); abas; menu ⋯ → gestão; evento → `event-detalhe`.
 
 **Layout (`ConfrariaDetalheScreen`):**
 - Header: capa + nome (ex.: "Winetasting Países") + chips "Muito ativa · 11 membros · Pública" + cidade + estilo + **"Participar"** (ou "Entrar"/"Sair" conforme estado).
-- **4 abas:**
+- **5 abas:**
   - **Eventos** — próximos (N) / passados (N); card de próximo evento em destaque ("Degustação às cegas") + "Ver detalhes" → `event-detalhe`. Membros-only: "Eventos são pra membros · Entre... pra ver datas".
   - **Publicações** — mural/feed da confraria (posts, fotos, papo).
   - **Membros** — lista de membros com avatar/nível/papel.
   - **Adega** — vinhos coletivos da confraria.
+  - **🆕 Experiência** (`ExperienciaTab`) — Marketplace de Experiência: 6 categorias (Vinícolas/Locais/Kits/Conteúdo/Equipamentos/Serviços), destaques pagos+grátis, CTA admin "Montar kit pro próximo evento". Cross M04 § 4.0.3 + M08 (cristais). Captura: `confraria-detalhe-experiencia.png`.
 - **Menu ⋯** (admin): config · convidar · regras · transferir · sair.
 
 **Estados:** admin vs membro vs não-membro; just-created (checklist); empty por aba (gated por membership).

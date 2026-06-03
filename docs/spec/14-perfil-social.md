@@ -13,7 +13,19 @@
   - **Perfil público** (default): assimétrico, segue sem aprovação.
   - **Perfil privado**: bilateral, exige aprovação do dono. Aparece um "Solicitar pra seguir" pra quem ainda não foi aceito.
 - **14.2 @handle — editável com cooldown de 30 dias.** Sem limite de vezes (só o cooldown). Handles reservados (`admin`, `tchin`, `sommelier`, `expert`, `tchin-oficial`) não disponíveis pra user.
-- **14.3 Perfil próprio — VIRA ROTA DEDICADA `perfil-eu`** (não mais sheet/drawer). Acessível pela bottom nav (avatar) e por links profundos. Tem todas as seções de edição inline (foto, bio, paladar, privacidade) — não precisa abrir telas separadas pra cada.
+- **14.3 Perfil próprio — VIRA ROTA DEDICADA `perfil-eu`** (não mais sheet/drawer). Acessível pela bottom nav (avatar) e por links profundos.
+
+### ✅ IMPLEMENTADO NO PROTÓTIPO (jun/2026)
+Decisão 14.3 já está no código:
+- **Nova rota** `perfil-eu` registrada em `prototype.jsx` (case + lista de telas com `headerOnly`).
+- **Novo screen** `screens-perfil-eu.jsx` com `PerfilEuScreen({ go, ctx })`.
+- **Header próprio** (back + título "Você" + atalho ✏️ editar-perfil).
+- **Identity card destacado**: avatar 80px + nome Fraunces + nível/cidade + 3 chips de ação (Editar perfil / Conquistas / Pontos).
+- **Seções** completas (mesmas do antigo ProfileDrawer + nova linha **Wishlist** ligada à taxonomia § 7.0): Atividade · Aprender · Marketplace · Convites · Suporte · Configurações.
+- **Footer** com Sair (modal de confirmação) + Excluir conta.
+- **ProfileDrawer** mantido pra compat (atalho rápido do avatar do header). O título "Você ↗" do drawer agora abre a rota `perfil-eu`.
+
+Falta: 14.1 (privacidade enforced — backend), 14.2 (cooldown @handle — backend).
 
 ## Mapa do fluxo
 ```
@@ -23,7 +35,12 @@
                                                 ├─ comparar paladar → perfil-comparar-paladar
                                                 └─ ⋯ bloquear/denunciar
 
-[perfil próprio (sheet)] → editar-perfil ─┬─ editar-perfil-foto (nome/@/bio/foto)
+[avatar header (atalho)] → ProfileDrawer (compat) → "Você ↗" → perfil-eu
+[bottom nav · avatar / deep link] → perfil-eu ─┬─ editar-perfil
+                                                ├─ badges-galeria · pontos · jornada
+                                                └─ todas as seções (Atividade, Marketplace, Convites, Configurações…)
+
+[perfil-eu] → editar-perfil ─┬─ editar-perfil-foto (nome/@/bio/foto)
                                           ├─ editar-perfil-paladar (recalibrar)
                                           ├─ editar-perfil-privacidade (quem vê o quê)
                                           └─ config-conta
@@ -140,6 +157,29 @@ _Atividade pública · Vinhos provados:_
 - **Bloquear** → estado bloqueado no perfil-outro + (backend) corta interações.
 - **Privacidade** não enforced no protótipo (atividade/vinhos sempre visíveis).
 - **Loading skeleton** no perfil-outro (700ms) — boa prática, manter.
+
+## 14.7 🆕 `perfil-eu` — Perfil próprio (rota dedicada · `PerfilEuScreen`) ✅
+
+<img src="shots/perfil-eu.png" width="240"/>
+
+**Propósito:** rota cheia pra "Você" — substitui o `ProfileDrawer` como destino canônico. Centraliza identidade + atalhos pra todas as áreas pessoais. **US-PERF-02 (parcial).**
+**Entradas:** avatar header (drawer permanece como atalho rápido, e o título "Você ↗" do drawer linka pra cá); deep link `?screen=perfil-eu`. **Saídas:** `editar-perfil`, `badges-galeria`, `pontos`, `jornada`, `chat-lista`, `adega`, `favoritos`, `lista-desejos` (wishlist), `indicacao-landing`, `config-*`, etc.
+
+**Layout (`PerfilEuScreen`):**
+- **Header**: back + título "Você" + atalho ✏️ → `editar-perfil`.
+- **Identity card** com gradiente burgundy/50: avatar 80px + nome em Fraunces + "{nível} · {cidade}" + **3 chips de ação** (Editar perfil / Conquistas / Pontos).
+- **Seções de navegação** (ícone + label + chevron) agrupadas em — **Atividade** (diário, eventos, favoritos, **Wishlist 🆕**, seguindo, jornada, pontos, desafios, conquistas, ranking, mensagens, buscar usuários) · **Aprender & descobrir** · **Marketplace** · **Convites** · **Suporte** · **Configurações**.
+- **Footer**: botão **Sair** (abre `LogoutModal`) + link **Excluir conta** (→ `conta-excluida`).
+
+**Estados/persistência:** sem estado próprio (lê de `ctx.user` e `ctx.diary`). LogoutModal interno controla confirmação de sair.
+
+**Analytics:** `profile_self_view`, `profile_self_edit_click`, `profile_self_section_click { id }`, `profile_self_logout`, `profile_self_delete_click`.
+
+> **⚠️ DIVERGÊNCIA — ProfileDrawer + perfil-eu coexistem.** Por compat o drawer ainda abre via avatar do header (atalho rápido). O título do drawer "Você ↗" linka pra rota. **Recomendação:** decidir se aposenta o drawer numa próxima fase ou mantém como atalho mobile.
+
+**Status:** ✅ 🆕
+
+---
 
 ## Pendências de backend / decisões do Gabriel
 ### Críticas (bloqueadores GA)

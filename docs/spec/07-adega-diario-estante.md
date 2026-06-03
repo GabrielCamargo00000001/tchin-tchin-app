@@ -10,6 +10,17 @@
 
 ## 🆕 § 7.0 Decisões fechadas (Gabriel, junho/2026) — TAXONOMIA OFICIAL DE "GUARDAR VINHO"
 
+### ✅ IMPLEMENTADO NO PROTÓTIPO (jun/2026)
+Decisões 7.0.1, 7.0.2, 7.0.5 já estão **no código** (`screens-app.jsx`). Comportamento:
+- **Banner "Onde fica o quê"** explica os 4 conceitos no topo da Adega (dispensável via `window.__tcAdegaTaxonomiaDismissed`).
+- **Chips de atalho** Favoritos e Wishlist sempre visíveis no header (antes só ♡).
+- **Pílula de definição inline** em cada aba ("O que TENHO na minha garrafeira física" / "O que JÁ PROVEI").
+- **Slot multi-garrafa**: cada slot aceita `{ wine, quantity, addedAt }`. Badge `×N` no canto + botões +/− pra ajustar. Contador "X de Y espaços · Z garrafas".
+- Constantes exportadas: `ADEGA_TAXONOMIA` + helpers `getCellWine`, `getCellQty`, `normalizeCell`.
+
+Falta: 7.0.3 (organização por prateleira), 7.0.4 (relatório anual), persistência real.
+
+
 ### 7.0.1 Os 4 conceitos (✅ definição canônica)
 | Conceito | Significado | Estado físico | Estado social |
 |---|---|---|---|
@@ -98,9 +109,9 @@ _Estante 🆕 · Diário · Indicadores · Paladar:_
 **Analytics:** `cellar_view { filled, total }`, `cellar_slot_add { index }`, `cellar_slot_open { wineId }`, `cellar_slot_remove { index }`.
 
 > **⚠️ DIVERGÊNCIA — persistência só na sessão** (`window.__tcCellar`). **Crítico:** mover pra `tc.cellar` localStorage + backend. Sem isso, a estante zera ao recarregar.
-> **⚠️ DIVERGÊNCIA — estante ≠ diário.** Hoje a estante é independente do diário (você pode ter vinho na estante sem registro). Isso confunde: o que é "minha adega"? **Recomendação Gabriel:** definir se Estante = vinhos que possuo (cave física) vs Diário = vinhos que provei. São conceitos diferentes que hoje se misturam.
-> **⛔ FALTA NO APP (épico pede):** **quantidade por slot** (tenho 3 garrafas do mesmo). Hoje 1 slot = 1 garrafa. Backlog **CELLAR-QTY**.
-> **⛔ FALTA NO APP (épico pede):** **organização por prateleira/região/tipo** (arrastar pra reorganizar). Backlog **CELLAR-ORGANIZE**.
+> ~~**⚠️ DIVERGÊNCIA — estante ≠ diário.** Hoje a estante é independente do diário…~~ ✅ **RESOLVIDO § 7.0.1** — taxonomia canônica (Estante=tenho, Diário=provei). Banner + pílula inline explicam ao usuário.
+> ~~**⛔ FALTA NO APP — quantidade por slot**~~ ✅ **IMPLEMENTADO § 7.0.2** — slot aceita `{ wine, quantity }`, badge `×N` + botões +/−.
+> **⛔ FALTA NO APP (épico pede):** **organização por prateleira/região/tipo** (arrastar pra reorganizar). § 7.0.3 fechada, falta UI. Backlog **CELLAR-ORGANIZE**.
 > **⛔ FALTA NO APP (épico pede):** **alerta de consumo ideal** ("esse vinho está no ponto / passando do ponto"). Backlog **CELLAR-DRINK-WINDOW**.
 
 **Status:** ✅ 🆕 (UI inovadora; persistência real + conceito estante/diário pendentes)
@@ -264,7 +275,7 @@ _Registro rápido (~15s) · Registro completo · Confirmação (+pontos):_
 
 **Layout (`FavoritosScreen`):** header back + "Favoritos" + lista de cards de vinhos favoritados (de `ctx.favorites`). Empty state quando vazio.
 
-> **⚠️ DIVERGÊNCIA — 3 conceitos de "guardar" sobrepostos:** Favoritos (Adega), Wishlist/lista-desejos (Módulo 04), Estante (Adega). Confuso pro usuário. **Recomendação Gabriel:** unificar ou diferenciar claramente (Favoritos = gostei / Wishlist = quero comprar / Estante = tenho/provei).
+> ~~**⚠️ DIVERGÊNCIA — 3 conceitos de "guardar" sobrepostos**~~ ✅ **RESOLVIDO § 7.0.1** — taxonomia canônica de 4 conceitos (Estante / Diário / Favoritos / Wishlist) com explicação visível no app (banner + pílula). Decisão Gabriel jun/2026.
 
 **Status:** ✅
 
@@ -299,11 +310,12 @@ _Registro rápido (~15s) · Registro completo · Confirmação (+pontos):_
 - Insights acionáveis nos indicadores (NLG).
 - Rascunhos reais no registro completo.
 
-### Decisões do Gabriel
-- **Conceito Estante vs Diário vs Favoritos vs Wishlist** — 4 jeitos de "guardar" vinho. Definir taxonomia clara.
-- Estante: quantidade por slot? organização por prateleira?
-- Relatório: mensal + anual (retrospectiva)?
-- Pontuação: +10 por registro — manter? escalar com qualidade do registro (foto+nota = mais)?
+### Decisões do Gabriel (✅ fechadas em junho/2026)
+- ~~Conceito Estante vs Diário vs Favoritos vs Wishlist~~ ✅ § 7.0.1 — 4 conceitos canônicos.
+- ~~Estante: quantidade por slot?~~ ✅ § 7.0.2 — sim, `quantity` por slot. Implementado.
+- ~~Estante: organização por prateleira?~~ ✅ § 7.0.3 — sim, dividir por prateleira/região/temperatura (UI pendente).
+- ~~Relatório: mensal + anual?~~ ✅ § 7.0.4 — sim, mensal + anual (Wrapped).
+- ~~Pontuação escalonada?~~ ✅ § 7.0.5 — 5/8/10/15/20 pts, cap 3/dia.
 
 ## Conexões com outros módulos
 - **Módulo 03 (Paladar)** — aba Paladar reusa o radar; "Refazer quiz" → quiz.

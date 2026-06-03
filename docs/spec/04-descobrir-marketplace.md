@@ -49,6 +49,13 @@ Algoritmo = **paladar (50%) + popularidade (30%) + curadoria editorial manual (2
 
 **Status:** 🆕 conceito definido por Gabriel — vira **backlog EXPERIÊNCIA** (épico próprio, M04 + M11 + M19 cross-module).
 
+### ✅ IMPLEMENTADO NO PROTÓTIPO (jun/2026 — kickoff visual)
+Decisão 4.0.3 já tem **versão visual** no código (sem backend ainda):
+- **Card destacado** no `DescobrirHome` (`screens-descobrir.jsx`) — gradiente âmbar/burgundy, badge "NOVO", texto "Vinícolas, kits, locais, conteúdo. Em R$ ou em cristais do Treino." Linka pra `confraria-detalhe` (aba Experiência).
+- **Nova 5ª aba "Experiência"** em `confraria-detalhe` (M11) com `ExperienciaTab` — categorias + destaques + CTA admin "Montar kit pro próximo evento". Ver M11 § 11.4.x.
+- **Captura:** `shots/descobrir-com-experiencia.png` + `shots/confraria-detalhe-experiencia.png`.
+
+Falta: sub-hub dedicado em `/descobrir` (rota própria), telas de detalhe de oferta, integração com checkout/cristais/comissão.
 
 ## Mapa do fluxo
 ```
@@ -74,9 +81,9 @@ marketplace ─┬─ Filtrar (bottom sheet inline) ──→ ajusta filtersActi
 
 _Variantes documentadas no Módulo 02 (FirstTime sem paladar) e aqui (DescobrirHome com quiz feito):_
 
-<img src="shots/home-descobrir.png" width="240"/>
+<img src="shots/home-descobrir.png" width="190"/> <img src="shots/descobrir-com-experiencia.png" width="190"/>
 
-**Propósito:** porta de entrada do app pós-onboarding. Ofereçe um **hero único** ("Pra você, hoje") com o vinho de maior match, + scanner + categorias + preview do Marketplace + Curiosity card editorial. **US-DESC-01.**
+**Propósito:** porta de entrada do app pós-onboarding. Ofereçe um **hero único** ("Pra você, hoje") com o vinho de maior match, + scanner + **🆕 card Marketplace de Experiência** + categorias + preview do Marketplace + Curiosity card editorial. **US-DESC-01.**
 **Entradas:** bottom nav "Descobrir"; deep link. **Saídas:** `wine`, `quiz`, `scanner`, `marketplace`, `marketplace { filter }`.
 
 **Layout (`DescobrirHome`):**
