@@ -6,7 +6,49 @@
 
 **⚠️ Constraint de produto (registrado pelo usuário):** o onboarding aqui é da **FEATURE** (mascote Tchin), **NÃO** o onboarding do app inteiro. Não repetir a pergunta de nível (já vem do Módulo 02 via `window.__tcUserLevel`).
 
-**Regra de negócio canônica:** persistência em `localStorage` (`tc.treino.v3`). Mecânicas: **streak** 🔥 (ofensiva diária, loss aversion), **vidas** ❤️ (5 max, regen 20min, erra = perde 1), **cristais** 💎 (moeda, ganha por lição/baú, gasta em congelamento de streak — 200), **meta diária** (anel, leve/regular/sério/intenso = 20/40/60/100 XP), **liga semanal** (leaderboard com promoção/rebaixamento). Conta nova reseta `tc.treino.v3` (onboarding reaparece — ver Módulo 01/02).
+**Regra de negócio canônica:** persistência em `localStorage` (`tc.treino.v3`). Mecânicas: **streak** 🔥 (ofensiva diária, loss aversion), **vidas** ❤️ (5 max, **regen 1 a cada 4h**, erra = perde 1), **cristais** 💎 (moeda do Treino — ver § 8.0.3), **meta diária** (anel, leve/regular/sério/intenso = 20/40/60/100 XP), **liga semanal** (leaderboard com promoção/rebaixamento). Conta nova reseta `tc.treino.v3` (onboarding reaparece — ver Módulo 01/02).
+
+---
+
+## 🆕 § 8.0 Decisões fechadas (Gabriel, junho/2026)
+
+### 8.0.1 Vidas — gate real com regen lento
+**5 vidas máximas · perde 1 por exercício errado · regenera 1 a cada 4h.** Sem vidas = não pode treinar (pode continuar revisando conteúdo no Aprenda/M09). Pode comprar regen instantâneo com Cristais (50 💎 = recarga total).
+
+### 8.0.2 Liga — divisões + 2 modos
+**Divisões nomeadas (rotação semanal, promoção/rebaixamento):**
+1. 🥂 **Frisante** (entrada)
+2. 🤍 **Branco**
+3. 🌸 **Rosé**
+4. 🍷 **Tinto**
+5. 🏆 **Reserva**
+6. 👑 **Gran Reserva** (topo)
+
+**Dois modos paralelos:**
+- **Liga Global** — leaderboard mundial dentro da divisão.
+- **Liga entre Amigos** — só com quem você segue (M14). Mesma mecânica, escopo restrito.
+
+User vê os 2 placares no Treino > aba Liga.
+
+### 8.0.3 🆕 Cristais — moeda do Treino, com loja própria E troca no Marketplace de Experiência
+**Como ganha:** lições concluídas, baús de streak, conquistas.
+
+**Como gasta — 2 destinos (ficar EXPLÍCITO na UI):**
+1. **Loja do Treino** (mecânicas internas):
+   - Congelar streak (200 💎 / 1 dia)
+   - Recarga total de vidas (50 💎)
+   - Pular lição difícil (30 💎)
+   - Refazer exercício errado (20 💎)
+   - Skin de avatar (variável)
+2. **Marketplace de Experiência** (M04 § 4.0.3 — ver):
+   - Desconto em kit (500 💎 = R$ 30 off)
+   - Voucher de degustação em vinícola parceira
+   - Acesso a evento Tchin Picks com prioridade
+
+> **Importante (UX):** quando o user gasta cristais, sempre **mostrar AS 2 OPÇÕES** lado a lado. Não esconder a troca por experiência (gateway pra monetização via marketplace).
+
+### 8.0.4 Vídeo-aula — produz E mantém quiz
+**Ambos.** Vídeo-aula complementa o quiz interativo (não substitui). Modelo: cada módulo de treino tem **vídeo curto (~2-3 min) opcional** + quiz obrigatório. Quem vê o vídeo ganha **+5 XP bônus**.
 
 ## Mapa do fluxo
 ```

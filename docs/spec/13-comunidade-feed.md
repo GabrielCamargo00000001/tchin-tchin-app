@@ -6,6 +6,13 @@
 
 **Regra de negócio canônica:** o feed entremeia **posts da rede** com **blocos não-orgânicos**: sugestão de confrarias (a cada 3 posts) e banner de indicação (após 2 posts). Post pode **referenciar um vinho** (mostra match do leitor). Audiência do post: Todo mundo / Minhas confrarias / Só você. Quem vem via `skip_to_feed` (Módulo 02) cai aqui com viés #educacao por 14 dias *(filtro downstream)*.
 
+---
+
+## 🆕 § 13.0 Decisões fechadas (Gabriel, junho/2026)
+- **13.1 Comentários — manter OS DOIS** (tela cheia `comentarios` E inline no `post-detail`). Inline pra leitura rápida; tela cheia pra comentar/threadear bem. Mesma fonte de dados.
+- **13.2 Momentos/Stories — ADICIONAR (manter no MVP).** Stories efêmeros 24h com posts curtos de vinho.
+- **13.3 Audiência default — "Minhas confrarias"** (mantém como está hoje).
+
 ## Mapa do fluxo
 ```
 home/comunidade (feed) ─┬─ Uva da Semana (editorial topo)

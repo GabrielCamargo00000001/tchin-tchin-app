@@ -4,7 +4,13 @@
 > **Fonte de verdade:** `screens-edge-cases.jsx` (`Erro404Screen`, `ErroPermissaoScreen`, `ErroSessaoScreen`, `VinhoIndisponivelScreen`, `ErroServidorScreen`) + componente `toast` (transversal, disparado via `go('toast', {...})`). Doc funcional: **transversal**.
 > **Épicos/US:** US-SYS-01 (404), US-SYS-02 (permissão), US-SYS-03 (sessão), US-SYS-04 (vinho indisponível), US-SYS-05 (erro servidor), US-SYS-06 (toast).
 
-**Regra de negócio canônica:** erro **nunca culpa o usuário** nem mostra stack/código cru — usa linguagem de marca ("Garrafa não encontrada" em vez de "404 Not Found") + sempre oferece **saída** (voltar/buscar/reentrar). Toast é feedback efêmero (success/info/warning/error), 3s auto-dismiss.
+**Regra de negócio canônica:** erro **nunca culpa o usuário** nem mostra stack/código cru — usa linguagem de marca ("Garrafa não encontrada" em vez de "404 Not Found") + sempre oferece **saída** (voltar/buscar/reentrar). Toast é feedback efêmero (success/info/warning/error), 3s auto-dismiss; toasts simultâneos **empilham** verticalmente.
+
+---
+
+## 🆕 § 21.0 Decisões fechadas (Gabriel, junho/2026)
+- **21.1 Página de status/incidentes — INTERNA** (não pública). Dashboard só pro time da Tchin (Grafana/Datadog/etc.). Não criamos `status.tchintchin.app` no MVP. Comunicação de incidentes externa fica no app (banner + push) e nas redes sociais.
+- **21.2 Toast simultâneo — EMPILHA** (não combina, não esconde). Múltiplos toasts ficam um abaixo do outro (até 3 visíveis; do 4º em diante, vai pra fila). Cada um conta o seu próprio timer de 3s.
 
 ## Mapa do fluxo
 ```

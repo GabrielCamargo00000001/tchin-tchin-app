@@ -4,7 +4,13 @@
 > **Fonte de verdade:** `screens-indicacao.jsx` (todas as 5: `IndicacaoLandingScreen`, `IndicacaoCompartilharScreen`, `IndicacaoMeusConvitesScreen`, `IndicacaoRecompensasScreen`, `ConviteRecebidoScreen`). Doc funcional: **Filtros das Confrarias (Convites US-C)**.
 > **Épicos/US:** US-IND-01 (landing/hub), US-IND-02 (compartilhar link/canais), US-IND-03 (meus convites + status), US-IND-04 (recompensas/desbloqueios), US-IND-05 (convite recebido — onboarding do convidado).
 
-**Regra de negócio canônica:** referral **bilateral** — R$ 30 pra quem indica + R$ 30 pra quem entra, **na primeira compra do convidado**. Janela: convidado usa o link nos **primeiros 7 dias**. Desbloqueios escalonados por nº de amigos: 1 (R$ 30) · 3 (selo Embaixador) · 5 (500 pontos bônus) · 10 (kit Tchin) · 25 (R$ 250). *(Não existe "Plus"/assinatura — Gabriel decidiu.)*
+**Regra de negócio canônica:** referral **bilateral** — R$ 30 pra quem indica + R$ 30 pra quem entra, **no CADASTRO do convidado** (sem precisar de 1ª compra). Janela: convidado usa o link nos **primeiros 7 dias**. Desbloqueios escalonados por nº de amigos: 1 (R$ 30) · 3 (selo Embaixador) · 5 (500 pontos bônus) · 10 (kit Tchin) · 25 (R$ 250). **Teto: 25 indicações por usuário** (depois disso, indicações continuam mas sem bônus). *(Não existe "Plus"/assinatura — Gabriel decidiu.)*
+
+---
+
+## 🆕 § 16.0 Decisões fechadas (Gabriel, junho/2026)
+- **16.1 Bônus libera no CADASTRO do convidado** (não na 1ª compra). Mais rápido pro user ver retorno + menos abandono. **Risco de farming** mitigado por: validação de e-mail real + telefone (não coletamos) → **fluxo anti-farming**: confirmar e-mail + dispositivo único (mesmo device = não conta).
+- **16.2 Teto de indicações: 25 por user.** Depois disso, pode continuar convidando, mas sem bônus. Quem chega a 25 vira **"Top Embaixador"** com badge especial. Anti-fraude: revisão manual pra quem chegar perto do teto rápido demais.
 
 ## Mapa do fluxo
 ```

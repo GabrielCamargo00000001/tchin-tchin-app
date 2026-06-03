@@ -6,6 +6,16 @@
 
 **Regra de negócio canônica:** conteúdo filtrado pelo **nível** declarado no onboarding (`__tcUserLevel`: iniciante/intermediário/avançado). `aprender` é a **landing** (preview de 3 cards) que vem do intent `learn`; `aprenda` é o **catálogo navegável**; `aprenda-detalhe` é o **leitor de artigo**. Leitura tem **progresso** (% lido, "Continue lendo").
 
+---
+
+## 🆕 § 9.0 Decisões fechadas (Gabriel, junho/2026)
+- **9.1 Botão "Começar a aprender" → vai pra `/aprenda`** (hub educacional dedicado). NÃO vai pro feed.
+- **9.2 UNIFICAR "Aprenda" (M09) + "Aprenda Bebendo" (M06) num só hub.** O hub fica em `/aprenda` e tem 2 modos:
+  - **Modo "Teoria"** (era M09): cards/artigos editoriais por nível.
+  - **Modo "Na hora"** (era M06): ativado quando vem do scanner — explicação "Por que combina" sobre o rótulo/vinho específico.
+  - O usuário não vê 2 features separadas; vê um hub único onde o conteúdo "na hora" aparece como dica/preview dentro do mesmo lugar.
+  - **Implementação:** M06 deixa de existir como módulo separado — vira **sub-feature do M09**. Cross-ref atualizada nos demais docs.
+
 ## Mapa do fluxo
 ```
 [intent learn (Módulo 02)] → aprender (preview 3 cards por nível)

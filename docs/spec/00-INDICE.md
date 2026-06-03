@@ -3,46 +3,43 @@
 > **Documento único, ultra-detalhado, para o time de Dev.** Reúne **todos os fluxos e telas** do app com suas histórias de usuário, regras de negócio, estados e comportamentos.
 > Gerado a partir de: (a) **as telas implementadas** no protótipo `tchin-tchin-app` e (b) os **11 documentos de épicos/MVPs/specs** em `…/duolingo do vinho/epicos`.
 >
-> **Última atualização:** 2026-06-02 · **Status:** ✅ **21/21 módulos documentados** · 🎯 **8/21 módulos com decisões TOTALMENTE FECHADAS** · ⏳ 13/21 com decisões em aberto (não revisados em sessão dedicada). **318 PNGs** capturadas, **228 referenciadas** nos docs.
+> **Última atualização:** 2026-06-03 · **Status:** ✅ **21/21 módulos documentados** · 🎯 **21/21 módulos com decisões TOTALMENTE FECHADAS** (sessão mega-decisões Gabriel, junho/2026). **318 PNGs** capturadas, **228 referenciadas** nos docs.
 > **Protótipo navegável (fonte de verdade comportamental):** https://tchin-tchin-app.vercel.app
 
 ---
 
 ## 🎯 Mapa de status real por módulo (junho/2026)
 
-### ✅ FECHADOS — decisões revisadas em sessão dedicada e aplicadas no doc + protótipo
+### ✅ TODOS OS 21 FECHADOS — decisões aplicadas no doc + protótipo
+> **Atualização (junho/2026):** Gabriel respondeu em **sessão mega-decisões** todas as 13 pendências dos módulos que ainda estavam em aberto + 2 NOVAS features ideias: **Marketplace de Experiência** (sub-feature de Confraria — products pagos/grátis pra organizar vinícola/locais/conteúdo) e **Hub de Pontos** (4ª aba explícita em `/pontos` + onboarding sutil + tabela mestra de ganho).
+>
+> Cada doc agora tem uma seção **`🆕 § X.0 Decisões fechadas (Gabriel, junho/2026)`** com as respostas finais.
+
 | # | Módulo | Última revisão | Decisões-chave fechadas |
 |---|---|---|---|
 | **01** | Auth & Acesso | M01 review | Apple+Google · sem magic-link · sem OTP de telefone |
 | **02** | Onboarding & Roteamento | M02 review | GPS por intent · mínimo 3 interesses · welcome 3 highlights |
-| **11** | Confrarias | esta sessão | § 11.0: Pública/Privada · papéis · visibilidade · "Descobrir" bottom nav ≠ "Descobrir eventos" |
-| **12** | Eventos | esta sessão | § 12.0: 17 sub-regras · fluxo de pagamento LACI/Pagar fora · 3 janelas de cancelamento · check-in MVP1/1.5/v2 |
+| **03** | Meu Paladar | M03 review | Quiz 5 perguntas · resultado canônico |
+| **04** | Descobrir/Marketplace | § 4.0 mega | Algoritmo 50% paladar + 30% popularity + 20% editorial · marketplace único · vinhos NÃO são nossos (Wine/Mercado Livre model) · **🆕 Marketplace de Experiência** (vinícolas/locais/kits/conteúdo) |
+| **05** | Carrinho/Checkout | § 5.0 mega | Tabela `Coupon{}` · bloqueio back em pedido-confirmado · avaliação opcional · cancelar só até pagamento · modo presente agora |
+| **06** | Scanner | § 6.0 mega | Aposentar v1 · +15pts/contribuir vinho (cap 5/dia) · validação automática · carta pública · sem limite páginas |
+| **07** | Adega/Diário | § 7.0 mega | **Taxonomia: Estante=tenho · Diário=provei · Favoritos=referência · Wishlist=comprar** · multi-garrafa/slot · dividir por prateleira · relatório mensal+anual (Wrapped) · pontuação escalonada (5/8/10/15/20, cap 3/dia) |
+| **08** | Treino Paladar | § 8.0 mega | Vidas regen 4h · divisões nomeadas (Frisante→Branco→Rosé→Tinto→Reserva→Gran Reserva) · liga global + amigos · cristais → loja interna + Marketplace de Experiência · vídeo+quiz coexistem |
+| **09** | Aprenda | § 9.0 mega | Botão "Começar" → hub `/aprenda` · **UNIFICAR M06+M09** num só hub educacional |
+| **10** | Harmoniza | § 10.0 mega | Bidirecional prato↔vinho · contexto (ocasião + estação + orçamento) |
+| **11** | Confrarias | § 11.0 + § 11.A | Pública/Privada · papéis · onboarding unificado (welcome→apresentar→tour, tutorial opcional) · confraria não-paga · sem limite membros · **🆕 nova aba "Experiência"** |
+| **12** | Eventos | § 12.0 + § 12.A | 17 sub-regras · LACI/Pagar fora · 3 janelas cancelamento · **Taxa: +R$ 1,20 PIX / +4% cartão, sempre visível e separada** · split dinâmico = backlog · endereço 24h antes (fixo) |
+| **13** | Comunidade/Feed | § 13.0 mega | Comentários tela cheia E inline · adicionar Stories · audiência default "Minhas confrarias" |
+| **14** | Perfil/Social | § 14.0 mega | Seguir bilateral se perfil privado · @handle cooldown 30d · perfil-eu como rota dedicada |
+| **15** | Expert | § 15.0 mega | Só badge (sem comissão) · Q&A resposta pública mas notif só pra quem perguntou · cooldown 30d |
+| **16** | Indicação | § 16.0 mega | Bônus libera no CADASTRO do convidado (não 1ª compra) · teto 25 indicações + badge "Top Embaixador" |
+| **17** | Chat/DMs | § 17.0 mega | DM configurável pelo user (qualquer um/quem sigo/mesma confraria/misto/ninguém) · histórico de grupo visível pra quem entra depois |
 | **18** | Notificações | M18 + esta sessão | Catálogo ~50 notifs · canais opt-out · nudges D+1/3/7/14 · +8 eventos pagamento/cancelamento/waitlist |
-| **19** | Jornada & Pontos | M19 review | Economia unificada · loja resgate (crédito/vinhos/experiências) · 8 templates desafio · 5 celebrações |
+| **19** | Jornada & Pontos | M19 + § 19.0 mega | Economia unificada · loja resgate (crédito/vinhos/experiências) · 8 templates desafio · 5 celebrações · **🆕 Hub de Pontos** (4ª aba "Como funcionam" + tabela mestra de ganho 24 linhas + onboarding sutil) |
 | **20** | Config & Suporte | M20 review | Sem telefone · sem 2FA · sem Tchin Tchin Plus · telas desativar+excluir |
-| **21** | Estados do sistema | M21 review | erro-sessao com 3 motivos (atualização/segurança/inatividade) |
+| **21** | Estados do sistema | § 21.0 mega | erro-sessao com 3 motivos · página status INTERNA (não pública) · toasts EMPILHAM (até 3 visíveis) |
 
-### ⏳ COM DECISÕES EM ABERTO — nunca revisados em sessão dedicada (Gabriel precisa decidir)
-| # | Módulo | Decisões pendentes |
-|---|---|---|
-| **03** | Meu Paladar | — *(sem decisões críticas em aberto)* |
-| **04** | Descobrir/Marketplace | algoritmo de recomendação · onde "Comprar" mora |
-| **05** | Carrinho/Checkout | Cupom hard-coded vs tabela · Bloqueio back · Avaliar obrigatório · Cancelar pedido · Modo "presente" |
-| **06** | Scanner | Aposentar v1? · Pontos por contribuir vinho · Compartilhar carta · Limite páginas |
-| **07** | Adega/Diário | **Taxonomia Estante/Diário/Favoritos/Wishlist** · Quantidade por slot · Relatório anual? · Escalar +10 com qualidade? |
-| **08** | Treino Paladar | Vidas: real ou cosmético · Divisões nomeadas · Cristais comprar o quê · Vídeo-aula manter? |
-| **09** | Aprenda | Destino "Começar" · Unificar com "Aprenda bebendo"? |
-| **10** | Harmoniza | Vinho→prato no MVP? · Contexto (ocasião/orçamento)? |
-| **11** | Confrarias *(parcial)* | **Unificar 2 onboardings** · Confraria paga? · Limite de membros? |
-| **12** | Eventos *(parcial)* | **Taxa da plataforma** (modelo de receita)? · Split dinâmico no MVP? · Endereço configurável? |
-| **13** | Comunidade/Feed | Comentários cheia vs inline · Momentos/Stories? · Audiência default |
-| **14** | Perfil/Social | Seguir assimétrico vs aprovação · @handle editável · Perfil próprio rota dedicada? |
-| **15** | Expert | Gratuito ou comissão? · Q&A público ou privado · Cooldown reaplicação |
-| **16** | Indicação | Bônus na 1ª compra ou cadastro? · Teto de indicações |
-| **17** | Chat/DMs | DM aberto ou só seguidos/mesma confraria? · Histórico de grupo retroativo? |
-| **21** | Estados *(parcial)* | Página status/incidentes pública? · Toast: fila quando múltiplos? |
-
-> **Resumo:** os **8 módulos fechados** cobrem a infra fundamental (auth, onboarding, confrarias, eventos, notificações, pontos, config, estados). Os **13 com decisões em aberto** estão **documentados, com telas capturadas e regras descritas no doc** — só faltam as **respostas finais do Gabriel** pra alguns pontos que tu pode bater em sessão dedicada. Nenhum doc está vazio ou faltando tela; o que existe é "pendência de decisão de produto", não falta de documentação.
+> **Resumo:** **21/21 módulos com decisões fechadas.** Cada doc tem seção `🆕 § X.0 Decisões fechadas (Gabriel, junho/2026)` no início, antes do mapa de fluxo. Pendências remanescentes são de **backend/infra** (não de produto): roteamento real, persistência, gateway de pagamento, ML de recomendação. O time de UI/UX já pode bater o Figma sem espera.
 
 ---
 

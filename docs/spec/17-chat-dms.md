@@ -4,7 +4,24 @@
 > **Fonte de verdade:** `screens-chat.jsx` (`ChatListaScreen`, `ChatConversaScreen` + `MOCK_CHATS`/`MOCK_MESSAGES`). Doc funcional: **MVP2 Épico 13**.
 > **Épicos/US:** US-CHAT-01 (lista de conversas + busca/filtros), US-CHAT-02 (conversa: enviar/receber mensagens), US-CHAT-03 (chat de grupo: confraria/evento).
 
-**Regra de negócio canônica:** 2 tipos de conversa — **DM** (1:1, avatar da pessoa) e **grupo** (confraria/evento, ícone de grupo + nº membros). Não-lidas com badge. Chat de grupo nasce de uma confraria/evento.
+**Regra de negócio canônica:** 2 tipos de conversa — **DM** (1:1, avatar da pessoa) e **grupo** (confraria/evento, ícone de grupo + nº membros). Não-lidas com badge. Chat de grupo nasce de uma confraria/evento. **Quem pode mandar DM é configurável pelo próprio usuário** (ver § 17.0).
+
+---
+
+## 🆕 § 17.0 Decisões fechadas (Gabriel, junho/2026)
+
+### 17.0.1 DM — configurável pelo user (Privacidade > Chat)
+Cada usuário escolhe quem pode mandar DM pra ele (em `config-privacidade`):
+- ☑️ **Qualquer um** (aberto — default pra usuário público)
+- ☑️ **Quem eu sigo**
+- ☑️ **Mesma confraria** (qualquer confraria que ambos participam)
+- ☑️ **Misto** (combina as opções acima — ex.: "quem eu sigo OU mesma confraria")
+- ☑️ **Ninguém** (DM desligado — só responde quem ele iniciou)
+
+UI: lista de checkboxes com toggle de "Misto"; quem tentar mandar e estiver fora vê: "Esse usuário só aceita DMs de pessoas que segue."
+
+### 17.0.2 Histórico do chat de grupo — visível pra quem entra depois
+**Sim, visível pra quem entra depois.** Quem entra na confraria/evento vê todo o histórico do chat (transparência da memória do grupo). Se admin quiser limitar, pode arquivar/limpar mensagens antigas (ação destrutiva, com confirmação).
 
 ## Mapa do fluxo
 ```

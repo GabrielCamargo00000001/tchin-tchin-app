@@ -6,6 +6,14 @@
 
 **Regra de negócio canônica:** o app **NUNCA** chama a câmera fria. Sempre tem um **viewfinder com guia de enquadramento** + dicas + botão claro de captura. **OCR roda no servidor**, retorna match contra a base de vinhos. Se não bate, **fallback gentil** com 3 caminhos. PIX/compra/registro são **acionados depois** do match.
 
+---
+
+## 🆕 § 6.0 Decisões fechadas (Gabriel, junho/2026)
+- **6.1 Scanner v1 — APOSENTAR formalmente.** Só v2 fica no app. Remove código/rotas/docs do v1.
+- **6.2 Pontos por contribuir vinho à base — +15 pts** (vinho desconhecido escaneado vira contribuição). **Validação automática** (libera direto na base — sem moderação humana no MVP; reportar abre revisão). Limite: 5 contribuições/dia por user pra evitar farming.
+- **6.3 Compartilhar carta de restaurante — PÚBLICO** (qualquer membro vê; quem subiu a carta ganha crédito visual "Subida por @user").
+- **6.4 Limite de páginas por carta — sem limite** (substituiu o limite de 3; nota: "subir páginas demais pode atrasar a leitura").
+
 ## Mapa do fluxo
 ```
                                   ┌── ✅ identifica → scanner-result(-v2) ─┐

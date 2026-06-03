@@ -4,7 +4,14 @@
 > **Fonte de verdade:** `screens-expert.jsx` (todas as 6 telas: `ExpertVirarScreen`, `ExpertAplicarScreen`, `ExpertPendenteScreen`, `ExpertQAScreen`, `ExpertResponderScreen`, `PerguntarExpertScreen`). Doc funcional: **MVP1 Épico 2 (badge expert)**.
 > **Épicos/US:** US-EXP-01 (virar expert — landing/requisitos), US-EXP-02 (candidatura), US-EXP-03 (status pendente), US-EXP-04 (Q&A inbox do expert), US-EXP-05 (responder pergunta), US-EXP-06 (perguntar pra expert).
 
-**Regra de negócio canônica:** virar expert exige **requisitos** (6+ meses, 30+ vinhos no diário, paladar calibrado, 20+ Q&A respondidos, formação) — mas pode candidatar mesmo sem cumprir todos ("candidatar mesmo assim"). Candidatura passa por **curadoria humana** (5-7 dias úteis). Expert tem selo, responde Q&A, segue **Código de Conduta** (fato, sem promo sem disclosure, sem trash-talk).
+**Regra de negócio canônica:** virar expert exige **requisitos** (6+ meses, 30+ vinhos no diário, paladar calibrado, 20+ Q&A respondidos, formação) — mas pode candidatar mesmo sem cumprir todos ("candidatar mesmo assim"). Candidatura passa por **curadoria humana** (5-7 dias úteis). Expert tem selo, responde Q&A, segue **Código de Conduta** (fato, sem promo sem disclosure, sem trash-talk). **Programa é gratuito** (só o badge — sem comissão sobre vendas, sem destaque pago).
+
+---
+
+## 🆕 § 15.0 Decisões fechadas (Gabriel, junho/2026)
+- **15.1 Expert = SÓ BADGE** (sem contrapartida financeira). Reputação + visibilidade + perfil destacado. Sem comissão sobre vendas no MVP.
+- **15.2 Q&A — resposta PÚBLICA, notificação PRIVADA.** A resposta do expert fica visível pra qualquer um (contribuição pra comunidade), mas a **notificação push de "respondeu sua pergunta" só vai pra quem perguntou**. Quem mais quiser ver, abre o feed Q&A.
+- **15.3 Cooldown de reaplicação após recusa — 30 dias.** Recusado pode candidatar de novo após 30d (com a recomendação de atender mais requisitos primeiro).
 
 ## Mapa do fluxo
 ```

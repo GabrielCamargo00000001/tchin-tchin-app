@@ -4,7 +4,15 @@
 > **Fonte de verdade:** `screens-app.jsx` (`ConfrariasScreen` home), `screens-confraria.jsx` (`ConfrariaDetalheScreen` + 4 abas), `screens-wizard-confraria*.jsx` (wizard P1–P6), `screens-confraria-full.jsx` (config/convidar/sair/transferir/regras), `screens-jornada-extras.jsx` (welcome/apresentar/tour), `screens-tutor.jsx` (tutorial `confraria-usar`). Doc funcional: **MVP2 Épicos 1-7** + **Filtros das Confrarias**.
 > **Épicos/US:** US-CONF-01 (descobrir/buscar/filtrar), US-CONF-02 (criar — wizard), US-CONF-03 (detalhe 4 abas), US-CONF-04 (gestão admin), US-CONF-05 (onboarding pós-entrada), US-CONF-06 (convites), US-CONF-07 (papéis/privacidade), US-CONF-08 (transferir/sair/arquivar).
 
-**Regra de negócio canônica:** confraria tem **privacidade** (Pública / Privada) e **papéis** (admin/co-admin vs membro vs não-membro). Criar = wizard de 6 passos (nome → template → personalizar → localização → revisar → 1º evento). Entrar dispara **onboarding** (welcome → apresentar → tour). Admin tem zona de gestão (editar, convidar, regras, transferir, arquivar, excluir). Localização é opcional (auto-skip se Online).
+**Regra de negócio canônica:** confraria tem **privacidade** (Pública / Privada) e **papéis** (admin/co-admin vs membro vs não-membro). Criar = wizard de 6 passos (nome → template → personalizar → localização → revisar → 1º evento). Entrar dispara **onboarding** (welcome → apresentar → tour). Admin tem zona de gestão (editar, convidar, regras, transferir, arquivar, excluir). Localização é opcional (auto-skip se Online). **Confraria não é paga** — só eventos podem ser pagos (M12).
+
+---
+
+## 🆕 § 11.A Decisões fechadas restantes (Gabriel, junho/2026)
+- **11.1 Onboarding pós-entrada UNIFICADO:** mantém **`welcome → apresentar → tour-rapido`** (mais rico). O **tutorial conversacional `confraria-usar`** vira **opcional via menu** (não dispara automaticamente). Reduz redundância.
+- **11.2 Confraria paga — NÃO existe.** Não há mensalidade nem assinatura de grupo. Só **eventos** podem ser pagos (M12). A confraria em si é sempre gratuita pros membros.
+- **11.3 Limite de membros — sem limite no momento.** Não impomos cap (admin pode arquivar se ficar grande demais). Backlog futuro: se aparecer abuso ou perda de qualidade, revisitar.
+- **11.5 🆕 Nova aba "Experiência"** no `confraria-detalhe` (5ª aba) — facilitador pro admin montar a experiência completa (locais, vinícolas, fornecedores). Ver M04 § 4.0.3 pra detalhes.
 
 ---
 

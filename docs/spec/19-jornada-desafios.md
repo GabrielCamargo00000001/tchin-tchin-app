@@ -4,7 +4,73 @@
 > **Fonte de verdade:** `screens-jornada-extras.jsx` (`JornadaScreen`, `JornadaCelebrarScreen`, `PontosScreen`, `POINTS_ECONOMY`), `f22_02_DetalheDesafio.jsx` (`DetalheDesafio`, `CHALLENGE_TEMPLATES`, `CHALLENGE_STATE`). *(`badges` = `badges-galeria`, documentado no Módulo 14.)* Doc funcional: **MVP2 Épico 7/9**.
 > **Épicos/US:** US-JOR-01 (jornada de marcos + pontos), US-JOR-02 (celebração de conquista), US-JOR-03 (desafio detalhe + ranking), US-JOR-04 🆕 (carteira + resgate de pontos).
 
-**Regra de negócio canônica:** existe **uma única moeda — Pontos Tchin** — ganha em todo o app e **resgatável** por crédito no marketplace, vinhos do catálogo resgatável (a Tchin absorve o custo) e experiências futuras (enoturismo/locais). A **jornada** é o checklist de marcos que ensina a ganhar pontos; os **desafios semanais** são metas temporais recorrentes; a **celebração** dá reforço positivo a cada conquista.
+**Regra de negócio canônica:** existe **uma única moeda — Pontos Tchin** — ganha em todo o app e **resgatável** por crédito no marketplace, vinhos do catálogo resgatável (a Tchin absorve o custo) e experiências (M04 § 4.0.3 — Marketplace de Experiência). A **jornada** é o checklist de marcos que ensina a ganhar pontos; os **desafios semanais** são metas temporais recorrentes; a **celebração** dá reforço positivo a cada conquista. **Existe um Hub de Pontos** (`/pontos`) que é a fonte da verdade visível pra usuário **e** documentação operacional pra dev (ver § 19.0).
+
+---
+
+## 🆕 § 19.0 Hub de Pontos — visível pro usuário, documentado pro dev (Gabriel, junho/2026)
+
+> **Princípio:** o sistema de pontos é o motor de retenção do app. Tem que ser **explícito, transparente e auditável** pra o usuário confiar (sem "pegadinha"). E **bem documentado pro time de dev** implementar uniforme.
+
+### 19.0.1 Aba "Como funcionam os pontos" no Hub `/pontos`
+Adicionar **nova aba** dentro da `PontosScreen` (junto de "Resgatar / Como ganhar / Extrato"):
+- **4ª aba: "Como funcionam"** — explicação completa e categorizada de TODOS os jeitos de ganhar e gastar pontos em cada função do app. Linguagem clara, sem jargão.
+
+**Estrutura da aba "Como funcionam":**
+
+| Bloco | Conteúdo |
+|---|---|
+| **🎯 Pontos Tchin: a moeda única** | O que é, taxa de conversão (10 pts = R$ 1), como expira |
+| **📥 Como ganhar (por feature)** | Tabela com TODAS as ações pontuadas, por módulo: marcos da jornada · diário · scanner · treino · desafios · indicação · etc. |
+| **🛒 Como gastar** | Marketplace (crédito) · vinhos resgatáveis · experiências (M04) · loja do Treino (cristais ↔ pontos) |
+| **⛔ Limites e regras anti-farming** | Cap diário, expiração, vinho grátis 1/mês, etc. |
+| **🔄 Cristais (Treino) ↔ Pontos** | Quando um vira o outro (M08 § 8.0.3) |
+| **❓ FAQ** | "Por que não recebi pts?" · "Posso transferir?" · "O que acontece se cancelar conta?" |
+
+### 19.0.2 Onboarding — mencionar pontos de forma NÃO-MASSIVA
+- No `welcome-final` (M02 § 2.6), **adicionar UMA frase**: *"Ah, você ganha **Pontos Tchin** pelo caminho — usar pra resgatar vinhos, crédito ou experiências. Detalhes em Meu Pontos."*
+- Sem tela dedicada no onboarding. Sem tour de pontos. **1 menção sutil.**
+- Quem quiser entender já vai pra `/pontos`.
+
+### 19.0.3 Para o time de dev (documentação técnica)
+- **Fonte da verdade:** `POINTS_ECONOMY` em `screens-jornada-extras.jsx` — TODA constante (taxa, limites, tabela earn) vive aqui. Backend espelha esta config.
+- **Cada feature que pontua REGISTRA UM EVENTO** com `{ user_id, feature, action, points, reason, timestamp }`. Backend agrega.
+- **Validação de cap (anti-farming)** é **server-side** — UI mostra "pts a ganhar" mas o servidor confirma se o cap permite.
+- **Sem dupla pontuação:** se o evento já foi pontuado (dedup por `feature+action+entity_id`), não pontua de novo.
+
+### 19.0.4 Tabela mestra de ganho (versão dev — fonte da verdade)
+| Origem | Ação | Pontos | Cap/limite | Doc spec |
+|---|---|---|---|---|
+| Marco | Cadastro | 50 | 1× só | M19 § 19.1 |
+| Marco | Calibrar paladar | 50 | 1× só | M19 § 19.1 |
+| Marco | 1º vinho no diário | 30 | 1× só | M19 § 19.1 |
+| Marco | Entrar em confraria | 40 | 1× só | M19 § 19.1 |
+| Marco | Confirmar 1º evento | 30 | 1× só | M19 § 19.1 |
+| Marco | Escanear rótulo | 20 | 1× só | M19 § 19.1 |
+| Marco | Perguntar pra Expert | 20 | 1× só | M19 § 19.1 |
+| Marco | Convidar 1 amigo | 50 | 1× só | M19 § 19.1 |
+| Marco | Conquistar 5 badges | 100 | 1× só | M19 § 19.1 |
+| Adega/Diário | Registro mínimo (nome) | +5 | até 3/dia | M07 § 7.0.5 |
+| Adega/Diário | Registro com nota | +8 | até 3/dia | M07 § 7.0.5 |
+| Adega/Diário | Registro com foto | +10 | até 3/dia | M07 § 7.0.5 |
+| Adega/Diário | Registro com harmonização | +15 | até 3/dia | M07 § 7.0.5 |
+| Adega/Diário | Registro completo | +20 | até 3/dia | M07 § 7.0.5 |
+| Treino | Concluir lição | +15 | — | M08/M19 |
+| Treino | Bater meta diária | +20 | 1×/dia | M08/M19 |
+| Treino | Vídeo-aula assistida | +5 | 1× por vídeo | M08 § 8.0.4 |
+| Treino | Subir de nível | +50 | por nível | M19 |
+| Desafio | Cumprir desafio semanal | +50 | 1×/semana | M19 |
+| Marketplace | Avaliar vinho registrado | +5 | por vinho | M04/M19 |
+| Scanner | Contribuir vinho à base | +15 | até 5/dia | M06 § 6.0.2 |
+| Indicação | Amigo entra pelo link | +50 | até 25 amigos | M16 § 16.0 |
+| Indicação | A partir do 2º amigo | +30 | até 5/mês | M19 § 19.1 |
+
+### 19.0.5 Onde aparece na UI
+- **Toast de ganho** sempre que pontua ("+10 pts 🍷"), com link "Como?" → leva pra aba "Como funcionam".
+- **Jornada** (M19 § 19.1) — mostra os marcos.
+- **`/pontos`** — fonte da verdade (saldo, extrato, loja).
+- **Welcome-final** — frase única sutil.
+- **Perfil próprio** (`perfil-eu` — M14) — badge com saldo atual.
 
 ---
 

@@ -4,7 +4,45 @@
 > **Fonte de verdade:** `screens-app.jsx` (AdegaScreen + EstanteTab + DiarioTab + IndicadoresTab + PaladarTab + FavoritosScreen), `screen-register.jsx` (RegisterConsumoScreen 2 passos), `f18_01_RegistroRapido.jsx`, `f18_02_RegistroCompleto.jsx`, `f18_03_ConfirmacaoRegistro.jsx`, `f17_04_RelatorioMensal.jsx`. Doc funcional: **MVP1 Épico 7** + **Sprint 11-13 Épico T2**.
 > **Épicos/US:** US-DIARIO-01 (registrar consumo), US-DIARIO-02 (timeline + busca), US-ADEGA-01 (Estante visual 🆕), US-IND-01 (indicadores), US-PAL-01 (perfil paladar evolutivo), US-REL-01 (relatório mensal), US-FAV-01 (favoritos).
 
-**Regra de negócio canônica:** registrar um vinho dá **+10 pontos** (gamificação). O paladar **evolui automaticamente a cada 5 vinhos** registrados. Indicadores **desbloqueiam com 3 registros** (gate anti-tela-vazia). A Estante 🆕 substituiu a antiga `AdegaVazia` — usuário novo já cai num rack interativo pra "colocar" vinhos. Persistência da sessão em `window.__tcCellar` (estante) e `ctx.diary` (registros).
+**Regra de negócio canônica:** registrar um vinho dá pontos **escalonados por qualidade** (ver § 7.0.5). O paladar **evolui automaticamente a cada 5 vinhos** registrados. Indicadores **desbloqueiam com 3 registros** (gate anti-tela-vazia). A Estante 🆕 substituiu a antiga `AdegaVazia` — usuário novo já cai num rack interativo pra "colocar" vinhos. Persistência da sessão em `window.__tcCellar` (estante) e `ctx.diary` (registros).
+
+---
+
+## 🆕 § 7.0 Decisões fechadas (Gabriel, junho/2026) — TAXONOMIA OFICIAL DE "GUARDAR VINHO"
+
+### 7.0.1 Os 4 conceitos (✅ definição canônica)
+| Conceito | Significado | Estado físico | Estado social |
+|---|---|---|---|
+| **Estante** | O que TENHO na minha garrafeira física, agora | Tenho | Possessão |
+| **Diário** | O que JÁ PROVEI (histórico de experiências) | Não tenho mais | Memória |
+| **Favoritos** | O que CURTI pra referência (sem ter provado nem ter) | Não tenho | Intenção/interesse |
+| **Wishlist** | O que QUERO COMPRAR (intent de compra rastreado pelo price-watch) | Não tenho | Intenção de compra |
+
+Cruzamentos:
+- Provei + tenho na estante → Estante (com flag "provei na data X") + Diário (registro)
+- Provei e gostei → Diário (registro com nota alta) → opcional: marcar como Favorito
+- Não provei mas quero comprar → Wishlist
+- Não provei mas é referência → Favoritos
+
+### 7.0.2 Estante — múltiplas garrafas por slot
+**SIM, slot permite quantidade.** Modelo: `CellarSlot { wineId, quantity, addedAt, notes }`. UI: badge "×6" quando mais de 1.
+
+### 7.0.3 Estante — organização
+**Dividir por prateleira/região/temperatura.** UI ganha sub-tabs OU filtro lateral: **Prateleira** (1, 2, 3...) · **Região** (agrupada por país de origem) · **Temperatura** (Cave 12°C / Adega 16°C / Geladeira / Ambiente).
+
+### 7.0.4 Relatório
+**Mensal + Anual** — adicionar "Seu 2026 no vinho" (retrospectiva de fim de ano estilo Wrapped). Disponível em dezembro.
+
+### 7.0.5 🆕 Pontos por registro — escalar com qualidade
+| Tipo de registro | Pontos |
+|---|---|
+| Nome do vinho só (registro mínimo) | **+5** |
+| Nome + nota (estrelas) | **+8** |
+| Nome + nota + foto do rótulo | **+10** |
+| Nome + nota + foto + harmonização escrita | **+15** |
+| Tudo acima + ocasião + companhia (registro "completo") | **+20** |
+
+> **Limite anti-farming:** cap de **3 registros/dia** ganhando pontos (vale só pros 3 primeiros do dia; do 4º em diante, registra mas não pontua).
 
 ## Mapa do fluxo
 ```

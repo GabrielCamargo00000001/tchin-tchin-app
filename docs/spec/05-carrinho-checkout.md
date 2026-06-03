@@ -6,6 +6,16 @@
 
 **Regra de negócio canônica:** o checkout tem **3 passos lineares** (Carrinho → Entrega → Pagamento → Pedido Confirmado). **Cupom é validado no carrinho**, **frete é estimado** (acima de R$ 300 = grátis). **Verificação de idade ≥18 na entrega** é responsabilidade da transportadora (não do app). PIX dá 5% off.
 
+---
+
+## 🆕 § 5.0 Decisões fechadas (Gabriel, junho/2026)
+- **5.1 Cupom — tabela** (não hard-code): backend tem entidade `Coupon { code, type: %|R$, value, minPurchase, validFrom, validUntil, maxUses, usesPerUser, scopeWines[], scopeStores[] }`. Admin cria/edita; user aplica no carrinho.
+- **5.2 Bloqueio de back em `pedido-confirmado` — SIM** (back vai pra home, nunca pro carrinho — evita pedido duplicado).
+- **5.3 Avaliar entrega — OPCIONAL** (toast simpático "Como foi a entrega?" depois de "Pedido entregue"; sem gate no próximo pedido).
+- **5.4 Cancelar pedido — só até o pagamento ser confirmado.** Depois disso (separação/envio/entrega), só por chat com a loja.
+- **5.5 Modo "presente" — CRIAR AGORA.** Adicionar checkbox "É um presente?" no checkout → endereço diferente do cobrança + campo "Cartão personalizado" (140 chars) impresso na nota.
+- **Modelo de marketplace:** vinhos **não são nossos** — modelo Wine/Mercado Livre (lojas parceiras listam; Tchin vende infra + descoberta + experiência). Comissão por venda + destaque pago (ver M04 § 4.0).
+
 ## Mapa do fluxo
 ```
 [wine] → "Comprar" → carrinho (1/3) ─→ endereco (2/3) ─→ pagamento (3/3) ─→ pedido-confirmado

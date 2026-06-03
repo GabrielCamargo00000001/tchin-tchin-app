@@ -4,7 +4,16 @@
 > **Fonte de verdade:** `screens-app.jsx` (`PerfilOutroScreen`), `screens-editar-perfil.jsx` (editar + foto/paladar/privacidade), `screens-perfil-publico.jsx` (seguidores/seguindo/atividade/vinhos/sugestões/comparar), `screens-badges-galeria.jsx`. *(O perfil próprio "self" é o bottom sheet `profileOpen` do app shell.)* Doc funcional: **MVP1 + MVP2**.
 > **Épicos/US:** US-PERF-01 (perfil de terceiro), US-PERF-02 (editar perfil), US-PERF-03 (seguir/seguidores), US-PERF-04 (atividade pública), US-PERF-05 (vinhos provados públicos), US-PERF-06 (sugestões de quem seguir), US-PERF-07 (comparar paladar), US-PERF-08 (badges), US-PERF-09 (privacidade granular), US-PERF-10 (bloquear).
 
-**Regra de negócio canônica:** seguir é **assimétrico** (segue sem aprovação, estilo Twitter). Privacidade granular controla quem vê diário / confrarias / paladar. Comparar paladar gera um **% de match** entre 2 pessoas (distância vetorial nas 5 dimensões). Bloquear corta seguir + ver posts + comentar.
+**Regra de negócio canônica:** seguir é **assimétrico em perfil público** (sem aprovação, estilo Twitter) e **bilateral com aprovação em perfil privado**. Privacidade granular controla quem vê diário / confrarias / paladar. Comparar paladar gera um **% de match** entre 2 pessoas (distância vetorial nas 5 dimensões). Bloquear corta seguir + ver posts + comentar.
+
+---
+
+## 🆕 § 14.0 Decisões fechadas (Gabriel, junho/2026)
+- **14.1 Seguir — DEPENDE DA PRIVACIDADE:**
+  - **Perfil público** (default): assimétrico, segue sem aprovação.
+  - **Perfil privado**: bilateral, exige aprovação do dono. Aparece um "Solicitar pra seguir" pra quem ainda não foi aceito.
+- **14.2 @handle — editável com cooldown de 30 dias.** Sem limite de vezes (só o cooldown). Handles reservados (`admin`, `tchin`, `sommelier`, `expert`, `tchin-oficial`) não disponíveis pra user.
+- **14.3 Perfil próprio — VIRA ROTA DEDICADA `perfil-eu`** (não mais sheet/drawer). Acessível pela bottom nav (avatar) e por links profundos. Tem todas as seções de edição inline (foto, bio, paladar, privacidade) — não precisa abrir telas separadas pra cada.
 
 ## Mapa do fluxo
 ```

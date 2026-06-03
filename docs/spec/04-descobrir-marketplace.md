@@ -4,7 +4,51 @@
 > **Fonte de verdade:** `screens-descobrir.jsx` (DescobrirHome, Marketplace, WineDetail), `screens-descobrir-first.jsx` (DescobrirHomeFirstTime), `screens-marketplace-pro.jsx` (FiltrosAvancados, ListaDesejos, CompararVinhos), `screens-app.jsx` (BuscaScreen), `multi-select-wines.jsx`. Doc funcional: **MVP1 Épico 5/6 + Sprint 11-13**.
 > **Épicos/US:** US-DESC-01 (feed por paladar), US-MKT-01 (catálogo + filtros), US-WINE-01 (detalhe + radar), US-WISH-01 (price-watch), US-COMP-01 (comparar 2), US-BUSCA-01 (busca global multi-entidade).
 
-**Regra de negócio canônica:** o **paladar é opcional** (banner contextual oferece o quiz a quem ainda não fez). Marketplace prioriza ordenação por `match` decrescente. Wishlist mostra **−15%** badge quando há queda real de preço (mock por enquanto). Comparação é **sempre 2 vinhos** (não 3+), lado a lado, com **destaque visual** no melhor valor por linha.
+**Regra de negócio canônica:** o **paladar é opcional** (banner contextual oferece o quiz a quem ainda não fez). Marketplace prioriza ordenação por `match` decrescente. Wishlist mostra **−15%** badge quando há queda real de preço (mock por enquanto). Comparação é **sempre 2 vinhos** (não 3+), lado a lado, com **destaque visual** no melhor valor por linha. **Vinhos NÃO são nossos** — modelo estilo Wine/Mercado Livre (lojas/produtores parceiros listam; a Tchin é a infra + camada de descoberta/social/experiência).
+
+---
+
+## 🆕 § 4.0 Decisões fechadas + Marketplace de Experiência (Gabriel, junho/2026)
+
+### 4.0.1 Recomendação do Descobrir
+Algoritmo = **paladar (50%) + popularidade (30%) + curadoria editorial manual (20%)**. Pesos calibráveis. Backend mistura os 3 sinais e ordena por score.
+
+### 4.0.2 Modelo de Marketplace
+- **Loja única dentro do app** — não tem link pra fora.
+- Vinhos são de **lojas/produtores parceiros**. A Tchin não estoca.
+- Modelo de receita: **comissão por venda** (% sobre cada pedido) + **destaque pago** (loja paga pra subir na ordenação).
+- Tudo passa pelo carrinho/checkout da Tchin (M05).
+
+### 4.0.3 🆕 Marketplace de Experiência (sub-feature de Confraria + Descobrir)
+> Facilitador pro **dono de confraria** montar a experiência completa do grupo (locais, vinícolas, fornecedores, conteúdo). Nasce de uma dor real: admin gasta tempo procurando onde fazer evento, qual vinícola visitar, que kit comprar.
+
+**Onde aparece:**
+- **`confraria-detalhe` ganha uma nova aba (5ª): "Experiência"** — junto de Eventos · Publicações · Membros · Adega.
+- **`home/Descobrir`** ganha um sub-hub "Experiências" (entre Recomendações e Marketplace).
+
+**Categorias (ofertas — pagas e gratuitas):**
+| Categoria | Pago | Gratuito |
+|---|---|---|
+| **Vinícolas & enoturismo** | Visitas, degustações guiadas, hospedagem | Lista/mapa de vinícolas próximas, info de contato |
+| **Locais pra encontro** | Aluguel de wine bar, espaços parceiros | Bares públicos cadastrados, restaurantes com taxa de rolha |
+| **Kits & curadoria** | Kits curados (3, 6, 12 vinhos), assinatura | Lista de "10 vinhos pra começar" |
+| **Conteúdo & templates** | Mentoria com sommelier, agenciamento de evento | Templates de evento, post-templates, playlists |
+| **Equipamentos** | Taças, decanters, acessórios parceiros | Tutoriais de armazenamento, guia de taças |
+| **Serviços** | Sommelier presencial, fotografia do evento | Calculadora de quantidade por pessoa |
+
+**Lógica de aplicabilidade:**
+- **Pago** → comprado via marketplace normal (carrinho, checkout, comissão da Tchin).
+- **Gratuito** → liberado pra qualquer membro de confraria; alguns liberados também por **Pontos Tchin** (M19 — ver loja de pontos).
+- **Cristais do Treino (M08)** podem ser trocados por benefícios na Experiência (ex.: desconto em kit, voucher de visita).
+- **Admin de confraria** ganha **dashboard simplificado**: "Pra próximo evento, sugiro estas 3 vinícolas perto + este kit + este local".
+
+**Modelo de receita:**
+- Comissão sobre produtos pagos (% padrão do marketplace).
+- "Selo verificado" pago pra parceiros (vinícolas/locais ganham destaque visual).
+- Experiências curadas pela Tchin (Tchin Picks) com margem maior.
+
+**Status:** 🆕 conceito definido por Gabriel — vira **backlog EXPERIÊNCIA** (épico próprio, M04 + M11 + M19 cross-module).
+
 
 ## Mapa do fluxo
 ```

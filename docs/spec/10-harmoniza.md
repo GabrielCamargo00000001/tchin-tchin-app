@@ -4,7 +4,17 @@
 > **Fonte de verdade:** `f23_04_HarmonizaPrato.jsx` (`HarmonizaPrato` — entrada), `f23_05_HarmonizaResultados.jsx` (`HarmonizaResultados` — sugestões). Doc funcional: **Sprint 11-13 Épico T4**.
 > **Épicos/US:** US-13-4-01 (digitar prato → sugestões), US-13-4-02 (resultado com match + razão), US-13-4-03 (filtros adaptáveis), US-13-4-04 (reversa: vinho → pratos — backlog).
 
-**Regra de negócio canônica:** entrada **prato → vinhos** (direção principal). O usuário digita (com autocomplete) ou toca num chip rápido. O resultado mostra **1 melhor opção em destaque** + **outras opções** ordenadas por match, cada uma com **razão da harmonização**. Filtros "Quer adaptar?" (preço/tipo/onde comprar) refinam sem refazer a busca.
+**Regra de negócio canônica:** **bidirecional** — `prato → vinhos` OU `vinho → pratos`. Toggle no topo da tela escolhe a direção. Resultado mostra **1 melhor opção em destaque** + outras ordenadas por match, cada uma com **razão da harmonização**. **Contexto** (ocasião + estação + orçamento) entra no matching como sinais.
+
+---
+
+## 🆕 § 10.0 Decisões fechadas (Gabriel, junho/2026)
+- **10.1 BIDIRECIONAL** (prato → vinho **E** vinho → prato) já no MVP. Toggle no topo: 🍽️ Prato → 🍷 Vinho.
+- **10.2 Considerar CONTEXTO no matching.** 3 sinais opcionais:
+  - **Ocasião** (chips): jantar romântico · churrasco · sozinho · happy hour · piquenique · evento formal.
+  - **Estação** (auto-detecta pela data do device; user pode trocar): verão · outono · inverno · primavera.
+  - **Orçamento** (slider): até R$ 50 · 50-100 · 100-200 · 200+.
+- Paladar do user continua sendo o sinal principal (peso maior). Contexto refina sem dominar.
 
 ## Mapa do fluxo
 ```

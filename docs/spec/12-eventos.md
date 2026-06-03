@@ -4,7 +4,31 @@
 > **Fonte de verdade:** `screens-event-wizard-p1…p5.jsx` (wizard), `screens-event-detalhe.jsx` (`EventDetalheScreen`), `screens-organizador.jsx` (`EventoEditarScreen` + `EventoPresencaScreen` + `EventoPosAvaliarScreen` + `EventoPosAtaScreen`), `screens-resumo-pos-evento.jsx` (card de resumo). Doc funcional: **MVP2 Épico 2** + **MVP2 Épico 3 (Financeiro/Rachão)** + **Sprint 11-13 Épico T5**.
 > **Épicos/US:** US-EV-01 (criar — wizard), US-EV-02 (detalhe + RSVP), US-EV-03 (editar), US-EV-04 (presença/check-in), US-EV-05 (pagamentos/rachão — LACI/Celcoin), US-EV-06 (pós: avaliar vinhos), US-EV-07 (pós: ata), US-EV-08 (resumo pós-evento no feed).
 
-**Regra de negócio canônica:** evento é criado por admin da confraria (wizard 5 passos). Pode ser **gratuito** ou **valor fixo por pessoa**. RSVP: Vou / Talvez / Não vou (em pago só Vou/Não vou — sem Talvez). Privacidade **herdada da confraria** (não há flag por evento). Pagamento via **LACI** (reconhecimento automático) ou **fora do LACI** (PIX externo / dinheiro no local, admin confirma). Pós-evento: avaliar vinhos + publicar ata. Pontos só pra quem fez **check-in real**.
+**Regra de negócio canônica:** evento é criado por admin da confraria (wizard 5 passos). Pode ser **gratuito** ou **valor fixo por pessoa** (sem split dinâmico no MVP). RSVP: Vou / Talvez / Não vou (em pago só Vou/Não vou — sem Talvez). Privacidade **herdada da confraria** (não há flag por evento). Pagamento via **LACI** (reconhecimento automático) ou **fora do LACI** (PIX externo / dinheiro no local, admin confirma). Endereço sempre liberado **24h antes** (regra fixa, não-configurável). Pós-evento: avaliar vinhos + publicar ata. Pontos só pra quem fez **check-in real**.
+
+---
+
+## 🆕 § 12.A Decisões fechadas restantes (Gabriel, junho/2026)
+
+### 12.A.1 Modelo de receita — repasse de taxa, sem comissão Tchin no MVP
+> **Princípio:** manter a base do app sustentável (BaaS) **sem cobrar a confraria/admin**. A taxa cobre custo bancário + uma pequena margem.
+
+| Método | Taxa cobrada do pagador | Como aparece na UI |
+|---|---|---|
+| **PIX (LACI)** | + **R$ 1,20 fixo** sobre o valor do evento | "R$ 80,00 · taxa R$ 1,20 = total R$ 81,20" |
+| **Cartão** | + **4%** sobre o valor do evento | "R$ 80,00 · taxa 4% (R$ 3,20) = total R$ 83,20" |
+
+**Como funciona:**
+- Custo PIX real ≈ R$ 1,00 → margem Tchin ≈ R$ 0,20 por transação.
+- Custo cartão real ≈ 3,5% → margem Tchin ≈ 0,5% por transação.
+- Taxa sempre **visível e separada** no checkout do RSVP (transparência).
+- Quando o admin define o valor do evento, vê o **breakdown**: "Cada participante paga R$ X + taxa (PIX) ou + taxa (cartão)".
+
+### 12.A.2 Split dinâmico — backlog
+**Só valor fixo por pessoa no MVP.** Split dinâmico ("gastei R$400 + R$100, divide entre 6") fica em **backlog EV-SPLIT-DYNAMIC** (M12 § 12.4 já marcado).
+
+### 12.A.3 Endereço — sempre 24h antes, fixo
+**Regra fixa, não-configurável pelo organizador.** Quem confirmou + pagou vê o endereço 24h antes do evento. Quem não confirmou vê só UF+Cidade. Sem opções de "X dias antes" — uniformidade total da regra (mais simples de comunicar e auditar).
 
 ---
 
