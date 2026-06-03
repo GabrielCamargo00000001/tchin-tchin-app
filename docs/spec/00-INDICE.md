@@ -261,3 +261,4 @@ Código/telas: `tchin-tchin-app/src/legacy/*` (rotas em `prototype.jsx`); contex
 - `01-auth-acesso.md` — ✅ pronto (padrão de qualidade)
 - `02`…`21` — em produção
 - `99-backlog.md` — Apêndice A detalhado
+- `99-backend-plan.md` — 🆕 **Plano de backend pras 5 features prontas no protótipo** (M07/M12/M14/M19/M04+M11). Resumo executivo + spec técnico (schema SQL + endpoints REST + eventos pubsub + integrações LACI/FCM). Stack aberto (Supabase recomendado).
