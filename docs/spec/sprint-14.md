@@ -18,12 +18,19 @@ super doc em `docs/spec/`.
 
 ## 2. Resumo do que entra
 
-Bugs urgentes herdados: 8 itens.
-Alterações de UX e label herdadas: 5 itens.
-Features novas e itens do backlog que ganham definição nesta Sprint: 12 itens.
-Pushes em produção desde Sprint 13 que precisam de revisão de copy: 3 itens.
+Bugs urgentes herdados: 8 itens (B1 a B8).
+Alterações de UX e label herdadas: 5 itens (A1 a A5).
+Features novas e itens do backlog que ganham definição nesta Sprint: 12 itens (F1 a F12).
+Pushes em produção desde Sprint 13 que precisam de revisão de copy: 3 itens (P1 a P3).
+Refatoração visual v2 de todas as telas existentes: 21 blocos (R1 a R21), um por módulo da super doc.
 
-Total de 28 itens organizados em 6 blocos sequenciais.
+Total de 49 itens organizados em 7 blocos sequenciais.
+
+Princípio da refatoração visual: as telas que já existem no app são repensadas com
+o design system v2 e as decisões de produto fechadas em junho de 2026. Não é só
+cosmético. Cada tela ganha as regras de negócio canônicas dos módulos, as
+mudanças de fluxo decididas pelo Gabriel e a consistência visual da identidade
+nova.
 
 ## 3. Atribuição por desenvolvedor
 
@@ -76,6 +83,30 @@ aberto até o último campo. Submit fecha o teclado.
 Testes regressivos: cadastro (M01), login (M01), recuperar senha (M01), criar post
 (M13), comentar (M13), enviar mensagem no chat (M17), criar evento wizard (M12).
 
+Telas afetadas em ordem:
+1. welcome
+2. login
+3. cadastro
+4. login-social
+5. recuperar
+6. recuperar-email
+7. recuperar-otp
+8. recuperar-redefinir
+9. criar-post (textarea + busca de menção)
+10. comentarios (input no rodapé)
+11. chat-conversa (composer)
+12. register-consumo (passo 1, busca de vinho)
+13. registro-rapido (todos os campos)
+14. registro-completo (todos os campos)
+15. wizard-confraria-1 a wizard-confraria-6 (inputs)
+16. event-wizard-1 a event-wizard-5 (inputs)
+17. editar-perfil-foto (campos de nome, bio, handle)
+18. config-conta (campos de email e senha)
+19. suporte-contato (textarea)
+20. expert-aplicar (textarea de bio)
+21. perguntar-expert (textarea da pergunta)
+22. criar-momento (textarea)
+
 ### B2. Botão Comprar na tela de detalhe do vinho
 
 Responsável: Guilherme.
@@ -112,6 +143,14 @@ Aceite:
 4. Botão Adicionar à Estante continua funcional.
 5. Nenhuma rota de checkout dispara a partir do detalhe do vinho.
 
+Telas afetadas em ordem:
+1. wine (remover botão Comprar e adicionar faixa Em breve).
+2. marketplace (revisar cards: nenhum CTA Comprar inline, manter Match score, Salvar).
+3. carta-matches (idem).
+4. comparar-vinhos (idem).
+5. lista-desejos (idem).
+6. wishlist do perfil (perfil-eu seção Atividade).
+
 ### B3. Valor obrigatório para criação de evento gratuito
 
 Responsável: Mauricio.
@@ -145,6 +184,17 @@ Aceite:
 Regra de negócio amarrada: a taxa Tchin Tchin (M12 § 12.A.1) só se aplica a evento
 Pago. Em Gratuito, taxa não aparece em lugar nenhum.
 
+Telas afetadas em ordem:
+1. event-wizard-1 (passo Tipo do evento, pode marcar Gratuito).
+2. event-wizard-2 (passo Tema, sem mudança direta).
+3. event-wizard-3 (passo Valor e pagamento, esconder se Gratuito).
+4. event-wizard-4 (passo Capacidade, sem mudança direta).
+5. event-wizard-5 (passo Revisão, mostrar "Sem cobrança" se Gratuito).
+6. evento-editar (replicar mesma regra ao trocar de Pago pra Gratuito).
+7. event-detalhe (esconder row Valor e qualquer menção à taxa quando Gratuito).
+8. ParticiparSheet (M12 event-pagamento) (não exibir bloco de pagamento quando
+   Gratuito).
+
 ### B4. Contador de comentários não atualiza ao excluir
 
 Responsável: Mateus.
@@ -172,6 +222,12 @@ Aceite:
 Testes regressivos: like e dislike de post (US-012 parcial, tratar junto se der
 tempo), contador de curtidas, contador de comentários em comentários aninhados (se
 aplicável).
+
+Telas afetadas em ordem:
+1. post-detail (contador no header do post).
+2. comentarios (rota dedicada, contador no topo da lista).
+3. home/comunidade (contador no card do post na timeline do feed).
+4. perfil-atividade-publica (cards de post mostrando contagem).
 
 ### B5. Deixar de seguir um usuário sem ação visível
 
@@ -205,6 +261,16 @@ Aceite:
 
 Regra de negócio cross M14 § 14.1: em perfil privado, o botão Seguir abre o estado
 pending até aprovação do dono. Tocar em "Cancelar solicitação" desfaz o pending.
+
+Telas afetadas em ordem:
+1. perfil-outro (botão Seguir/Deixar de seguir no header).
+2. perfil-seguidores (cada linha tem botão Seguir/Deixar de seguir).
+3. perfil-seguindo (cada linha tem botão Deixar de seguir).
+4. perfil-sugestoes (cada linha tem botão Seguir).
+5. confraria-detalhe aba Membros (cada membro tem botão Seguir se não-membro).
+6. comentarios (avatar + nome do autor abre perfil-outro).
+7. post-detail (autor do post abre perfil-outro).
+8. home/comunidade (autores dos posts no feed).
 
 ### B6. Modal de cancelamento de evento gratuito não fecha
 
@@ -242,6 +308,12 @@ Aceite:
 3. Evento Pago janela entre 24h e 2h: cancelar abre fluxo de crédito em Pontos.
 4. Evento Pago janela menor que 2h: opção desabilitada com explicação.
 
+Telas afetadas em ordem:
+1. event-detalhe (modal de cancelamento gratuito).
+2. CancelarSheet de M12 event-pagamento (3 variações pra evento pago).
+3. evento-presenca (atualizar contadores de RSVP após cancelamento).
+4. notificacoes (notificar lista de espera se houver, cross M18).
+
 ### B7. Botão Compartilhar aparece para não-membros da confraria
 
 Responsável: Mauricio.
@@ -269,6 +341,12 @@ Aceite:
 Cross M11 § 11.0: confraria Pública sem ser membro permite ver detalhes e
 publicações públicas, mas sem ações sociais sobre a confraria. Confraria Privada
 sem ser membro só vê descrição, capa e botão "Pedir entrada".
+
+Telas afetadas em ordem:
+1. confraria-detalhe (header, ações do top right, menu de 3 pontos).
+2. confraria-convidar (esconder rota completa pra não-membros).
+3. home/confrarias (cards de confraria não-membro com share oculto se aplicável).
+4. confraria-regras (menu, esconder Compartilhar se não-membro).
 
 ### B8. Botão flutuante aparece em telas de detalhamento
 
@@ -327,6 +405,68 @@ Aceite:
 3. Abrir event-detalhe: nenhum FAB visível.
 4. Abrir chat-lista: FAB de Nova conversa visível.
 5. Voltar de uma tela detalhada pra home: FAB volta a aparecer.
+
+Telas afetadas em ordem (mostrar FAB):
+1. home/descobrir (FAB Scanner).
+2. home/comunidade (FAB Criar post).
+3. home/confrarias (FAB Criar confraria).
+4. home/adega (FAB Registrar consumo).
+5. busca (FAB Scanner).
+6. marketplace (FAB Scanner).
+7. favoritos (FAB Adicionar vinho).
+8. lista-desejos (FAB Adicionar vinho).
+9. chat-lista (FAB Nova conversa).
+
+Telas afetadas em ordem (ocultar FAB):
+1. wine.
+2. event-detalhe.
+3. confraria-detalhe.
+4. post-detail.
+5. perfil-outro.
+6. perfil-eu.
+7. comentarios.
+8. perfil-seguidores, perfil-seguindo, perfil-atividade-publica,
+   perfil-vinhos-provados, perfil-sugestoes, perfil-comparar-paladar.
+9. badges-galeria.
+10. relatorio-mensal.
+11. event-wizard-1 a event-wizard-5.
+12. wizard-confraria-1 a wizard-confraria-6.
+13. register-consumo (passo 1 e 2), registro-rapido, registro-completo,
+    registro-confirmacao.
+14. welcome, onboarding, login, cadastro, login-social, recuperar (todas as
+    sub-telas de recuperar), termos, politica-privacidade.
+15. quiz-nivel, quiz-interesses, tela-intencao, gps-primer, gps-negado,
+    welcome-final, tutoriais.
+16. quiz, quiz-result.
+17. erro-404, erro-permissao, erro-sessao, erro-servidor, vinho-indisponivel.
+18. config-notif, config-privacidade, config-conta, conta-desativada,
+    conta-excluida, config-bloqueados, suporte-faq, suporte-contato.
+19. carrinho, endereco, pagamento, pedido-confirmado.
+20. ParticiparSheet, EscolherMetodoSheet, PixLaciSheet, PagarForaSheet,
+    CancelarSheet (sheets de pagamento de evento).
+21. scanner, scanner-result, scanner-v2, scanner-result-v2, scanner-fallback,
+    modo-restaurante, carta-matches, porque-combina.
+22. harmoniza, harmoniza-resultados.
+23. treino-paladar, treino-licao, treino-liga, treino-aprender.
+24. aprender, aprenda, aprenda-detalhe.
+25. indicacao-landing, indicacao-compartilhar, indicacao-meus-convites,
+    indicacao-recompensas, convite-recebido.
+26. expert-virar, expert-aplicar, expert-pendente, expert-q-a, expert-responder,
+    perguntar-expert.
+27. confraria-config, confraria-convidar, confraria-sair, confraria-transferir,
+    confraria-regras, confraria-welcome, confraria-apresentar,
+    confraria-tour-rapido.
+28. evento-editar, evento-presenca, evento-pos-avaliar, evento-pos-ata.
+29. editar-perfil, editar-perfil-foto, editar-perfil-paladar,
+    editar-perfil-privacidade.
+30. push-primer, push-negado, push-canais, push-preview, plus-one, nudge-d1,
+    nudge-d3, nudge-d7, nudge-d14.
+31. jornada, pontos, jornada-celebrar, desafio-detalhe.
+32. chat-conversa.
+33. criar-post, criar-momento.
+34. lista-desejos quando vinda de Pedir presente (não conta, exibir FAB normal).
+35. filtros-avancados, comparar-vinhos.
+36. Qualquer sheet, modal ou overlay em geral.
 
 ## 5. Bloco de alterações de UX e label
 
@@ -396,6 +536,17 @@ Aceite:
 Dependência: importação do banco de vinhos (LAPM, F1) precisa estar concluída pra
 Pra você ter dataset.
 
+Telas afetadas em ordem:
+1. home/descobrir (substitui o layout inteiro pelo novo Descobri).
+2. wine (cards do bloco Pra você abrem detalhe normal).
+3. confraria-detalhe (entrada via bloco Confrarias da região).
+4. event-detalhe (entrada via bloco Eventos próximos).
+5. confraria-detalhe aba Experiência (entrada via bloco Marketplace de
+   Experiência).
+6. scanner (entry via FAB do bloco home).
+7. marketplace (entrada via CTA Ver tudo do bloco Pra você).
+8. quiz (rota de calibração de paladar se vier do estado "Sem paladar").
+
 ### A2. Label "Adega" continua "Adega de vinhos" e não "Estoque"
 
 Origem: backlog Sprint 13, item entregue por Gustavo na Sprint 13 com label
@@ -422,6 +573,17 @@ Aceite:
 1. Nenhuma string visível ao usuário usa Estoque.
 2. Telas internas usam Estante, Diário, Favoritos, Wishlist como taxonomia
    canônica (M07 § 7.0.1).
+
+Telas afetadas em ordem:
+1. Bottom nav global (label da tab esquerda direita Adega).
+2. home/adega (header Minha Adega, banner Onde fica o quê).
+3. perfil-eu seção Atividade (linha Meu diário (N) e Adega).
+4. ProfileDrawer (compat) seção Atividade.
+5. Push 4h (P1) copy refeita: destino Adega, não Estoque.
+6. favoritos (header continua Favoritos, sub label esclarece "Curti pra
+   referência" da taxonomia M07 § 7.0.1).
+7. lista-desejos (header continua Wishlist com label "Quero comprar").
+8. register-consumo passo 2 (CTA "Salvar no diário e na adega").
 
 ### A3. Match do paladar com vinhos (PAUSADO)
 
@@ -477,6 +639,16 @@ Aceite:
 
 Desbloqueio do PAUSADO: depende de F1 (importação do banco de produtos) entregar.
 
+Telas afetadas em ordem:
+1. wine (chip do match score abaixo do nome).
+2. marketplace (cards de vinho com chip de match).
+3. home/descobrir (bloco Pra você, cards com match).
+4. carta-matches (lista ordenada por match score, ja existia parcialmente).
+5. comparar-vinhos (match comparativo entre 2 ou 3 vinhos).
+6. scanner-result-v2 (match score destacado no resultado do scan).
+7. porque-combina (explicação do match aplicada).
+8. harmoniza-resultados (vinhos sugeridos com match individual).
+
 ### A4. Permitir login social Google a quem se cadastrou com senha
 
 Responsável: João.
@@ -506,6 +678,13 @@ Aceite:
 2. Conta antiga com senha, tentar Google com email diferente: cria conta nova.
 3. config-conta mostra vínculos ativos.
 
+Telas afetadas em ordem:
+1. welcome (botão Entrar com Google funciona pra contas com senha).
+2. login (botão Entrar com Google).
+3. login-social (passo intermediário do SSO).
+4. cadastro (botão Cadastrar com Google).
+5. config-conta (linha Vincular Google com status).
+
 ### A5. Migrar Apps de conta dentro da Apple Store e Google Play
 
 Responsável: Mauricio.
@@ -523,6 +702,11 @@ Migração concluída na Sprint 13. O app passou da conta de desenvolvedor antig
 
 Pendência menor: atualizar o screenshot da loja com os novos shots da Adega
 (M07 home-adega-estante-limpa) e do hub Descobrir após A1 estar pronto.
+
+Telas afetadas em ordem:
+1. Nenhuma tela do app é tocada nesta entrega (impacto somente em store assets).
+2. Pós entrega de A1 (Descobri) e v2 da Adega (R7): regerar 6 screenshots da loja
+   com versão 1.7.0.
 
 ## 6. Bloco de features e backlog priorizados
 
@@ -552,6 +736,16 @@ Aceite:
 
 Bloqueia: A3 (match), A1 (bloco Pra você no Descobrir).
 
+Telas afetadas em ordem:
+1. marketplace (listagem completa com novo dataset).
+2. wine (detalhe com campos enriquecidos).
+3. busca (resultados com novo dataset).
+4. filtros-avancados (filtros sobre o novo dataset).
+5. comparar-vinhos (catálogo expandido).
+6. lista-desejos (vinhos da wishlist com perfil sensorial).
+7. carta-matches (sugestões a partir do dataset).
+8. home/descobrir bloco Pra você (cards Pra você dependem do dataset).
+
 ### F2. Salvar token Keycloak permitindo logout esperado
 
 Responsável: Bruno.
@@ -580,6 +774,12 @@ Aceite:
 1. Usuario abre o app diariamente: nunca cai em erro-sessao.
 2. Usuario fica 7 dias sem abrir: ao abrir, entra direto.
 3. Usuario fica 60 dias sem abrir: erro-sessao com reason inatividade.
+
+Telas afetadas em ordem:
+1. welcome (entry point pós erro-sessao).
+2. login (rota de re-autenticação).
+3. erro-sessao com 3 reasons: atualizacao, seguranca, inatividade.
+4. recuperar-email (rota disparada por erro-sessao reason seguranca).
 
 ### F3. Reverter label Estoque para Adega
 
@@ -613,6 +813,10 @@ Aceite:
 3. Completar: vai direto pro welcome.
 4. Reinstall: vê os slides de novo.
 5. Login subsequente do mesmo dispositivo: pula os slides.
+
+Telas afetadas em ordem:
+1. onboarding (3 slides pre auth).
+2. welcome (destino pós onboarding pre auth).
 
 ### F5. Templates para criação de eventos (definição completa)
 
@@ -667,6 +871,12 @@ Aceite:
 4. Editar campo após selecionar template não remove o vínculo (template fica
    marcado como "Personalizado").
 
+Telas afetadas em ordem:
+1. event-wizard-1 (passo Tema com 5 cards de template).
+2. event-wizard-2 (Descrição preenchida pelo template).
+3. event-wizard-4 (Capacidade sugerida pelo template).
+4. evento-editar (templates disponíveis se trocar de tema).
+
 ### F6. Correlação confraria template (sugestão automática)
 
 Responsável: indefinido nesta Sprint, alocar.
@@ -696,6 +906,12 @@ Aceite:
 1. Confraria Velho Mundo: T3 aparece com badge.
 2. Confraria Social: T4 aparece com badge.
 3. Confraria sem estilo: nenhum badge, lista normal.
+
+Telas afetadas em ordem:
+1. confraria-detalhe (CTA Criar evento dispara wizard com sugestão).
+2. event-wizard-1 (badge Sugerido pra esta confraria no template correlato).
+3. wizard-confraria-6 (último passo do wizard de confraria, captura o estilo
+   pra usar na correlação).
 
 ### F7. Modal tutorial pós criação de confraria
 
@@ -729,6 +945,15 @@ Aceite:
 3. Reabrir o detalhe: modal não aparece de novo.
 4. CTA do passo 2 leva pro event-wizard com template sugerido.
 
+Telas afetadas em ordem:
+1. wizard-confraria-6 (último passo, conclui o wizard).
+2. confraria-welcome (após o wizard, antes do detalhe).
+3. confraria-detalhe (modal aparece sobre a primeira abertura).
+4. confraria-convidar (CTA Convide o pessoal).
+5. event-wizard-1 (CTA Crie o primeiro evento, sai com template sugerido por F6).
+6. indicacao-compartilhar (CTA Compartilhe nas redes pode encaminhar pra cá ou
+   pro share nativo, conforme decisão de UX final).
+
 ### F8. Push lembrete D+3 sem evento criado
 
 Responsável: indefinido nesta Sprint, alocar.
@@ -756,6 +981,12 @@ Aceite:
 2. Criar evento antes do D+3: push não dispara.
 3. Admin vê banner sticky no detalhe da confraria.
 4. Não admin não vê banner.
+
+Telas afetadas em ordem:
+1. notificacoes (registro do push enviado).
+2. push-preview (preview do push pra QA).
+3. confraria-detalhe (banner sticky pra admin no topo da aba Eventos).
+4. event-wizard-1 (destino do CTA do banner sticky).
 
 ### F9. Onboarding novo membro em confraria
 
@@ -788,6 +1019,12 @@ Aceite:
 1. Primeiro acesso pós entrada: modal aparece.
 2. Acessos subsequentes: modal não aparece.
 3. Highlights renderizam mesmo quando não há dados (mensagens vazias claras).
+
+Telas afetadas em ordem:
+1. confraria-welcome (entrada após aceitar convite ou ter solicitação aprovada).
+2. confraria-detalhe (modal aparece sobre a primeira abertura).
+3. confraria-apresentar (CTA Apresenta você leva pra cá).
+4. confraria-tour-rapido (opção alternativa pós apresentar).
 
 ### F10. Feed da confraria com contadores
 
@@ -823,6 +1060,12 @@ Aceite:
 2. Confraria apagada: barra não aparece.
 3. Tap em chip muda de aba corretamente.
 
+Telas afetadas em ordem:
+1. confraria-detalhe (barra abaixo do header, antes das abas).
+2. confraria-detalhe aba Eventos (destino do chip Eventos próximos).
+3. confraria-detalhe aba Publicações (destino do chip Publicações).
+4. confraria-detalhe aba Adega (destino do chip Novos vinhos).
+
 ### F11. Cutuca o organizador
 
 Responsável: Otavio (mover lógica pra ele dado que cuida do bloco de pushes).
@@ -852,6 +1095,13 @@ Aceite:
 2. Membro cutuca: push chega pros admins.
 3. Após cutucada, 7 dias sem nova cutucada possível.
 4. Após nova publicação ou evento criado: card some.
+
+Telas afetadas em ordem:
+1. confraria-detalhe aba Publicações (card no topo da timeline).
+2. confraria-detalhe aba Eventos (card também aparece se inatividade for de
+   eventos).
+3. notificacoes (push registrado).
+4. push-preview (preview pra QA).
 
 ### F12. Push de evento D-3, D-1, e dia
 
@@ -898,6 +1148,14 @@ Aceite:
 3. Evento cancelado: nenhum push pra ninguém.
 4. Banner no topo da aba Eventos quando evento está a 3 dias ou menos.
 
+Telas afetadas em ordem:
+1. event-detalhe (banner sticky com countdown).
+2. confraria-detalhe aba Eventos (banner sticky no topo da aba).
+3. home/confrarias aba Eventos segmento Meus (banner sticky se houver evento
+   próximo entre os meus).
+4. notificacoes (registro dos 3 pushes).
+5. push-preview (preview dos 3 pushes pra QA).
+
 ## 7. Bloco de pushes em produção (revisão de copy)
 
 Os 3 pushes abaixo foram entregues na Sprint 13 e estão ativos em 1.6.6. Nesta
@@ -934,6 +1192,427 @@ Copy ajustada: "{Nome}, sentimos sua falta. Tem confraria nova na sua região".
 
 Comportamento: dispara no 7º dia após cadastro às 18h, apenas se o usuário não
 abriu o app nos últimos 3 dias. Não dispara de novo.
+
+## 7B. Bloco de refatoração visual v2 de todas as telas existentes
+
+A Sprint 14 inclui a refatoração visual de todas as telas existentes do app pra
+acompanhar a v2 do design system. Iniciada na Sprint 13 com Splash, Onboarding
+pre auth, Auth, Setup Perfil e Criação de Confraria/Evento, agora abrange o app
+inteiro. Cada bloco abaixo representa um módulo da super doc.
+
+Princípio único: a refatoração não é cosmética. Cada tela aplica as decisões de
+produto fechadas até junho de 2026 (vide super doc) e ganha consistência total
+com a identidade Tchin Tchin (tokens em src/legacy/tokens.jsx).
+
+Regras gerais da v2 aplicáveis em todas as telas:
+1. Cores burgundy primárias com âmbar como secundária para destaques editoriais.
+2. Tipografia Fraunces serif em headlines, Inter sans serif em corpo.
+3. Espaçamento em múltiplos de 4 px.
+4. Botões com 4 variants: primary (burgundy), secondary (outline burgundy),
+   ghost (texto burgundy), destructive (vermelho).
+5. Cards com border radius médio, sombra suave, fundo branco em modo claro.
+6. Estados vazios sempre com ilustração + título + body + 1 CTA primário (CTA
+   ghost secundário opcional).
+7. Toast top anchored, 3 s, 3 variants (success, info, warning, error).
+8. Header de rotas de detalhe sempre com back à esquerda + título centro ou
+   início + ações à direita.
+
+### R1. Módulo 01 Auth e Acesso
+
+Princípio: identidade burgundy + Apple e Google SSO em destaque. Sem magic link e
+sem OTP de telefone (fora do produto, M01 § 1.0).
+
+Telas afetadas em ordem:
+1. welcome (SSO Apple + Google, hero serif).
+2. onboarding (3 slides pre auth do MKT, fechado em F4).
+3. login (formulário inputs + SSO).
+4. cadastro (formulário + SSO + termos).
+5. login-social (passo intermediário do SSO).
+6. recuperar (entry point).
+7. recuperar-email (input de email).
+8. recuperar-enviado (estado pós envio).
+9. recuperar-otp (input do código).
+10. recuperar-redefinir (nova senha).
+11. recuperar-sucesso (confirmação).
+12. termos (texto rolável).
+13. politica-privacidade (texto rolável).
+
+Regras de negócio aplicadas:
+1. SSO Apple + Google em destaque no welcome (Sprint 12 já entregou base, agora
+   ajusta visual).
+2. Vincular Google em config-conta (A4 desta Sprint).
+3. Sem campo de telefone em momento algum (M01 § 1.0).
+
+### R2. Módulo 02 Onboarding educacional e Roteamento
+
+Princípio: 5 perguntas no quiz nivel, mínimo 3 interesses, GPS por intent, welcome
+final com 3 highlights e CTA pra tour ou skip.
+
+Telas afetadas em ordem:
+1. quiz-nivel.
+2. quiz-interesses.
+3. tela-intencao.
+4. gps-primer (variantes por intent: discover, diario, aprender, treino,
+   confraria, wizard).
+5. gps-negado.
+6. welcome-final (3 highlights, CTA Começar tour ou Pular tour).
+7. tutoriais (hub de tutoriais conversacionais).
+
+Regras aplicadas:
+1. Mínimo 3 interesses (validação no avançar).
+2. Welcome final inclui pílula sutil de Pontos Tchin (M19 § 19.0.2).
+3. Tour rapido com 4 passos cobrindo Comunidade, Confrarias, Descobrir, Adega.
+
+### R3. Módulo 03 Meu Paladar
+
+Princípio: 5 perguntas com swipe horizontal, resultado em radar 5 dimensões.
+
+Telas afetadas em ordem:
+1. quiz (5 perguntas).
+2. quiz-result (radar + característica dominante + CTA Refazer).
+
+Regras aplicadas:
+1. Dimensões canônicas: Acidez, Tanino, Corpo, Doçura, Aromas (M07 § 7.5
+   diferenciação Aromas vs Frutado fica fechada como Aromas).
+2. Resultado abre Descobrir bloco Pra você imediatamente.
+
+### R4. Módulo 04 Descobrir e Marketplace
+
+Princípio: home/descobrir vira Descobri (A1 desta Sprint). Marketplace consume
+banco novo (F1). Wine sem botão Comprar (B2).
+
+Telas afetadas em ordem:
+1. home/descobrir transformada em Descobri (A1).
+2. marketplace (cards com match score, sem Comprar inline).
+3. wine (sem botão Comprar, com match score, taxonomia clara).
+4. busca (resultados sobre novo dataset).
+5. filtros-avancados (filtros sobre novo dataset).
+6. lista-desejos (taxonomia Wishlist M07 § 7.0).
+7. comparar-vinhos (match comparativo).
+
+### R5. Módulo 05 Carrinho e Checkout
+
+Princípio: este módulo aplica ao carrinho geral (não eventos). Eventos têm seu
+próprio fluxo em M12. O carrinho aqui é referência pra futura compra direta de
+parceiros e pra resgate de Pontos.
+
+Telas afetadas em ordem:
+1. carrinho.
+2. endereco.
+3. pagamento.
+4. pedido-confirmado.
+
+Regras aplicadas:
+1. Bloqueio de back em pedido-confirmado (M05 § 5.0).
+2. Tabela de cupons (não hard-coded).
+3. Avaliação opcional pós compra.
+
+### R6. Módulo 06 Scanner e Aprenda Bebendo
+
+Princípio: aposentar scanner v1, manter v2 e fallback. Carta-matches integrada.
+
+Telas afetadas em ordem:
+1. scanner (legado v1, manter pra compat) com aviso de aposentadoria.
+2. scanner-result (legado v1).
+3. scanner-v2 (atual).
+4. scanner-result-v2 (atual, com match score A3).
+5. scanner-fallback (busca manual).
+6. modo-restaurante.
+7. carta-matches (lista ordenada por match).
+8. porque-combina.
+
+Regras aplicadas:
+1. Aposentar v1 conforme M06 § 6.0.
+2. Pontos 15 por contribuir vinho novo (cap 5/dia), conforme M19 e M07 § 7.0.5.
+3. Compartilhar carta pública.
+
+### R7. Módulo 07 Adega, Diário e Estante
+
+Princípio: taxonomia 4 conceitos (Estante, Diário, Favoritos, Wishlist),
+slot multi garrafa, relatório mensal + anual (Wrapped).
+
+Telas afetadas em ordem:
+1. home/adega (banner Onde fica o quê dispensável, chips Favoritos e Wishlist,
+   pílula inline por aba).
+2. register-consumo passo 1 e 2.
+3. registro-rapido.
+4. registro-completo.
+5. registro-confirmacao.
+6. relatorio-mensal (e anual via mesmo template).
+7. favoritos.
+
+Regras aplicadas:
+1. Banner taxonomia persistente em localStorage tc.adega.tax.dismissed.
+2. Slot multi garrafa com badge times N.
+3. Pontuação escalonada 5/8/10/15/20 com cap 3/dia.
+4. Reverter label pra Adega (A2).
+
+### R8. Módulo 08 Treine seu Paladar
+
+Princípio: vidas regeneram a cada 4h, divisões nomeadas (Frisante, Branco, Rosé,
+Tinto, Reserva, Gran Reserva), liga global + amigos, cristais com 2 destinos
+(loja interna + Marketplace de Experiência).
+
+Telas afetadas em ordem:
+1. treino-paladar (home do Treino, 8 passos do onboarding do mascote).
+2. treino-licao (conceito, exercício, feedback, completa).
+3. treino-liga (ranking).
+4. treino-aprender (catálogo de unidades).
+
+Regras aplicadas:
+1. Vidas regeneram 4h cada uma.
+2. Cristais convertem em pontos Tchin (M19) a 1 cristal = 5 pts.
+
+### R9. Módulo 09 Aprenda (hub educacional)
+
+Princípio: unificar com M06 num só hub educacional (Gabriel jun 2026, M09 § 9.0).
+
+Telas afetadas em ordem:
+1. aprender.
+2. aprenda.
+3. aprenda-detalhe.
+
+Regras aplicadas:
+1. Botão Começar leva pro hub unificado.
+2. Unificar M06 e M09 num único acesso a partir do bottom nav ou do header de
+   Descobrir.
+
+### R10. Módulo 10 Harmoniza
+
+Princípio: bidirecional prato vs vinho, contexto (ocasião, estação, orçamento).
+
+Telas afetadas em ordem:
+1. harmoniza (entry, escolher prato ou vinho).
+2. harmoniza-resultados (sugestões com match individual).
+
+### R11. Módulo 11 Confrarias
+
+Princípio: 5 abas (Eventos, Publicações, Membros, Adega, Experiência), papéis
+Admin Membro Convidado, privacidade Pública Privada.
+
+Telas afetadas em ordem:
+1. home/confrarias (segmented Confrarias e Eventos, filtros, badges em cards via
+   V4 da Sprint 15).
+2. confraria-detalhe header.
+3. confraria-detalhe aba Eventos.
+4. confraria-detalhe aba Publicações.
+5. confraria-detalhe aba Membros.
+6. confraria-detalhe aba Adega.
+7. confraria-detalhe aba Experiência (cross M04 § 4.0.3).
+8. wizard-confraria-1 (info básica).
+9. wizard-confraria-2 (estilo e perfil).
+10. wizard-confraria-3 (privacidade).
+11. wizard-confraria-4 (cidade e localização).
+12. wizard-confraria-5 (capa e ícone).
+13. wizard-confraria-6 (revisão e CTA Criar).
+14. confraria-config (admin).
+15. confraria-convidar (membro e admin).
+16. confraria-sair (modal de confirmação).
+17. confraria-transferir (admin only).
+18. confraria-regras (mostrar regras editáveis).
+19. confraria-welcome (pós convite aceito).
+20. confraria-apresentar (escrever apresentação).
+21. confraria-tour-rapido (tour de 3 passos).
+
+Regras aplicadas:
+1. Compartilhar e Convidar só pra membros e admins (B7).
+2. Onboarding novo membro com 3 highlights (F9).
+3. Modal pós criação com 3 passos (F7).
+4. Banner D+3 sticky pra admin sem evento criado (F8).
+5. Card Cutuca os admins na inatividade (F11).
+6. Barra de 3 contadores (F10).
+
+### R12. Módulo 12 Eventos
+
+Princípio: 5 passos no wizard, taxa visível e separada, 3 janelas de cancelamento,
+LACI vs Combinar com admin, endereço sempre 24h antes.
+
+Telas afetadas em ordem:
+1. event-wizard-1 (tipo, tema com 5 templates F5).
+2. event-wizard-2 (descrição preenchida por template).
+3. event-wizard-3 (valor e pagamento, oculto pra Gratuito B3).
+4. event-wizard-4 (capacidade sugerida por template).
+5. event-wizard-5 (revisão).
+6. event-detalhe (RSVP, row Valor com taxa, CTA sticky V3 Sprint 15).
+7. evento-editar (replicar regras).
+8. evento-presenca (presença e pagamentos).
+9. evento-pos-avaliar (avaliar vinhos).
+10. evento-pos-ata (publicar ata).
+11. ParticiparSheet, EscolherMetodoSheet, PixLaciSheet, PagarForaSheet,
+    CancelarSheet (sheets do fluxo de pagamento).
+
+Regras aplicadas:
+1. Taxa Tchin Tchin visível e separada (M12 § 12.A.1).
+2. 3 janelas de cancelamento (M12 § 12.0.x).
+3. Endereço 24h antes (M12 § 12.A.3).
+4. Templates de evento (F5).
+5. Correlação confraria template (F6).
+6. Push D-3, D-1, dia (F12).
+
+### R13. Módulo 13 Comunidade e Feed
+
+Princípio: feed cronológico + sugestões, posts e momentos (Stories), comentários
+em tela cheia e inline (M13 § 13.0).
+
+Telas afetadas em ordem:
+1. home/comunidade (feed principal).
+2. criar-post.
+3. criar-momento (Stories).
+4. post-detail.
+5. comentarios (rota dedicada).
+
+Regras aplicadas:
+1. Comentários em tela cheia E inline (Gabriel jun 2026).
+2. Stories existem (Momentos).
+3. Audiência default Minhas confrarias.
+4. Contador de comentários atualiza ao excluir (B4).
+
+### R14. Módulo 14 Perfil e Social
+
+Princípio: perfil próprio como rota dedicada (perfil-eu), seguir bilateral se
+perfil privado, @handle com cooldown 30 dias.
+
+Telas afetadas em ordem:
+1. perfil-outro.
+2. perfil-eu (rota dedicada, M14 § 14.3).
+3. editar-perfil (hub).
+4. editar-perfil-foto.
+5. editar-perfil-paladar.
+6. editar-perfil-privacidade.
+7. perfil-seguidores.
+8. perfil-seguindo.
+9. perfil-atividade-publica.
+10. perfil-vinhos-provados.
+11. perfil-sugestoes.
+12. perfil-comparar-paladar.
+13. badges-galeria.
+
+Regras aplicadas:
+1. perfil-eu canônico (M14 § 14.3 e implementação atual no protótipo).
+2. Seguir bilateral se privado (M14 § 14.1).
+3. Cooldown 30 dias no handle (M14 § 14.2), com tela de aviso quando dentro do
+   cooldown.
+
+### R15. Módulo 15 Expert
+
+Princípio: badge only (sem comissão), Q&A resposta pública mas notificação
+privada, cooldown 30 dias pra reaplicar (M15 § 15.0).
+
+Telas afetadas em ordem:
+1. expert-virar.
+2. expert-aplicar.
+3. expert-pendente.
+4. expert-q-a.
+5. expert-responder.
+6. perguntar-expert.
+
+Regras aplicadas:
+1. Só badge, sem comissão (M15 § 15.1).
+2. Resposta pública, notificação só pra quem perguntou (M15 § 15.2).
+3. Cooldown 30 dias (M15 § 15.3).
+
+### R16. Módulo 16 Indicação e Convites
+
+Princípio: bilateral (R$ 30 e R$ 30), bônus libera no cadastro do convidado (não
+1ª compra), teto 25 com badge Top Embaixador (M16 § 16.0).
+
+Telas afetadas em ordem:
+1. indicacao-landing.
+2. indicacao-compartilhar.
+3. indicacao-meus-convites.
+4. indicacao-recompensas.
+5. convite-recebido (tela do convidado).
+
+Regras aplicadas:
+1. Bônus libera no cadastro (M16 § 16.0.1).
+2. Teto 25 indicações com badge Top Embaixador (M16 § 16.0.2).
+
+### R17. Módulo 17 Chat e DMs
+
+Princípio: DM configurável pelo user (M17 § 17.0.1), histórico de grupo
+retroativo (M17 § 17.0.2).
+
+Telas afetadas em ordem:
+1. chat-lista (tabs Todas, Pessoas, Grupos, Não lidas).
+2. chat-conversa.
+
+Regras aplicadas:
+1. DM com 5 opções de quem pode mandar (anyone, following, mutual, none, misto).
+2. Histórico do grupo visível pra quem entra depois (M17 § 17.0.2).
+
+### R18. Módulo 18 Notificações e Engajamento
+
+Princípio: catálogo amplo (~50 notificações), canais opt-out, nudges D+1, D+3,
+D+7, D+14.
+
+Telas afetadas em ordem:
+1. notificacoes (lista in app).
+2. push-primer.
+3. push-negado.
+4. push-canais.
+5. push-preview.
+6. nudge-d1, nudge-d3, nudge-d7, nudge-d14.
+7. plus-one.
+
+Regras aplicadas:
+1. Quiet hours 22h às 8h em todas as notifs (P1, P2, P3, F8, F11, F12).
+2. Cap diário de notifs em torno de 4 por usuário.
+3. Pushes novos desta Sprint (F8, F11, F12) entram no catálogo.
+
+### R19. Módulo 19 Jornada, Pontos e Desafios
+
+Princípio: economia unificada (Pontos Tchin), 4 abas em pontos (Resgatar, Ganhar,
+Extrato, Como funcionam), tabela mestra de 24 linhas em 6 grupos.
+
+Telas afetadas em ordem:
+1. jornada (marcos do usuário).
+2. pontos com 4 abas (M19 § 19.4).
+3. jornada-celebrar (5 variações: marco, desafio, nível, streak, resgate).
+4. desafio-detalhe (8 templates × 3 estados).
+5. badges (cross M14 § 14.6).
+
+Regras aplicadas:
+1. 4 abas na pontos (Sprint 14 jun 2026).
+2. Tabela mestra completa M19 § 19.0.4.
+
+Atenção: a decisão de reativar o épico de Pontos no backend é da Sprint 15 R6. O
+trabalho visual da v2 entra aqui de qualquer forma.
+
+### R20. Módulo 20 Config e Suporte
+
+Princípio: sem 2FA, sem telefone, sem Tchin Tchin Plus, telas de desativar e
+excluir conta.
+
+Telas afetadas em ordem:
+1. config-notif.
+2. config-privacidade (com privacy granular cross M14 e M17).
+3. config-conta (linha Vincular Google de A4).
+4. conta-desativada.
+5. conta-excluida.
+6. config-bloqueados.
+7. suporte-faq.
+8. suporte-contato.
+
+Regras aplicadas:
+1. Desativar (reversível) vs Excluir (soft delete 30 dias).
+2. Vínculo Google em config-conta (A4).
+
+### R21. Módulo 21 Estados de sistema
+
+Princípio: linguagem de marca em vez de jargão técnico, sempre oferecer saída.
+
+Telas afetadas em ordem:
+1. erro-404 (Garrafa não encontrada).
+2. erro-permissao (Conteúdo restrito).
+3. erro-sessao com 3 reasons: atualizacao, seguranca, inatividade (M21 § 21.3).
+4. vinho-indisponivel.
+5. erro-servidor (assume a culpa do nosso lado).
+6. toast (overlay, transversal).
+
+Regras aplicadas:
+1. erro-sessao só em 3 cenários raros (F2).
+2. Status page interna (não pública), conforme M21 § 21.0.1.
+3. Toasts empilham, até 3 visíveis, M21 § 21.0.2.
 
 ## 8. Critérios gerais de aceite da Sprint 14
 

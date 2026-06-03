@@ -6,13 +6,13 @@ A Sprint 15 começa em 17/06/2026 e termina em 30/06/2026 (entrega prevista 02/0
 Versão de produção atual ao iniciar: 1.7.0 (Sprint 14 entregue).
 Versão alvo desta Sprint: 1.7.5.
 
-Esta Sprint é a primeira que opera com a base estabilizada pós Sprint 14. O foco
-está em três blocos:
+Esta Sprint é a primeira que opera com a base estabilizada pós Sprint 14. A
+Sprint 14 absorveu a refatoração visual v2 completa de todos os módulos (R1 a
+R21), portanto a Sprint 15 já começa com a v2 plugada e foca em três blocos:
 
 1. Itens que vazaram da Sprint 14 por falta de tempo.
-2. Itens da v2 visual que continuam (Sprint 14 começou v2 de Splash, Onboarding,
-   Setup Perfil, Criação de Confraria e Evento; Sprint 15 segue com Listagem,
-   Detalhe e Adega v2).
+2. Refinos pontuais sobre a v2 visual aplicada (estados, animações,
+   acessibilidade).
 3. Refinamento dos gaps de UX que sobraram do mapeamento de features prontas no
    protótipo (M07 taxonomia, M12 taxa, M14 perfil-eu, M19 pontos, M04 Marketplace
    Experiência).
@@ -20,7 +20,8 @@ está em três blocos:
 ## 2. Resumo do que entra
 
 Itens vazados da Sprint 14: 5 itens.
-Continuação v2 visual: 3 itens grandes.
+Refinos pontuais da v2 visual aplicada: 3 itens (estados, animações,
+acessibilidade).
 Refinamentos da super doc: 6 itens.
 Bug fixes recém abertos em 1.7.0: backlog adaptativo (definir após release).
 
@@ -171,57 +172,46 @@ Aceite:
 3. Pílula muda conforme aba selecionada.
 4. Slot com 3 garrafas mostra badge ×3.
 
-## 4. Bloco v2 visual continuado
+## 4. Bloco refinos pontuais sobre a v2 visual aplicada
 
-### v2.1. Listagem e detalhe v2 de confrarias e eventos
+A Sprint 14 entregou a v2 visual completa de R1 a R21. Esta Sprint trata de
+finalizações que costumam ficar pra depois da grande rodada.
 
-Origem: Sprint 14 backlog, "Aguardar o novo layout".
+### v2.1. Estados vazios e estados de erro com identidade v2
 
-Continuação da v2 visual iniciada na Sprint 14. Após Splash, Auth, Setup Perfil
-e Criação ganharem v2, agora as listagens e detalhes entram.
+Auditoria dos estados em todas as telas pra garantir que os estados vazios
+seguem o template canônico (ilustração + título + body + CTA primário e ghost
+opcional).
 
-Escopo de listagem:
-1. home/confrarias: novo layout dos cards, animações de entrada, estados vazios
-   redesenhados.
-2. home/comunidade aba Eventos: cards alinhados com a nova linguagem.
-3. Marketplace: cards de vinho com novo layout (preparado pra match score
-   destacado quando A3 da Sprint 14 estiver pronto).
+Telas afetadas em ordem:
+1. favoritos vazio.
+2. lista-desejos vazio.
+3. home/comunidade feed vazio.
+4. home/confrarias sem confrarias.
+5. chat-lista vazio.
+6. notificacoes vazio.
+7. perfil-seguidores e perfil-seguindo vazios.
+8. evento-presenca sem inscritos.
+9. perfil-vinhos-provados vazio.
+10. expert-q-a sem perguntas pendentes.
 
-Escopo de detalhe:
-1. confraria-detalhe: header refinado, abas com transições, conteúdo de cada
-   aba revisado.
-2. event-detalhe: hero capa redesenhado, RSVP repensado pra dar destaque ao CTA
-   sticky de V3.
-3. wine: layout limpo, taxonomia clara, sem botão Comprar (B2 já correto).
+### v2.2. Animações e microinterações refinadas
 
-Critérios:
-1. Todas as telas refletem o design system v2.
-2. Sem regressão funcional.
-3. Aprovação do MKT antes do merge.
+1. Transição de troca de aba em confraria-detalhe, home/adega, home/comunidade
+   aba Eventos.
+2. Animação de aparição do banner contextual em event-detalhe (PaymentBanner
+   M12).
+3. Pulse no FAB ao mudar de contexto (B8).
+4. Reorder animado em ranking (treino-liga, ranking de confraria).
+5. Confete em jornada-celebrar variante marco e desafio.
 
-### v2.2. Adega v2
+### v2.3. Acessibilidade e fontes responsivas
 
-Origem: Sprint 14 backlog.
-
-Layout v2 da Adega:
-1. Header reorganizado com identidade Tchin (gradient burgundy suave).
-2. Tabs com transição suave.
-3. Estante visual com rack 3D mais realista.
-4. Diário com timeline melhorada.
-5. Indicadores e Paladar com gráficos modernizados.
-
-Cruza com V5 (taxonomia plugada).
-
-### v2.3. Match do paladar com vinhos
-
-Origem: A3 da Sprint 14 que estava bloqueado por F1.
-
-Após F1 (importação de banco) estar pronto, plugar A3 (match) com a fórmula
-definida na Sprint 14:
-
-1. score = 0.50 * cosineSim + 0.30 * popularityBoost + 0.20 * editorialBoost
-2. Exibir nos cards de vinho, detalhe do vinho e carta-matches.
-3. Estados visuais por faixa de score (cinza, burgundy, burgundy negrito).
+1. Aumento de contraste WCAG AA em todas as labels de chip pequenas.
+2. Tamanho mínimo de toque 44 px em todos os CTAs.
+3. Suporte a Dynamic Type do iOS em headlines e corpo (até 200 por cento sem
+   quebrar layout).
+4. aria-label em todos os botões de ícone do app.
 
 ## 5. Bloco refinamentos da super doc
 
