@@ -341,6 +341,33 @@ const SPRINT14_ITEMS = [
     ],
     telas: ['event-detalhe (banner sticky)', 'confraria-detalhe aba Eventos (banner)', 'home/confrarias aba Eventos Meus (banner)', 'notificacoes (3 pushes)', 'push-preview'],
   },
+  { id: 'F13', kind: 'feature', title: 'API Meta SDK Instagram, Facebook e tracking', owner: 'Otavio', module: 'M01 + M14 + M18', status: 'definido', urgent: true,
+    summary: 'Integração com Meta SDK em 3 frentes: conta do usuário (Instagram e Facebook pessoais), conta do app (página oficial Tchin) e tracking publicitário (Conversions API).',
+    rule: 'OAuth oficial Meta. Permissões Frente 1: instagram_basic, instagram_graph_user_profile, instagram_graph_user_media, public_profile, email, user_posts. Frente 2: token de app com pages_show_list e pages_read_engagement. Frente 3: server side via Conversions API. LGPD: opt out em config-privacidade. Política de privacidade ajustada.',
+    fix: 'Frente 1: conectar conta no perfil-eu, puxar foto/handle/posts. Frente 2: conta oficial alimenta Bloco 6 do Descobri. Frente 3: Conversions API completa US-236.',
+    accept: [
+      'Conectar Instagram pessoal: OAuth nativo abre, retorna, chip aparece Conectada.',
+      'Desconectar: dados removidos em menos de 24h.',
+      'Conta do app: post editorial replica no Bloco 6 do Descobri.',
+      'Tracking server side: RSVP pago dispara conversão sem PII.',
+      'Opt out: desliga tracking server side em tempo real.',
+      'Falha de OAuth: volta sem estado parcial e toast de cancelado.',
+      'Token expirado: chip Reconectar + push de aviso.',
+    ],
+    telas: [
+      'perfil-eu seção Configurações (nova sub seção Minhas redes com 2 cards).',
+      'editar-perfil (CTA Conectar Instagram, CTA Conectar Facebook).',
+      'config-conta (linha Contas conectadas duplicando o acesso).',
+      'config-privacidade (sub seção Redes sociais com 2 toggles).',
+      'config-privacidade (sub seção Dados de publicidade com toggle opt out).',
+      'perfil-outro (chips Instagram e Facebook quando autorizado).',
+      'home/descobrir bloco 6 do Descobri (conta oficial Tchin no Instagram).',
+      'Fluxo OAuth nativo da Meta (modal externo do sistema).',
+      'Toast de sucesso e erro pós OAuth.',
+      'notificacoes (registro de aviso de token expirado).',
+      'termos e politica-privacidade (texto ajustado).',
+    ],
+  },
   // Pushes em produção (revisão de copy)
   { id: 'P1', kind: 'push', title: 'Push 4h após cadastro sem registrar', owner: 'Otavio', module: 'M18', status: 'producao', urgent: false,
     summary: 'Sprint 13. Dispara 4h após criação da conta se usuário não tem registro no diário.',
@@ -700,7 +727,7 @@ function Sprint14HubScreen({ go }) {
           Plano de execução completo
         </div>
         <div style={{ fontFamily: T.font, fontSize: 13, lineHeight: 1.45, opacity: 0.92 }}>
-          50 itens organizados em 7 blocos. Versão alvo 1.7.0.
+          51 itens organizados em 7 blocos. Versão alvo 1.7.0.
         </div>
         <div style={{ marginTop: 12, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <span style={{ padding: '4px 10px', background: 'rgba(255,255,255,0.18)', borderRadius: T.r.full, fontSize: 11, fontWeight: 600 }}>

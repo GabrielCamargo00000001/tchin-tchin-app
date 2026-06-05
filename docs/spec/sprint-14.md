@@ -26,7 +26,10 @@ Refatoração visual v2 de todas as telas existentes: 22 blocos (R1 a R22). R1 a
 cobrem um módulo da super doc cada. R22 cobre o sistema transversal de tutoriais
 conversacionais com mascote e tours guiados (40 telas e overlays).
 
-Total de 50 itens organizados em 7 blocos sequenciais.
+Integração Meta SDK pra puxar dados de Instagram e Facebook das contas dos usuários
+e do app: 1 item (F13).
+
+Total de 51 itens organizados em 7 blocos sequenciais.
 
 Princípio da refatoração visual: as telas que já existem no app são repensadas com
 o design system v2 e as decisões de produto fechadas em junho de 2026. Não é só
@@ -1151,6 +1154,135 @@ Telas afetadas em ordem:
    próximo entre os meus).
 4. notificacoes (registro dos 3 pushes).
 5. push-preview (preview dos 3 pushes pra QA).
+
+### F13. Criação e integração da API Meta SDK pra Instagram, Facebook e contas do app
+
+Responsável: Otavio (já cuida do tracking AppsFlyer e Meta Ads).
+Origem: necessidade nova levantada na sessão Gabriel jun 2026 mais cruzamento
+com US-236 (Meta App Events SDK e Conversions API em desenvolvimento), US-192
+(compartilhamento multi canal em desenvolvimento) e US-239 (compartilhamento
+nativo Instagram Stories em desenvolvimento).
+Status: definido nesta Sprint, dependência de credenciais Meta Business.
+
+Definição: o app passa a se integrar com a Meta SDK em três frentes complementares:
+
+Frente 1, conta do usuário (Instagram e Facebook pessoais):
+1. Usuário pode conectar a conta de Instagram dele no perfil (perfil-eu seção
+   Configurações ou editar-perfil).
+2. Usuário pode conectar a conta de Facebook dele no mesmo lugar.
+3. Conexão via OAuth oficial da Meta (Facebook Login SDK iOS e Android +
+   Instagram Basic Display API quando aplicável).
+4. Dados puxados da conta do usuário: foto de perfil, nome público, handle do
+   Instagram, contagem de seguidores, contagem de posts, biografia, e a lista
+   dos últimos 9 posts públicos (capa apenas, com permissão Basic Display).
+5. Esses dados ficam disponíveis no perfil Tchin do usuário (linha "Minhas
+   redes" no perfil-eu, com chips Instagram e Facebook conectados ou pendentes).
+6. Política: nada é compartilhado pra outros usuários do Tchin sem opt in. A
+   linha Minhas redes vira pública só se o usuário ativar em
+   config-privacidade nova seção Redes sociais.
+
+Frente 2, conta do app (página oficial Tchin Tchin):
+1. App passa a ler dados da conta oficial Tchin Tchin no Instagram e Facebook
+   via Graph API com token do app.
+2. Dados puxados da conta do app: últimos posts editoriais, número de
+   seguidores oficial, estatísticas de alcance dos posts marcados como
+   campanha.
+3. Esses dados alimentam o Bloco 6 do hub Descobri (A1) Curiosidades editoriais
+   e o card editorial mensal Uva da semana, ambos podem virar reflexo das
+   publicações da conta oficial.
+4. Permite ao time editorial publicar no Instagram oficial e, com flag de
+   sincronização, replicar o conteúdo dentro do app como card de feed.
+
+Frente 3, tracking publicitário (Meta App Events e Conversions API):
+1. Continuar e completar a integração já em desenvolvimento US-236.
+2. Tracking AppsFlyer já fechado em Sprint 12 e 13 (criação de conta a partir
+   de Meta Ads) continua válido.
+3. Adicionar eventos de conversão server side via Conversions API (compra,
+   RSVP pago, scanner usado, lição concluída).
+4. Sincronizar Customer List Audiences (segmentação de usuários do Tchin pra
+   reaproveitar em campanhas).
+5. Garantir compliance LGPD: opt out na config-privacidade seção Dados de
+   publicidade.
+
+Permissões Meta solicitadas no fluxo OAuth da Frente 1:
+1. instagram_basic (foto, posts públicos básicos).
+2. instagram_graph_user_profile (handle, nome).
+3. instagram_graph_user_media (últimos posts da conta pessoal).
+4. public_profile (nome e foto do Facebook).
+5. email (apenas pra validação se já não tem email no Tchin).
+6. user_posts (opcional, só pra contagem de posts).
+
+Permissões para a Frente 2 (token do app):
+1. instagram_basic com conta business Tchin Tchin.
+2. pages_show_list, pages_read_engagement (Facebook Page).
+3. ads_management e ads_read se forem precisos pra Frente 3.
+
+Onde aparece na UI:
+
+1. perfil-eu seção Configurações ganha sub seção Minhas redes com 2 cards:
+   Instagram (Conectar ou Conectada) e Facebook (Conectar ou Conectada).
+2. editar-perfil ganha CTA Conectar Instagram e Facebook quando ainda não
+   conectado.
+3. config-conta ganha linha Contas conectadas que duplica a sub seção pra
+   acesso direto.
+4. config-privacidade ganha nova sub seção Redes sociais com toggles: Mostrar
+   Instagram no meu perfil público (default off), Mostrar Facebook no meu
+   perfil público (default off).
+5. config-privacidade ganha nova sub seção Dados de publicidade com toggle
+   Permitir uso anônimo dos meus eventos pra calibrar campanhas (default on,
+   opt out disponível).
+6. perfil-outro mostra chips Instagram e Facebook apenas se o dono autorizou.
+7. home/descobrir (Descobri) Bloco 6 puxa as últimas curiosidades editoriais
+   também da conta oficial Tchin no Instagram.
+
+Aceite:
+1. Conectar Instagram da conta pessoal: fluxo OAuth nativo abre, retorna pro
+   app, chip aparece como Conectada.
+2. Desconectar: chip volta pra Conectar, dados são removidos do perfil em
+   menos de 24h.
+3. Conta do app: editorial publica no Instagram oficial e o card aparece no
+   Bloco 6 do Descobri após sincronização.
+4. Tracking server side: evento RSVP pago dispara uma conversão na Meta com
+   parâmetros sanitizados (sem PII).
+5. LGPD: opt out de dados de publicidade desliga o tracking server side em
+   tempo real.
+6. Falha de OAuth (cancelar no meio): app volta pro perfil-eu sem estado
+   parcial e mostra toast "Conexão cancelada".
+7. Token expirado: app marca chip como Reconectar e dispara push de aviso.
+
+Dependências e considerações técnicas:
+1. Cadastro da Tchin Tchin como aplicativo no Meta Developers App Dashboard
+   (já existe parcialmente, validar permissões e ambientes Dev, Stage, Prod).
+2. App Review da Meta pra permissões avançadas (instagram_graph_user_media,
+   ads_management). Estimativa: 5 a 10 dias úteis de revisão.
+3. Domínio verificado no Meta Business Manager.
+4. Política de privacidade e termos de uso precisam mencionar uso da API Meta
+   (rota termos e politica-privacidade já existem, ajustar texto se
+   necessário).
+5. Esta Sprint entrega a base e a Frente 1 completa. Frentes 2 e 3 podem
+   ficar como Em desenvolvimento e fechar até Sprint 15.
+
+Riscos:
+1. Risco de App Review demorar mais que a Sprint. Mitigação: iniciar revisão
+   no dia 1 da Sprint, usar permissões básicas que não precisam de revisão
+   manual enquanto avançadas estão em fila.
+2. Risco de mudança de política da Meta sobre dados de Instagram. Mitigação:
+   monitorar release notes da Graph API.
+
+Telas afetadas em ordem:
+1. perfil-eu seção Configurações (nova sub seção Minhas redes com 2 cards).
+2. editar-perfil (CTA Conectar Instagram, CTA Conectar Facebook).
+3. config-conta (linha Contas conectadas duplicando o acesso).
+4. config-privacidade (nova sub seção Redes sociais com 2 toggles; nova sub
+   seção Dados de publicidade com 1 toggle de opt out).
+5. perfil-outro (chips Instagram e Facebook quando autorizado pelo dono).
+6. home/descobrir bloco 6 do Descobri (alimentação da conta oficial Tchin no
+   Instagram).
+7. Fluxo OAuth nativo da Meta (modal externo do sistema, não tela do app).
+8. Toast de sucesso e de erro pós OAuth (overlay transversal, M21).
+9. notificacoes (registro de aviso de token expirado).
+10. termos e politica-privacidade (texto ajustado pra mencionar uso da API
+    Meta).
 
 ## 7. Bloco de pushes em produção (revisão de copy)
 
