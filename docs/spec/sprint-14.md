@@ -481,10 +481,13 @@ Responsável: Guilherme.
 Origem: backlog Sprint 13, marcado "Falta definir funcionalidade das telas e figma".
 Status: indefinido nesta Sprint, vira definição agora.
 
-Definição: a tela Descobri é o hub editorial e algorítmico que substitui a antiga
-tela marketplace. A home/descobrir (tab esquerda do bottom nav) continua sendo o
-hub editorial principal e ganha um CTA destacado pra abrir a Descobri (que herda
-o lugar do antigo marketplace). A arquitetura está documentada em M04 § 4.0.
+Definicao: a tela Descobri e o hub principal que CONTEM o Marketplace como bloco
+interno. Decisao Gabriel jun 2026 (D3): o Marketplace fica DENTRO do Descobri,
+mantendo o nome Marketplace. A rota tecnica do bloco interno continua se chamando
+marketplace (compat de deep links e tracking). A tela Descobri agrega esse
+bloco mais 5 outros blocos editoriais e algoritmicos. A home/descobrir continua
+sendo a tab esquerda do bottom nav e ganha CTA destacado Abrir Descobri.
+A arquitetura completa esta documentada em M04 § 4.0.
 
 Estrutura completa da tela Descobri:
 
@@ -556,33 +559,24 @@ Telas afetadas em ordem:
 7. scanner (entry via FAB do hub Descobri).
 8. quiz (rota de calibração de paladar se vier do estado "Sem paladar").
 
-### A2. Sub aba "Adega" dentro da confraria volta a se chamar "Adega" e não "Estoque"
+### A2. Sub aba Estoque da confraria fica como Estoque (decisao revista)
 
 Origem: backlog Sprint 13, Gustavo trocou a quarta aba do confraria-detalhe
-(que mostra os vinhos catalogados pela confraria como coletivo) de "Adega" pra
-"Estoque".
+(que mostra os vinhos catalogados pela confraria como coletivo) de Adega pra
+Estoque.
 
-Decisão Gabriel revisão jun 2026: reverter pra "Adega". A poesia da marca pede
-"Adega" mesmo no contexto coletivo da confraria. "Estoque" é jargão de
-comerciante e quebra o tom.
+Decisao Gabriel revisao jun 2026 (atualizada apos resposta D4): MANTER
+Estoque. O label da Sprint 13 fica como ficou. Nao reverter pra Adega.
 
-Correção:
-1. Reverter a label da quarta sub aba do confraria-detalhe de "Estoque" pra
-   "Adega".
-2. Manter inalteradas todas as outras telas (bottom nav, home/adega individual,
-   perfil-eu, ProfileDrawer, favoritos, lista-desejos, register-consumo).
-3. A taxonomia interna do M07 (Estante, Diário, Favoritos, Wishlist) é da Adega
-   individual e segue inalterada.
+Justificativa: Adega como conceito da marca segue valido pra Adega individual
+do usuario (M07). Dentro do contexto da confraria, o acervo coletivo se chama
+Estoque, que descreve melhor o que e (vinhos da confraria, coletivo) e nao
+conflita com a Adega pessoal.
 
-Aceite:
-1. confraria-detalhe: a quarta aba chama "Adega" e não "Estoque".
-2. Nenhuma outra tela do app foi tocada por esta correção.
+Acao na Sprint 14: NENHUMA. Item retirado da Sprint.
 
 Telas afetadas em ordem:
-1. confraria-detalhe header de abas (rótulo da quarta aba muda de "Estoque" pra
-   "Adega").
-2. AdegaConfTab (componente que renderiza a aba): manter conteúdo, só ajustar
-   header.
+1. Nenhuma. A2 sai da Sprint 14.
 
 ### A3. Match do paladar com vinhos (PAUSADO)
 
@@ -780,9 +774,10 @@ Telas afetadas em ordem:
 3. erro-sessao com 3 reasons: atualizacao, seguranca, inatividade.
 4. recuperar-email (rota disparada por erro-sessao reason seguranca).
 
-### F3. Reverter label Estoque para Adega (sub aba da confraria)
+### F3. Manter Estoque na sub aba da confraria (decisao revista)
 
-Fechado em A2. Escopo: apenas a quarta aba do confraria-detalhe.
+Fechado em A2. Decisao Gabriel jun 2026: manter Estoque. Sem acao. Item
+retirado da Sprint 14.
 
 ### F4. Onboarding inicial com imagens guias antes de logar
 
@@ -2260,17 +2255,18 @@ Notação:
    - Toca: R11, B8 (FAB Criar confraria).
 
 2. confraria-detalhe
-   - Estados: 5 abas (Eventos, Publicações, Membros, Adega, Experiência);
-     diferentes por papel (admin, membro, não-membro); just-created (modal F7);
+   - Estados: 5 abas (Eventos, Publicacoes, Membros, Estoque, Experiencia);
+     diferentes por papel (admin, membro, nao-membro); just-created (modal F7);
      empty por aba.
-   - Entra de: home/confrarias; cards de sugestão; convite-recebido aprovado.
+   - Entra de: home/confrarias; cards de sugestao; convite-recebido aprovado.
    - Sai pra: 5 abas; event-detalhe; wizard-confraria-1; confraria-config;
      confraria-convidar; confraria-regras; confraria-sair; confraria-transferir;
      perfil-outro membros.
-   - Toca: B7 (compartilhar oculto pra não membro), F7 (modal pós criação), F8
+   - Toca: B7 (compartilhar oculto pra nao membro), F7 (modal pos criacao), F8
      (banner sticky D+3 pro admin), F9 (modal boas vindas novo membro), F10
      (barra 3 contadores), F11 (card Cutuca os admins), F12 (banner sticky pra
-     próximo evento <3 dias), A2 (aba 4 volta de Estoque pra Adega), R11.
+     proximo evento <3 dias), R11. A4ª aba mantem o nome Estoque (decisao
+     Gabriel jun 2026, A2 retirado).
 
 3. wizard-confraria-1
    - Estados: passo 1 info básica.
