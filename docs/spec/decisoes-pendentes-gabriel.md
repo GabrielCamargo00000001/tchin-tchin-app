@@ -108,9 +108,44 @@ RESPOSTA GABRIEL (06/2026): aguardando. Bruno reenvia hoje (06/2026) os 3
 slides em alta resolucao pro Gabriel aprovar individualmente. Copy proposta
 nos slides 1 a 3 esta listada abaixo no bloco de copys pra validar.
 
+APROVACAO FINAL GABRIEL (06/2026): APROVADO CONFORME PROPOSTO. Os 3 slides
+ficam exatamente como propostos:
+
+Slide 1, Identidade da marca:
+  Imagem: hero burgundy com tacas clinking.
+  Headline: "O app de vinho que entende seu paladar."
+  Body: "Descubra, registre, compartilhe. Sua jornada com vinho comeca aqui."
+  CTA: "Avancar". Skip topo direito: "Pular".
+
+Slide 2, Dor 1 Incerteza de compra:
+  Imagem: corredor de vinhos com pessoa indecisa, overlay burgundy.
+  Headline: "Saiba qual vinho combina com voce antes de comprar."
+  Body: "Match score baseado no seu paladar, recomendacoes curadas,
+    comparativos lado a lado."
+  CTA: "Avancar". Skip: "Pular".
+
+Slide 3, Dor 3 Memoria fragmentada:
+  Imagem: caderno aberto com taca e foto de rotulo.
+  Headline: "Lembre de cada vinho que provou."
+  Body: "Adega, diario e relatorio mensal. Sua historia com vinho em um so
+    lugar."
+  CTA: "Comecar". Skip: "Pular".
+
+Visual em todos os 3:
+1. Background gradient burgundy/50 para burgundy/100.
+2. Headline Fraunces 32px peso 600.
+3. Body Inter 14px lineheight 1.5 cor n800.
+4. 3 dots indicadores no rodape acima do CTA. Dot ativo burgundy/700, dots
+   inativos n300.
+5. Transicao horizontal swipe sem fade. Swipe pra tras permitido.
+
 ---
 
 ## Bloco 2, Decisoes de copy e UX que precisam de aprovacao
+
+RESPOSTA GABRIEL (06/2026) PRO BLOCO INTEIRO: APROVADO CONFORME PROPOSTO em
+D6 a D13. Todas as copys e definicoes ficam exatamente como redigidas neste
+documento, sem ajustes. Implementacao direta na Sprint 14.
 
 ### D6, Copy dos pushes P1, P2, P3 ajustada
 

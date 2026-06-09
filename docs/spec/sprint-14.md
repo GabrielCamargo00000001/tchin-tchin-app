@@ -133,8 +133,8 @@ Correção:
 2. Manter o botão Salvar na Wishlist (US-060 ja entregue), o botão Adicionar à
    Estante (M07 § 7.0.2) e o botão Ver onde encontrar (que abre lista de
    parceiros sem checkout).
-3. Adicionar uma faixa informativa no rodapé do card: "Em breve: compra direta
-   pelo app".
+3. Adicionar uma faixa informativa no rodapé do card. Copy aprovada por Gabriel
+   (jun 2026, D13): "Em breve: compra direta pelo app."
 
 Dependência: o desbloqueio do botão Comprar volta quando a importação do banco de
 produtos do marketplace (Sprint 13, LAPM) estiver completa e quando a regra de
@@ -783,23 +783,46 @@ retirado da Sprint 14.
 
 Responsável: Bruno.
 Origem: Sprint 13, em produção 1.6.6.
-Status: entregue, documentar pra ter referência.
+Status: APROVADO POR GABRIEL (jun 2026, D5). Copy e visual finais abaixo.
 
 Sequência atual (M01 e M02):
 1. Splash com logo Tchin Tchin.
-2. Onboarding pre auth com 3 slides editoriais: identidade da marca, dor 1
-   (incerteza de compra), dor 3 (memória fragmentada).
+2. Onboarding pre auth com 3 slides editoriais (detalhamento abaixo).
 3. Welcome com SSO Apple e Google (M01).
 4. Pós login: quiz nivel, quiz interesses, tela intenção, gps primer,
    welcome final (M02).
 
-Ajuste fino nesta Sprint:
-1. O MKT enviou outro layout pros 3 slides. Aplicar o novo layout sem mudar a
-   estrutura.
-2. Adicionar transição suave entre slides (slide horizontal, sem fade).
-3. Indicadores de dots fixos abaixo dos slides.
-4. Botão "Avançar" no rodapé do slide 1 e 2, "Começar" no slide 3.
-5. Botão "Pular" no canto superior direito de todos os slides.
+Conteúdo final dos 3 slides (aprovado por Gabriel):
+
+Slide 1, Identidade da marca:
+1. Imagem: hero burgundy com taças clinking.
+2. Headline (Fraunces 32px peso 600): "O app de vinho que entende seu paladar."
+3. Body (Inter 14px lineheight 1.5 cor n800): "Descubra, registre, compartilhe.
+   Sua jornada com vinho começa aqui."
+4. CTA primário no rodapé: "Avançar."
+5. Skip no canto superior direito: "Pular."
+
+Slide 2, Dor 1 Incerteza de compra:
+1. Imagem: corredor de vinhos com pessoa indecisa, overlay burgundy.
+2. Headline: "Saiba qual vinho combina com você antes de comprar."
+3. Body: "Match score baseado no seu paladar, recomendações curadas,
+   comparativos lado a lado."
+4. CTA: "Avançar." Skip: "Pular."
+
+Slide 3, Dor 3 Memória fragmentada:
+1. Imagem: caderno aberto com taça e foto de rótulo.
+2. Headline: "Lembre de cada vinho que provou."
+3. Body: "Adega, diário e relatório mensal. Sua história com vinho em um só
+   lugar."
+4. CTA: "Começar." Skip: "Pular."
+
+Visual em todos os 3 slides:
+1. Background gradient burgundy/50 → burgundy/100.
+2. Headline Fraunces 32px peso 600.
+3. Body Inter 14px lineheight 1.5 cor n800.
+4. 3 dots indicadores no rodapé acima do CTA, dot ativo burgundy/700, dots
+   inativos n300.
+5. Transição horizontal swipe sem fade. Swipe pra trás permitido.
 
 Aceite:
 1. Primeiro abrir: vê os 3 slides com layout novo.
@@ -952,23 +975,25 @@ Telas afetadas em ordem:
 
 Responsável: indefinido nesta Sprint, alocar.
 Origem: backlog "Falta figma e local para mostrar a mensagem".
-Status: definição feita aqui.
+Status: APROVADO POR GABRIEL (jun 2026, D7 e D8).
 
 Gatilho: 3 dias após a criação da confraria, se nenhum evento foi criado.
 
-Notificação push:
-1. Título: "Sua confraria está esperando".
-2. Corpo: "Marca o primeiro encontro de {nome da confraria} pra começar bem".
+Notificação push (copy aprovada):
+1. Título: "Sua confraria está esperando."
+2. Corpo: "Marca o primeiro encontro de {nome da confraria} pra começar bem."
 3. Disparo: 10h da manhã do D+3.
 4. Quiet hours: respeita 22h às 8h da timezone do usuário.
 5. Cap: dispara 1 vez. Se o usuário ignorar, dispara outro em D+7 e D+14 (cross
    M18 nudges).
 
-Local in app pra reforçar:
-1. Banner sticky no topo do detalhe da confraria, visível apenas pro admin:
-   "Sua confraria não tem evento ainda. {Crie o primeiro evento}".
-2. CTA do banner leva pro event-wizard com template sugerido (F6).
-3. Banner some quando o primeiro evento é criado.
+Local in app pra reforçar (banner sticky no detalhe da confraria, copy
+aprovada):
+1. Mensagem: "Sua confraria não tem evento ainda. Crie o primeiro evento."
+2. CTA do banner: "Crie o primeiro evento" leva pro event-wizard-1 com
+   template sugerido por F6.
+3. Visível apenas pro admin.
+4. Banner some quando o primeiro evento é criado.
 
 Aceite:
 1. Criar confraria, esperar 3 dias sem evento: push dispara às 10h.
@@ -986,7 +1011,9 @@ Telas afetadas em ordem:
 
 Responsável: indefinido nesta Sprint, alocar.
 Origem: backlog "Falta figma e definir o que conversa ativa".
-Status: definição feita aqui.
+Status: APROVADO POR GABRIEL (jun 2026, D11). Definição de Conversa ativa
+fechada: publicação no feed da confraria com timestamp menor que 7 dias.
+Empty state aprovado: "Seja o primeiro a publicar."
 
 Disparo: ao entrar em uma confraria pela primeira vez (não vale pra fundador,
 vale pra membro que aceita convite ou pede entrada e é aprovado).
@@ -1064,25 +1091,36 @@ Telas afetadas em ordem:
 
 Responsável: Otavio (mover lógica pra ele dado que cuida do bloco de pushes).
 Origem: backlog "Falta figma e definir o período de inatividade".
-Status: definição feita aqui.
+Status: APROVADO POR GABRIEL (jun 2026, D9 copy e D23 thresholds).
 
 Gatilho de inatividade da confraria:
 1. 14 dias sem nenhuma publicação no feed da confraria.
 2. 21 dias sem nenhum evento marcado.
 3. Apenas uma das duas condições basta pra disparar.
+4. Filtro extra (D23): confraria tem 5 membros ou mais. Evita cutucar
+   confraria com 1 ou 2 pessoas.
 
-Comportamento:
-1. Card no feed da confraria, visível pra qualquer membro: "Tá quieto por aqui.
-   {Cutuca os admins}".
-2. CTA "Cutuca os admins" dispara push pros admins.
-3. Cooldown de cutucada: 7 dias entre tentativas, pra evitar spam.
+Card no feed da confraria (copy aprovada):
+1. Visível pra qualquer membro da confraria.
+2. Headline: "Tá quieto por aqui."
+3. Subheadline: "Que tal cutucar os admins pra marcar um evento?"
+4. CTA: "Cutuca os admins."
+5. Após tocar: card vira estado pós cutucada por 24h: "Cutucada enviada pros
+   admins. Eles foram avisados." com botão desabilitado.
 
-Push pra admins:
-1. Título: "Cutucada da confraria".
+Cooldown de cutucada:
+1. Mesmo usuário não pode cutucar a mesma confraria por 7 dias após cutucar.
+2. Cada confraria só pode receber 1 cutucada total por janela de 7 dias
+   (independente de quantos membros tentam).
+
+Push pra admins (copy aprovada):
+1. Título: "Cutucada da confraria."
 2. Corpo: "{nome do usuário} sente falta de movimento em {nome da confraria}.
-   Que tal um evento?".
-3. Quiet hours: 22h às 8h.
-4. Cap: 1 push por cutucada. Cooldown de 7 dias pra mesma confraria.
+   Que tal um evento?"
+3. Quiet hours: 22h às 8h. Posterga se cair em quiet.
+4. Cap: 1 push por cutucada. Cooldown global de 7 dias por confraria.
+5. Tap no push: leva pro confraria-detalhe aba Eventos com banner sticky
+   indicando "Membro cutucou pra marcar evento" e CTA Criar evento.
 
 Aceite:
 1. Confraria sem publicação há 15 dias: card aparece pra qualquer membro.
@@ -1101,27 +1139,29 @@ Telas afetadas em ordem:
 
 Responsável: Otavio.
 Origem: backlog.
-Status: definição feita aqui.
+Status: APROVADO POR GABRIEL (jun 2026, D10).
 
-Cadência de push pré evento:
+Cadência de push pré evento (copys aprovadas):
 
 Push D-3 às 19h da timezone do usuário:
-1. Título: "Daqui a 3 dias".
-2. Corpo: "{nome do evento} é em 3 dias. {Você está confirmado | Falta confirmar
-   sua presença}".
-3. Destino do tap: event-detalhe.
+1. Título: "Daqui a 3 dias."
+2. Corpo se confirmado: "{nome do evento} é em 3 dias. Você está confirmado."
+3. Corpo se não confirmado: "{nome do evento} é em 3 dias. Falta confirmar
+   sua presença."
+4. Destino do tap: event-detalhe.
 
 Push D-1 às 19h:
-1. Título: "Amanhã: {nome do evento}".
-2. Corpo: "{Você está confirmado, te vemos lá | Falta confirmar pra garantir
-   sua vaga}".
-3. Destino do tap: event-detalhe.
+1. Título: "Amanhã: {nome do evento}."
+2. Corpo se confirmado: "Você está confirmado, te vemos lá."
+3. Corpo se não confirmado: "Falta confirmar pra garantir sua vaga."
+4. Destino do tap: event-detalhe.
 
 Push do dia às 9h:
-1. Título: "Hoje às {hora}".
-2. Corpo: "{nome do evento} em {local resumido}. {Vamos lá | Confirma sua
-   presença até as 12h}".
-3. Destino do tap: event-detalhe.
+1. Título: "Hoje às {hora}."
+2. Corpo se confirmado: "{nome do evento} em {local resumido}. Vamos lá."
+3. Corpo se não confirmado: "{nome do evento} em {local resumido}. Confirma
+   sua presença até as 12h."
+4. Destino do tap: event-detalhe.
 
 Banner em destaque no detalhe da confraria pra evento próximo:
 1. Quando o próximo evento da confraria está a 3 dias ou menos, um banner
@@ -1287,21 +1327,18 @@ Sprint, ajustar a copy pra acompanhar o tom atualizado.
 ### P1. Push 4h após cadastro sem registrar vinho
 
 Status: ativo.
-Copy atual: "Pronto pra registrar seu primeiro vinho? Vai levar 1 minuto".
-Copy ajustada: "Vamos começar sua adega? Registra o primeiro vinho em 1 minuto".
-
-Ajuste necessário: tom mais convidativo, foco na ação concreta.
+Copy aprovada por Gabriel (jun/2026): "Vamos começar sua adega? Registra o
+primeiro vinho em 1 minuto."
 
 Comportamento: dispara 4h após criação da conta se o usuário não tiver feito
-nenhum registro no diário. Não dispara de novo.
-
-Quiet hours: respeita 22h às 8h. Se as 4h caem em quiet, posterga pras 9h.
+nenhum registro no diário. Não dispara de novo. Quiet hours respeita 22h às
+8h. Se as 4h caem em quiet, posterga pras 9h.
 
 ### P2. Push do 3º dia 9h da manhã sobre quiz paladar
 
 Status: ativo.
-Copy atual: "Já experimentou ver os vinhos que combinam com seu paladar?".
-Copy ajustada: "Calibrou seu paladar? Em 2 minutos a gente descobre".
+Copy aprovada por Gabriel (jun/2026): "Calibrou seu paladar? Em 2 minutos a
+gente descobre."
 
 Comportamento: dispara no 3º dia após cadastro às 9h da manhã, apenas se o
 usuário não tiver feito o quiz de paladar (M03). Não dispara de novo.
@@ -1309,9 +1346,8 @@ usuário não tiver feito o quiz de paladar (M03). Não dispara de novo.
 ### P3. Push do 7º dia às 18h sentiu sua falta
 
 Status: ativo.
-Copy atual: "[Nome do usuário], a gente sentiu sua falta. Vem ver as confrarias
-da sua região".
-Copy ajustada: "{Nome}, sentimos sua falta. Tem confraria nova na sua região".
+Copy aprovada por Gabriel (jun/2026): "{Nome}, sentimos sua falta. Tem
+confraria nova na sua região."
 
 Comportamento: dispara no 7º dia após cadastro às 18h, apenas se o usuário não
 abriu o app nos últimos 3 dias. Não dispara de novo.
